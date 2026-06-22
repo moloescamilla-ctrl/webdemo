@@ -5,6 +5,7 @@ export function useExpediente(id) {
   const [expediente, setExpediente] = useState(null)
   const [metodoFisico, setMetodoFisico] = useState(null)
   const [inspeccion, setInspeccion] = useState(null)
+  const [metodoComparativo, setMetodoComparativo] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -16,17 +17,24 @@ export function useExpediente(id) {
   async function fetchAll() {
     setLoading(true)
     setError(null)
-    const [{ data: exp, error: e1 }, { data: mf }, { data: insp }] = await Promise.all([
+    const [
+      { data: exp, error: e1 },
+      { data: mf },
+      { data: insp },
+      { data: mc },
+    ] = await Promise.all([
       supabase.from('expedientes').select('*').eq('id', id).single(),
       supabase.from('metodos_fisicos').select('*').eq('expediente_id', id).maybeSingle(),
       supabase.from('inspecciones_fisicas').select('*').eq('expediente_id', id).maybeSingle(),
+      supabase.from('metodos_comparativos').select('*').eq('expediente_id', id).maybeSingle(),
     ])
     if (e1) { setError(e1.message); setLoading(false); return }
     setExpediente(exp)
     setMetodoFisico(mf)
     setInspeccion(insp)
+    setMetodoComparativo(mc)
     setLoading(false)
   }
 
-  return { expediente, metodoFisico, inspeccion, loading, error }
+  return { expediente, metodoFisico, inspeccion, metodoComparativo, loading, error }
 }

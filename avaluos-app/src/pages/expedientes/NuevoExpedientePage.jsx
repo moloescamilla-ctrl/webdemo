@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
+import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,16 +18,19 @@ const TIPOS_INMUEBLE = [
 const TABS = [
   { id: 'datos', label: '1. Datos generales' },
   { id: 'fisico', label: '2. Método Físico' },
+  { id: 'comparativo', label: '3. Comparativo' },
 ]
 
 export function NuevoExpedientePage() {
   const navigate = useNavigate()
-  const { crearExpediente, guardarMetodoFisico } = useExpedientes()
+  const { crearExpediente, guardarMetodoFisico, guardarMetodoComparativo } = useExpedientes()
 
   const [tab, setTab] = useState('datos')
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState(null)
   const [expedienteId, setExpedienteId] = useState(null)
+  const [fisicoGuardado, setFisicoGuardado] = useState(false)
+  const [superficieFisico, setSuperficieFisico] = useState('')
 
   const [datos, setDatos] = useState({
     calle: '', colonia: '', municipio: '', estado_rep: '', cp: '',
@@ -73,12 +77,35 @@ export function NuevoExpedientePage() {
     setError(null)
     try {
       await guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs)
+      setSuperficieFisico(inputs.superficieConstruccion || '')
+      setFisicoGuardado(true)
+      setTab('comparativo')
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setGuardando(false)
+    }
+  }
+
+  const handleGuardarComparativo = async (resultado, superficieSujeto) => {
+    if (!expedienteId) return
+    setGuardando(true)
+    setError(null)
+    try {
+      await guardarMetodoComparativo(expedienteId, resultado, superficieSujeto)
       navigate('/expedientes')
     } catch (e) {
       setError(e.message)
     } finally {
       setGuardando(false)
     }
+  }
+
+  const canAccessTab = (id) => {
+    if (id === 'datos') return true
+    if (id === 'fisico') return !!expedienteId
+    if (id === 'comparativo') return fisicoGuardado
+    return false
   }
 
   return (
@@ -92,11 +119,11 @@ export function NuevoExpedientePage() {
         {TABS.map(t => (
           <button
             key={t.id}
-            onClick={() => t.id === 'datos' || expedienteId ? setTab(t.id) : null}
+            onClick={() => canAccessTab(t.id) ? setTab(t.id) : null}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
               tab === t.id
                 ? 'bg-white shadow-sm text-gray-900'
-                : t.id === 'fisico' && !expedienteId
+                : !canAccessTab(t.id)
                   ? 'text-gray-300 cursor-not-allowed'
                   : 'text-gray-500 hover:text-gray-700'
             }`}
@@ -162,10 +189,36 @@ export function NuevoExpedientePage() {
         </div>
       </div>
 
-      {/* Método Físico — siempre montado una vez que expedienteId existe */}
+      {/* Método Físico — montado cuando expedienteId existe */}
       {expedienteId && (
         <div className={tab === 'fisico' ? '' : 'hidden'}>
-          <MetodoFisicoForm onGuardar={handleGuardarFisico} guardando={guardando} />
+          <MetodoFisicoForm
+            onGuardar={handleGuardarFisico}
+            guardando={guardando}
+            submitLabel="Guardar y continuar a Comparativo"
+          />
+        </div>
+      )}
+
+      {/* Método Comparativo — montado cuando físico guardado */}
+      {fisicoGuardado && (
+        <div className={tab === 'comparativo' ? '' : 'hidden'}>
+          <div className="space-y-2">
+            <MetodoComparativoForm
+              onGuardar={handleGuardarComparativo}
+              guardando={guardando}
+              superficieInicial={superficieFisico}
+            />
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => navigate('/expedientes')}
+                className="text-xs text-gray-400 hover:text-gray-600"
+              >
+                Saltar — el expediente ya fue guardado con el Método Físico
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

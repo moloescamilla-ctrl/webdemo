@@ -47,7 +47,7 @@ function Campo({ label, name, value, onChange, suffix, hint }) {
   )
 }
 
-export function MetodoFisicoForm({ onGuardar, guardando }) {
+export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente' }) {
   const [inputs, setInputs] = useState(defaultInputs)
   const [estadosChecklist, setEstadosChecklist] = useState(initialEstados)
   const [estadoManual, setEstadoManual] = useState(null)
@@ -195,7 +195,7 @@ export function MetodoFisicoForm({ onGuardar, guardando }) {
                   <Button className="w-full" onClick={handleGuardar} disabled={guardando}>
                     {guardando
                       ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando...</>
-                      : 'Guardar resultado en expediente'
+                      : submitLabel
                     }
                   </Button>
                 )}
