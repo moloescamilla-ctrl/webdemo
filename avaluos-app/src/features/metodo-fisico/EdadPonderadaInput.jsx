@@ -79,7 +79,7 @@ export function EdadPonderadaInput({ value, onChange }) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="col-span-2 space-y-2">
       <div className="flex items-center justify-between">
         <Label>Edad ponderada por partidas de construcción</Label>
         <button

@@ -112,6 +112,7 @@ export function NuevoExpedientePage() {
         </div>
       )}
 
+      {/* Datos generales — siempre montado, solo oculto visualmente */}
       <div className={tab === 'datos' ? '' : 'hidden'}>
         <div className="space-y-5">
           <Card>
@@ -161,6 +162,7 @@ export function NuevoExpedientePage() {
         </div>
       </div>
 
+      {/* Método Físico — siempre montado una vez que expedienteId existe */}
       {expedienteId && (
         <div className={tab === 'fisico' ? '' : 'hidden'}>
           <MetodoFisicoForm onGuardar={handleGuardarFisico} guardando={guardando} />
