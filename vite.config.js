@@ -10,4 +10,12 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['@react-pdf/renderer'],
+  },
+  build: {
+    rollupOptions: {
+      external: ['canvas'],
+    },
+  },
 })
