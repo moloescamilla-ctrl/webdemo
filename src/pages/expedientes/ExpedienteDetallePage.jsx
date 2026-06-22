@@ -1,9 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
+import { PDFDownloadLink } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
+import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, FileDown } from 'lucide-react'
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -55,6 +58,7 @@ export function ExpedienteDetallePage() {
     )
   }
 
+  const folio = expediente.folio || expediente.id.slice(0, 8).toUpperCase()
   const dir = [expediente.calle, expediente.colonia, expediente.municipio, expediente.estado_rep]
     .filter(Boolean).join(', ')
 
@@ -66,17 +70,34 @@ export function ExpedienteDetallePage() {
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-900">
-              {expediente.folio || expediente.id.slice(0, 8).toUpperCase()}
-            </h1>
+            <h1 className="text-xl font-bold text-gray-900">{folio}</h1>
             <Badge variant={ESTADO_VARIANT[expediente.estado]}>
               {ESTADO_LABEL[expediente.estado]}
             </Badge>
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{dir || 'Sin dirección'}</p>
         </div>
+        <PDFDownloadLink
+          document={
+            <AvaluoPDF
+              expediente={expediente}
+              metodoFisico={metodoFisico}
+              inspeccion={inspeccion}
+              metodoComparativo={metodoComparativo}
+            />
+          }
+          fileName={`avaluo-${folio}.pdf`}
+        >
+          {({ loading: pdfLoading }) => (
+            <Button variant="outline" size="sm" disabled={pdfLoading}>
+              <FileDown className="h-4 w-4" />
+              {pdfLoading ? 'Generando...' : 'Descargar PDF'}
+            </Button>
+          )}
+        </PDFDownloadLink>
       </div>
 
+      {/* Datos generales */}
       <Card>
         <CardHeader><CardTitle>Datos generales</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
@@ -96,6 +117,7 @@ export function ExpedienteDetallePage() {
         </CardContent>
       </Card>
 
+      {/* Método Físico */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -166,6 +188,7 @@ export function ExpedienteDetallePage() {
         </CardContent>
       </Card>
 
+      {/* Método Comparativo */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
