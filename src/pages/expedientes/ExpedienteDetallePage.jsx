@@ -1,9 +1,10 @@
 import { useParams, Link } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
+import { ComparableCaptura } from '@/features/comparables/ComparableCaptura'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Link2 } from 'lucide-react'
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -184,6 +185,18 @@ export function ExpedienteDetallePage() {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-blue-500" />
+            <CardTitle>Banco de Comparables</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ComparableCaptura expedienteId={id} />
         </CardContent>
       </Card>
 

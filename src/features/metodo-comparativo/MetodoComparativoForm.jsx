@@ -28,9 +28,30 @@ function factorColor(f) {
   return f > 1 ? 'text-green-600' : 'text-orange-500'
 }
 
-export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '' }) {
+function fromComparable(comp) {
+  const sup = comp.superficie_construccion ?? comp.superficie_total ?? comp.superficie_terreno ?? ''
+  const desc = [comp.colonia, comp.municipio].filter(Boolean).join(', ') || comp.portal || ''
+  return {
+    id: cuid(),
+    descripcion: desc,
+    superficie: sup !== '' ? String(sup) : '',
+    precioTotal: comp.precio_total != null ? String(comp.precio_total) : '',
+    factorZona: '1.00',
+    factorSuperficie: '1.00',
+    factorEdad: '1.00',
+    factorConservacion: '1.00',
+  }
+}
+
+export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialComparables = [] }) {
   const [supSujeto, setSupSujeto] = useState(String(superficieInicial || ''))
-  const [comps, setComps] = useState([newComp(), newComp(), newComp()])
+  const [comps, setComps] = useState(() => {
+    if (initialComparables.length > 0) {
+      const mapped = initialComparables.map(fromComparable)
+      return mapped.length >= 3 ? mapped : [...mapped, ...Array(3 - mapped.length).fill(null).map(newComp)]
+    }
+    return [newComp(), newComp(), newComp()]
+  })
 
   const updateSupSujeto = (val) => {
     setSupSujeto(val)

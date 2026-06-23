@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
+import { ComparableCapturaBuffer } from '@/features/comparables/ComparableCaptura'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,7 +19,8 @@ const TIPOS_INMUEBLE = [
 const TABS = [
   { id: 'datos', label: '1. Datos generales' },
   { id: 'fisico', label: '2. Método Físico' },
-  { id: 'comparativo', label: '3. Comparativo' },
+  { id: 'comparables', label: '3. Comparables' },
+  { id: 'comparativo', label: '4. Comparativo' },
 ]
 
 export function NuevoExpedientePage() {
@@ -31,6 +33,7 @@ export function NuevoExpedientePage() {
   const [expedienteId, setExpedienteId] = useState(null)
   const [fisicoGuardado, setFisicoGuardado] = useState(false)
   const [superficieFisico, setSuperficieFisico] = useState('')
+  const [bufferComparables, setBufferComparables] = useState([])
 
   const [datos, setDatos] = useState({
     calle: '', colonia: '', municipio: '', estado_rep: '', cp: '',
@@ -104,6 +107,7 @@ export function NuevoExpedientePage() {
   const canAccessTab = (id) => {
     if (id === 'datos') return true
     if (id === 'fisico') return !!expedienteId
+    if (id === 'comparables') return fisicoGuardado
     if (id === 'comparativo') return fisicoGuardado
     return false
   }
@@ -199,12 +203,52 @@ export function NuevoExpedientePage() {
       )}
 
       {fisicoGuardado && (
+        <div className={tab === 'comparables' ? '' : 'hidden'}>
+          <div className="space-y-5">
+            <Card>
+              <CardHeader>
+                <CardTitle>Captura de comparables de mercado</CardTitle>
+                <p className="text-xs text-gray-400 mt-1">
+                  Pega URLs de anuncios inmobiliarios similares. La IA extrae los datos automáticamente.
+                  Mínimo 3 comparables recomendados.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <ComparableCapturaBuffer
+                  buffer={bufferComparables}
+                  onAgregarAlBuffer={comp =>
+                    setBufferComparables(prev => [...prev, { ...comp, _bufferId: Date.now() }])
+                  }
+                  onEliminarDelBuffer={id =>
+                    setBufferComparables(prev => prev.filter(c => c._bufferId !== id))
+                  }
+                />
+              </CardContent>
+            </Card>
+            <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setTab('comparativo')}
+                className="text-xs text-gray-400 hover:text-gray-600"
+              >
+                Saltar — continuar sin comparables
+              </button>
+              <Button onClick={() => setTab('comparativo')}>
+                Continuar a Método Comparativo
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {fisicoGuardado && (
         <div className={tab === 'comparativo' ? '' : 'hidden'}>
           <div className="space-y-2">
             <MetodoComparativoForm
               onGuardar={handleGuardarComparativo}
               guardando={guardando}
               superficieInicial={superficieFisico}
+              initialComparables={bufferComparables}
             />
             <div className="text-center">
               <button
