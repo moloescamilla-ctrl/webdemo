@@ -4,7 +4,6 @@ import { useExpediente } from '@/hooks/useExpediente'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, FileDown } from 'lucide-react'
 
@@ -87,12 +86,13 @@ export function ExpedienteDetallePage() {
             />
           }
           fileName={`avaluo-${folio}.pdf`}
+          className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors no-underline"
         >
           {({ loading: pdfLoading }) => (
-            <Button variant="outline" size="sm" disabled={pdfLoading}>
-              <FileDown className="h-4 w-4" />
+            <>
+              <FileDown className="h-3.5 w-3.5" />
               {pdfLoading ? 'Generando...' : 'Descargar PDF'}
-            </Button>
+            </>
           )}
         </PDFDownloadLink>
       </div>
