@@ -77,7 +77,12 @@ export function NuevoExpedientePage() {
     setError(null)
     try {
       await guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs)
-      setSuperficieFisico(inputs.superficieConstruccion || '')
+      const conConstruccion = inspeccion.tieneConstruccion !== false
+      setSuperficieFisico(
+        conConstruccion
+          ? (inputs.superficieConstruccion || '')
+          : (inputs.superficieTerreno || '')
+      )
       setFisicoGuardado(true)
       setTab('comparativo')
     } catch (e) {
@@ -111,7 +116,7 @@ export function NuevoExpedientePage() {
   return (
     <div className="p-6 max-w-5xl">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Nuevo Avalúo</h1>
+        <h1 className="text-xl font-bold text-gray-900">Nuevo Avaúlo</h1>
         <p className="text-sm text-gray-500 mt-0.5">Completa los datos del expediente</p>
       </div>
 
