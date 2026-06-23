@@ -105,26 +105,52 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Fetch page content via Jina AI Reader
-    const jinaUrl = `https://r.jina.ai/${url}`
-    const jinaRes = await fetch(jinaUrl, {
-      headers: {
-        'Accept': 'text/plain',
-        'X-Return-Format': 'markdown',
-        'X-With-Links-Summary': 'false',
-        'X-With-Images-Summary': 'false',
-      },
-      signal: AbortSignal.timeout(25000),
-    })
+    // Fetch page content — Jina AI Reader first, direct fetch as fallback
+    let contenido = ''
 
-    if (!jinaRes.ok) {
-      return res.status(502).json({
-        success: false,
-        error: `No se pudo acceder al portal (${jinaRes.status}). Verifica que el URL sea público y esté activo.`,
+    try {
+      const jinaUrl = `https://r.jina.ai/${url}`
+      const jinaRes = await fetch(jinaUrl, {
+        headers: {
+          'Accept': 'text/plain',
+          'X-Return-Format': 'markdown',
+          'X-With-Links-Summary': 'false',
+          'X-With-Images-Summary': 'false',
+        },
+        signal: AbortSignal.timeout(20000),
       })
+      if (jinaRes.ok) {
+        contenido = await jinaRes.text()
+      }
+    } catch {
+      // Jina failed — try direct fetch
     }
 
-    const contenido = await jinaRes.text()
+    // Fallback: direct HTTP fetch (works for portals with SSR; less reliable for SPAs)
+    if (!contenido || contenido.length < 200) {
+      const directRes = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+          'Accept': 'text/html,application/xhtml+xml',
+          'Accept-Language': 'es-MX,es;q=0.9',
+        },
+        signal: AbortSignal.timeout(15000),
+      })
+      if (!directRes.ok) {
+        return res.status(502).json({
+          success: false,
+          error: `No se pudo acceder al portal (HTTP ${directRes.status}). Verifica que el URL sea público y esté activo.`,
+        })
+      }
+      const html = await directRes.text()
+      // Strip tags for a cleaner text input to Claude
+      contenido = html
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[\s\S]*?<\/style>/gi, '')
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s{3,}/g, '\n')
+        .trim()
+    }
 
     if (!contenido || contenido.length < 100) {
       return res.status(422).json({
