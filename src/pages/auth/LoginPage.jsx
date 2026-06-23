@@ -1,23 +1,41 @@
 import { useState } from 'react'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
 import { Building2, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
 export function LoginPage() {
+  const { user, loading: authLoading } = useAuth()
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+      </div>
+    )
+  }
+
+  if (user) return <Navigate to="/dashboard" replace />
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    if (error) setError(error.message)
-    setLoading(false)
+    if (error) {
+      setError(error.message)
+      setLoading(false)
+    } else {
+      navigate('/dashboard', { replace: true })
+    }
   }
 
   return (
@@ -27,7 +45,7 @@ export function LoginPage() {
           <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl mb-4">
             <Building2 className="h-6 w-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Avalúos MX</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Avaluós MX</h1>
           <p className="text-sm text-gray-500 mt-1">Sistema profesional de valuación inmobiliaria</p>
         </div>
 
