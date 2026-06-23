@@ -1,9 +1,11 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { PDFDownloadLink } from '@react-pdf/renderer'
+import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, FileDown } from 'lucide-react'
 
@@ -33,6 +35,7 @@ function Row({ label, value }) {
 export function ExpedienteDetallePage() {
   const { id } = useParams()
   const { expediente, metodoFisico, inspeccion, metodoComparativo, loading, error } = useExpediente(id)
+  const [pdfLoading, setPdfLoading] = useState(false)
 
   if (loading) {
     return (
@@ -61,6 +64,28 @@ export function ExpedienteDetallePage() {
   const dir = [expediente.calle, expediente.colonia, expediente.municipio, expediente.estado_rep]
     .filter(Boolean).join(', ')
 
+  async function handleDownloadPDF() {
+    setPdfLoading(true)
+    try {
+      const blob = await pdf(
+        <AvaluoPDF
+          expediente={expediente}
+          metodoFisico={metodoFisico}
+          inspeccion={inspeccion}
+          metodoComparativo={metodoComparativo}
+        />
+      ).toBlob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `avaluo-${folio}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    } finally {
+      setPdfLoading(false)
+    }
+  }
+
   return (
     <div className="p-6 max-w-4xl space-y-5">
       <div className="flex items-center gap-3">
@@ -76,25 +101,10 @@ export function ExpedienteDetallePage() {
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{dir || 'Sin dirección'}</p>
         </div>
-        <PDFDownloadLink
-          document={
-            <AvaluoPDF
-              expediente={expediente}
-              metodoFisico={metodoFisico}
-              inspeccion={inspeccion}
-              metodoComparativo={metodoComparativo}
-            />
-          }
-          fileName={`avaluo-${folio}.pdf`}
-          className="inline-flex items-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors no-underline"
-        >
-          {({ loading: pdfLoading }) => (
-            <>
-              <FileDown className="h-3.5 w-3.5" />
-              {pdfLoading ? 'Generando...' : 'Descargar PDF'}
-            </>
-          )}
-        </PDFDownloadLink>
+        <Button variant="outline" size="sm" onClick={handleDownloadPDF} disabled={pdfLoading}>
+          <FileDown className="h-4 w-4" />
+          {pdfLoading ? 'Generando...' : 'Descargar PDF'}
+        </Button>
       </div>
 
       {/* Datos generales */}
