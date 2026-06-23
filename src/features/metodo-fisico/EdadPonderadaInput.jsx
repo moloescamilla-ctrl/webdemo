@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
+import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { PlusCircle, Trash2, Calculator } from 'lucide-react'
 
@@ -125,19 +126,17 @@ export function EdadPonderadaInput({ value, onChange }) {
                       value={p.anio}
                       onChange={e => update(p.id, 'anio', e.target.value)}
                       className="w-24 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
-                    />
+-                    />
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-xs text-gray-500">
                     {edad !== null ? `${edad} a` : '—'}
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="0"
+                    <NumericInput
                       value={p.superficie}
                       onChange={e => update(p.id, 'superficie', e.target.value)}
-                      className="w-24 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
+                      placeholder="0"
+                      className="w-24 text-sm bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 rounded-none text-gray-800 placeholder-gray-300 h-auto py-0"
                     />
                   </td>
                   <td className="px-2 py-2">

@@ -3,7 +3,7 @@ import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
 import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
@@ -26,11 +26,9 @@ function Campo({ label, name, value, onChange, suffix, hint }) {
     <div className="space-y-1">
       <Label htmlFor={name}>{label}</Label>
       <div className="relative">
-        <Input
+        <NumericInput
           id={name}
           name={name}
-          type="number"
-          min="0"
           value={value}
           onChange={onChange}
           className={suffix ? 'pr-12' : ''}

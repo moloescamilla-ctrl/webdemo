@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
@@ -27,6 +27,8 @@ function factorColor(f) {
   if (!f || Math.abs(f - 1) < 0.001) return 'text-gray-500'
   return f > 1 ? 'text-green-600' : 'text-orange-500'
 }
+
+const inlineNum = 'bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 text-gray-800 placeholder-gray-300 h-auto py-0 rounded-none'
 
 export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '' }) {
   const [supSujeto, setSupSujeto] = useState(String(superficieInicial || ''))
@@ -80,10 +82,8 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
           <div className="max-w-xs space-y-1">
             <Label htmlFor="supSujeto">Superficie a comparar</Label>
             <div className="relative">
-              <Input
+              <NumericInput
                 id="supSujeto"
-                type="number"
-                min="0"
                 value={supSujeto}
                 onChange={e => updateSupSujeto(e.target.value)}
                 className="pr-10"
@@ -121,8 +121,8 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
               <thead className="bg-gray-50 border-y border-gray-200">
                 <tr>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Descripción</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-24">Sup m²</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-28">Precio total $</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-28">Sup m²</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-32">Precio total $</th>
                   <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-24 bg-gray-100">$/m²</th>
                   <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-16">F.Zona</th>
                   <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-16">F.Sup</th>
@@ -156,19 +156,19 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                         />
                       </td>
                       <td className="px-3 py-2">
-                        <input
-                          type="number" min="0" placeholder="0"
+                        <NumericInput
                           value={comp.superficie}
                           onChange={e => updateComp(comp.id, 'superficie', e.target.value)}
-                          className="w-20 text-right text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
+                          placeholder="0"
+                          className={`w-full text-right text-sm ${inlineNum}`}
                         />
                       </td>
                       <td className="px-3 py-2">
-                        <input
-                          type="number" min="0" placeholder="0"
+                        <NumericInput
                           value={comp.precioTotal}
                           onChange={e => updateComp(comp.id, 'precioTotal', e.target.value)}
-                          className="w-24 text-right text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
+                          placeholder="0"
+                          className={`w-full text-right text-sm ${inlineNum}`}
                         />
                       </td>
                       <td className="px-3 py-2 bg-gray-50 text-right font-mono text-xs text-gray-500">
