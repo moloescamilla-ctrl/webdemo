@@ -58,6 +58,8 @@ export function ExpedienteDetallePage() {
   const dir = [expediente.calle, expediente.colonia, expediente.municipio, expediente.estado_rep]
     .filter(Boolean).join(', ')
 
+  const esTerrenoSolo = metodoFisico && metodoFisico.superficie_construccion === 0
+
   return (
     <div className="p-6 max-w-4xl space-y-5">
       <div className="flex items-center gap-3">
@@ -100,12 +102,31 @@ export function ExpedienteDetallePage() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-blue-600" />
-            <CardTitle>Método Físico — Ross Heidecke</CardTitle>
+            <CardTitle>
+              {esTerrenoSolo
+                ? 'Método Físico — Terreno sin construcción'
+                : 'Método Físico — Ross Heidecke'
+              }
+            </CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           {!metodoFisico ? (
             <p className="text-sm text-gray-400">Sin datos del Método Físico guardados.</p>
+          ) : esTerrenoSolo ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                <div>
+                  <Row label="Superficie terreno" value={`${formatNumber(metodoFisico.superficie_terreno, 2)} m²`} />
+                  <Row label="Valor unitario terreno /m²" value={formatCurrency(metodoFisico.valor_unitario_terreno)} />
+                </div>
+              </div>
+              <div className="bg-blue-600 text-white rounded-md p-4">
+                <p className="text-sm text-blue-100">Valor del terreno</p>
+                <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_fisico_total)}</p>
+                <p className="text-xs text-blue-200 mt-1">Terreno sin construcción (solo suelo)</p>
+              </div>
+            </div>
           ) : (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">

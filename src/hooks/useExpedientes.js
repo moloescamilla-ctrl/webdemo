@@ -38,34 +38,38 @@ export function useExpedientes() {
   }
 
   async function guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs) {
-    const { error: eInsp } = await supabase
-      .from('inspecciones_fisicas')
-      .upsert({
-        expediente_id: expedienteId,
-        ...inspeccion.estados,
-        puntaje_heidecke: inspeccion.puntaje,
-        estado_heidecke: inspeccion.estadoHeidecke.nombre,
-        coeficiente_c: inspeccion.coeficienteC,
-        estado_manual: inspeccion.estadoManualNombre,
-        coeficiente_c_manual: inspeccion.coeficienteCManual,
-      }, { onConflict: 'expediente_id' })
+    const conConstruccion = inspeccion.tieneConstruccion !== false
 
-    if (eInsp) throw new Error(eInsp.message)
+    if (conConstruccion) {
+      const { error: eInsp } = await supabase
+        .from('inspecciones_fisicas')
+        .upsert({
+          expediente_id: expedienteId,
+          ...inspeccion.estados,
+          puntaje_heidecke: inspeccion.puntaje,
+          estado_heidecke: inspeccion.estadoHeidecke.nombre,
+          coeficiente_c: inspeccion.coeficienteC,
+          estado_manual: inspeccion.estadoManualNombre,
+          coeficiente_c_manual: inspeccion.coeficienteCManual,
+        }, { onConflict: 'expediente_id' })
+
+      if (eInsp) throw new Error(eInsp.message)
+    }
 
     const { error: eMf } = await supabase
       .from('metodos_fisicos')
       .upsert({
         expediente_id: expedienteId,
-        superficie_construccion: parseFloat(inputs.superficieConstruccion),
+        superficie_construccion: conConstruccion ? parseFloat(inputs.superficieConstruccion) : 0,
         superficie_terreno: parseFloat(inputs.superficieTerreno),
-        costo_reposicion_m2: parseFloat(inputs.costoReposicionM2),
+        costo_reposicion_m2: conConstruccion ? parseFloat(inputs.costoReposicionM2) : 0,
         valor_unitario_terreno: parseFloat(inputs.valorUnitarioTerreno),
-        edad_anios: parseFloat(inputs.edadAnios),
-        vida_util_anios: parseFloat(inputs.vidaUtilAnios),
-        valor_residual_pct: parseFloat(inputs.valorResidual),
+        edad_anios: conConstruccion ? parseFloat(inputs.edadAnios) : 0,
+        vida_util_anios: conConstruccion ? parseFloat(inputs.vidaUtilAnios) : 0,
+        valor_residual_pct: conConstruccion ? parseFloat(inputs.valorResidual) : 0,
         valor_reposicion_nuevo: resultado.valorReposicionNuevo,
         factor_ross: resultado.factorA,
-        coeficiente_c_adoptado: inspeccion.coeficienteCAdoptado,
+        coeficiente_c_adoptado: conConstruccion ? (inspeccion.coeficienteCAdoptado ?? null) : null,
         factor_depreciacion: resultado.factorDepreciacion,
         porcentaje_depreciacion: resultado.porcentajeDepreciacion,
         depreciacion_pesos: resultado.depreciacion,

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
-import { calcularMetodoFisico, calcularHeideckeDesdeChecklist, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
+import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -48,6 +48,7 @@ function Campo({ label, name, value, onChange, suffix, hint }) {
 }
 
 export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente' }) {
+  const [tieneConstruccion, setTieneConstruccion] = useState(true)
   const [inputs, setInputs] = useState(defaultInputs)
   const [estadosChecklist, setEstadosChecklist] = useState(initialEstados)
   const [estadoManual, setEstadoManual] = useState(null)
@@ -66,25 +67,36 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
 
   const resultado = useMemo(() => {
     const n = (v) => parseFloat(v) || 0
-    const sc = n(inputs.superficieConstruccion)
     const st = n(inputs.superficieTerreno)
-    const cr = n(inputs.costoReposicionM2)
     const vt = n(inputs.valorUnitarioTerreno)
+    if (!st || !vt) return null
+
+    if (!tieneConstruccion) {
+      return calcularTerrenoSolo({ superficieTerreno: st, valorUnitarioTerreno: vt })
+    }
+
+    const sc = n(inputs.superficieConstruccion)
+    const cr = n(inputs.costoReposicionM2)
     const edad = n(inputs.edadAnios)
     const vu = n(inputs.vidaUtilAnios)
     const vr = n(inputs.valorResidual) / 100
-    if (!sc || !st || !cr || !vt || !vu) return null
+    if (!sc || !cr || !vu) return null
     return calcularMetodoFisico({
       superficieConstruccion: sc, superficieTerreno: st,
       costoReposicionM2: cr, valorUnitarioTerreno: vt,
       edadAnios: edad, vidaUtilAnios: vu,
       valorResidual: vr, coeficienteC: estadoFinal?.c ?? coeficienteC,
     })
-  }, [inputs, estadoFinal, coeficienteC])
+  }, [inputs, estadoFinal, coeficienteC, tieneConstruccion])
 
   const handleGuardar = () => {
     if (!resultado || !onGuardar) return
+    if (!tieneConstruccion) {
+      onGuardar(resultado, { tieneConstruccion: false }, inputs)
+      return
+    }
     const inspeccion = {
+      tieneConstruccion: true,
       estados: estadosChecklist,
       puntaje,
       estadoHeidecke,
@@ -101,26 +113,50 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       <div className="space-y-5">
         <Card>
           <CardHeader><CardTitle>Datos del Inmueble</CardTitle></CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
-            <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
-            <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
-            <Campo label="Costo reposición nuevo" name="costoReposicionM2" value={inputs.costoReposicionM2} onChange={handleInput} suffix="$/m²" hint="Costo de construir 1 m² nuevo hoy" />
-            <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
-            <div className="col-span-2">
-              <EdadPonderadaInput value={inputs.edadAnios} onChange={handleInput} />
-            </div>
-            <Campo label="Vida útil" name="vidaUtilAnios" value={inputs.vidaUtilAnios} onChange={handleInput} suffix="años" hint="Típico: 60 años" />
-            <div className="col-span-2">
-              <Campo label="Valor residual" name="valorResidual" value={inputs.valorResidual} onChange={handleInput} suffix="%" hint="Típico: 15%" />
+          <CardContent className="space-y-4">
+            <label className="flex items-center gap-3 p-3 bg-gray-50 rounded-md cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={tieneConstruccion}
+                onChange={e => setTieneConstruccion(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 accent-blue-600"
+              />
+              <span className="text-sm font-medium text-gray-700">El inmueble tiene construcción</span>
+            </label>
+
+            <div className="grid grid-cols-2 gap-4">
+              {tieneConstruccion ? (
+                <>
+                  <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
+                  <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
+                  <Campo label="Costo reposición nuevo" name="costoReposicionM2" value={inputs.costoReposicionM2} onChange={handleInput} suffix="$/m²" hint="Costo de construir 1 m² nuevo hoy" />
+                  <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
+                  <div className="col-span-2">
+                    <EdadPonderadaInput value={inputs.edadAnios} onChange={handleInput} />
+                  </div>
+                  <Campo label="Vida útil" name="vidaUtilAnios" value={inputs.vidaUtilAnios} onChange={handleInput} suffix="años" hint="Típico: 60 años" />
+                  <div className="col-span-2">
+                    <Campo label="Valor residual" name="valorResidual" value={inputs.valorResidual} onChange={handleInput} suffix="%" hint="Típico: 15%" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
+                  <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
-        <ChecklistInspeccion
-          estados={estadosChecklist}
-          onChange={handleChecklist}
-          estadoManual={estadoManual}
-          onEstadoManualChange={setEstadoManual}
-        />
+
+        {tieneConstruccion && (
+          <ChecklistInspeccion
+            estados={estadosChecklist}
+            onChange={handleChecklist}
+            estadoManual={estadoManual}
+            onEstadoManualChange={setEstadoManual}
+          />
+        )}
       </div>
 
       <div className="space-y-5">
@@ -130,17 +166,22 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
               <Calculator className="h-4 w-4 text-blue-600" />
               <CardTitle>Resultado — Método Físico</CardTitle>
             </div>
-            <p className="text-xs text-gray-500 font-mono">
-              VA = VR × &#123;1 − (1 − r) × [A + (1 − A) × C]&#125;
-            </p>
+            {tieneConstruccion && (
+              <p className="text-xs text-gray-500 font-mono">
+                VA = VR × &#123;1 − (1 − r) × [A + (1 − A) × C]&#125;
+              </p>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             {!resultado ? (
               <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-md text-sm text-gray-500">
                 <Info className="h-4 w-4 mt-0.5 shrink-0" />
-                Completa los datos del inmueble y el checklist para ver el resultado.
+                {tieneConstruccion
+                  ? 'Completa los datos del inmueble y el checklist para ver el resultado.'
+                  : 'Ingresa la superficie y valor unitario del terreno para ver el resultado.'
+                }
               </div>
-            ) : (
+            ) : tieneConstruccion ? (
               <>
                 <div className="bg-gray-50 rounded-md p-3 space-y-2">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Variables</p>
@@ -189,6 +230,34 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                   <p className="text-sm text-blue-100">Valor físico total del inmueble</p>
                   <p className="text-2xl font-bold mt-1">{formatCurrency(resultado.valorFisicoTotal)}</p>
                   <p className="text-xs text-blue-200 mt-1">Terreno + Construcción depreciada</p>
+                </div>
+
+                {onGuardar && (
+                  <Button className="w-full" onClick={handleGuardar} disabled={guardando}>
+                    {guardando
+                      ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando...</>
+                      : submitLabel
+                    }
+                  </Button>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="space-y-2 p-3 bg-gray-50 rounded-md">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Superficie terreno</span>
+                    <span className="font-semibold">{formatNumber(parseFloat(inputs.superficieTerreno), 2)} m²</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Valor unitario terreno</span>
+                    <span className="font-semibold">{formatCurrency(parseFloat(inputs.valorUnitarioTerreno))}/m²</span>
+                  </div>
+                </div>
+
+                <div className="bg-blue-600 text-white rounded-md p-4">
+                  <p className="text-sm text-blue-100">Valor del terreno</p>
+                  <p className="text-2xl font-bold mt-1">{formatCurrency(resultado.valorFisicoTotal)}</p>
+                  <p className="text-xs text-blue-200 mt-1">Terreno sin construcción (solo suelo)</p>
                 </div>
 
                 {onGuardar && (
