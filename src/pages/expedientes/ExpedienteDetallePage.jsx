@@ -85,7 +85,7 @@ export function ExpedienteDetallePage() {
       URL.revokeObjectURL(url)
     } catch (err) {
       console.error('Error generando PDF:', err)
-      alert('No se pudo generar el PDF. Intenta de nuevo.')
+      alert(`Error PDF: ${err?.message || String(err)}`)
     } finally {
       setPdfLoading(false)
     }
