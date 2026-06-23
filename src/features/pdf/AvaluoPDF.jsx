@@ -1,6 +1,5 @@
 import { Document, Page, View, Text, StyleSheet } from '@react-pdf/renderer'
 
-// Helvetica (built-in PDF font) doesn't support Latin extended chars — replace with ASCII
 const s = (str) => (str ?? '')
   .replace(/[áà]/g, 'a').replace(/[ÁÀ]/g, 'A')
   .replace(/[éè]/g, 'e').replace(/[ÉÈ]/g, 'E')
@@ -74,6 +73,7 @@ const styles = StyleSheet.create({
   },
   sectionBarGreen: {
     backgroundColor: '#16a34a',
+    marginTop: 16,
   },
   sectionTitle: {
     fontSize: 9,
@@ -98,10 +98,13 @@ const styles = StyleSheet.create({
   },
   grid2: {
     flexDirection: 'row',
-    gap: 12,
     marginBottom: 8,
   },
   col: {
+    flex: 1,
+    paddingRight: 8,
+  },
+  colLast: {
     flex: 1,
   },
   valuebox: {
@@ -132,6 +135,13 @@ const styles = StyleSheet.create({
     padding: 8,
     flex: 1,
   },
+  miniboxRight: {
+    backgroundColor: '#f9fafb',
+    borderRadius: 3,
+    padding: 8,
+    flex: 1,
+    marginLeft: 8,
+  },
   miniboxLabel: {
     color: '#6b7280',
     fontSize: 8,
@@ -143,7 +153,6 @@ const styles = StyleSheet.create({
   },
   miniboxRow: {
     flexDirection: 'row',
-    gap: 8,
     marginTop: 6,
   },
   depBar: {
@@ -187,6 +196,11 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f3f4f6',
   },
   tableRowAlt: {
+    flexDirection: 'row',
+    paddingVertical: 2.5,
+    paddingHorizontal: 6,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#f3f4f6',
     backgroundColor: '#f9fafb',
   },
   tableCell: {
@@ -227,6 +241,8 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
   const fecha = new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })
   const dir = [expediente.calle, expediente.colonia, expediente.municipio, expediente.estado_rep]
     .filter(Boolean).map(s).join(', ')
+  const depPct = Math.min(metodoFisico?.porcentaje_depreciacion ?? 0, 100)
+  const comparables = (metodoComparativo?.comparables ?? []).filter(c => c.precioM2Homologado > 0)
 
   return (
     <Document title={`Avaluo ${folio}`} author="Avaluos Inmobiliarios MX">
@@ -263,7 +279,7 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
               <Text style={styles.rowValue}>{s(expediente.solicitante) || '—'}</Text>
             </View>
           </View>
-          <View style={styles.col}>
+          <View style={styles.colLast}>
             <View style={styles.row}>
               <Text style={styles.rowLabel}>Direccion</Text>
               <Text style={styles.rowValue}>{dir || '—'}</Text>
@@ -305,11 +321,11 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
                   <Text style={styles.rowValue}>{fmt(metodoFisico.costo_reposicion_m2)}</Text>
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.rowLabel}>Val. unitario terreno /m2</Text>
+                  <Text style={styles.rowLabel}>Val. unit. terreno /m2</Text>
                   <Text style={styles.rowValue}>{fmt(metodoFisico.valor_unitario_terreno)}</Text>
                 </View>
               </View>
-              <View style={styles.col}>
+              <View style={styles.colLast}>
                 <View style={styles.row}>
                   <Text style={styles.rowLabel}>Edad</Text>
                   <Text style={styles.rowValue}>{metodoFisico.edad_anios} anos</Text>
@@ -331,7 +347,7 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
 
             {inspeccion && (
               <Text style={{ color: '#6b7280', fontSize: 8, marginTop: 4 }}>
-                Estado de conservacion:{' '}
+                {'Estado conservacion: '}
                 <Text style={{ fontFamily: 'Helvetica-Bold' }}>{s(inspeccion.estado_heidecke)}</Text>
                 {inspeccion.estado_manual ? ` (ajustado: ${s(inspeccion.estado_manual)})` : ''}
               </Text>
@@ -339,9 +355,9 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
 
             <View style={{ marginTop: 8 }}>
               <View style={styles.depBar}>
-                <View style={[styles.depFill, { width: `${Math.min(metodoFisico.porcentaje_depreciacion ?? 0, 100)}%` }]} />
+                <View style={[styles.depFill, { width: `${depPct}%` }]} />
               </View>
-              <Text style={styles.depLabel}>{fmtNum(metodoFisico.porcentaje_depreciacion, 2)}% depreciado</Text>
+              <Text style={styles.depLabel}>{fmtNum(depPct, 2)}% depreciado</Text>
             </View>
 
             <View style={styles.miniboxRow}>
@@ -349,7 +365,7 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
                 <Text style={styles.miniboxLabel}>Valor actual construccion</Text>
                 <Text style={styles.miniboxValue}>{fmt(metodoFisico.valor_actual_construccion)}</Text>
               </View>
-              <View style={styles.minibox}>
+              <View style={styles.miniboxRight}>
                 <Text style={styles.miniboxLabel}>Valor del terreno</Text>
                 <Text style={styles.miniboxValue}>{fmt(metodoFisico.valor_terreno)}</Text>
               </View>
@@ -365,7 +381,7 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
         {/* Metodo Comparativo */}
         {metodoComparativo && (
           <>
-            <View style={[styles.sectionBar, styles.sectionBarGreen, { marginTop: 16 }]}>
+            <View style={styles.sectionBarGreen}>
               <Text style={styles.sectionTitle}>METODO COMPARATIVO DE MERCADO</Text>
             </View>
 
@@ -375,25 +391,23 @@ export function AvaluoPDF({ expediente, metodoFisico, inspeccion, metodoComparat
             </View>
             <View style={[styles.row, { marginBottom: 6 }]}>
               <Text style={styles.rowLabel}>Comparables utilizados</Text>
-              <Text style={styles.rowValue}>{metodoComparativo.comparables?.length ?? 0}</Text>
+              <Text style={styles.rowValue}>{comparables.length}</Text>
             </View>
 
-            {(metodoComparativo.comparables?.filter(c => c.precioM2Homologado > 0).length ?? 0) > 0 && (
+            {comparables.length > 0 && (
               <View style={styles.table}>
                 <View style={styles.tableHead}>
                   <Text style={[styles.tableHeadCell, { flex: 3 }]}>Comparable</Text>
                   <Text style={[styles.tableHeadCell, { flex: 1, textAlign: 'right' }]}>F.Total</Text>
                   <Text style={[styles.tableHeadCell, { flex: 1.5, textAlign: 'right' }]}>$/m2 Homo</Text>
                 </View>
-                {metodoComparativo.comparables
-                  .filter(c => c.precioM2Homologado > 0)
-                  .map((c, i) => (
-                    <View key={i} style={[styles.tableRow, i % 2 === 1 && styles.tableRowAlt]}>
-                      <Text style={[styles.tableCell, { flex: 3 }]}>{s(c.descripcion) || `Comparable ${i + 1}`}</Text>
-                      <Text style={[styles.tableCell, { flex: 1, textAlign: 'right' }]}>{fmtNum(c.factorTotal, 4)}</Text>
-                      <Text style={[styles.tableCell, styles.tableCellBold, { flex: 1.5, textAlign: 'right' }]}>{fmtNum(c.precioM2Homologado, 2)}</Text>
-                    </View>
-                  ))}
+                {comparables.map((c, i) => (
+                  <View key={i} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
+                    <Text style={[styles.tableCell, { flex: 3 }]}>{s(c.descripcion) || `Comparable ${i + 1}`}</Text>
+                    <Text style={[styles.tableCell, { flex: 1, textAlign: 'right' }]}>{fmtNum(c.factorTotal, 4)}</Text>
+                    <Text style={[styles.tableCell, styles.tableCellBold, { flex: 1.5, textAlign: 'right' }]}>{fmtNum(c.precioM2Homologado, 2)}</Text>
+                  </View>
+                ))}
                 <View style={styles.tableFoot}>
                   <Text style={[styles.tableHeadCell, { flex: 4 }]}>Valor unitario ponderado</Text>
                   <Text style={[styles.tableHeadCell, { flex: 1.5, textAlign: 'right', color: '#1e3a5f' }]}>
