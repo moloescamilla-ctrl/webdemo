@@ -126,7 +126,7 @@ export function EdadPonderadaInput({ value, onChange }) {
                       value={p.anio}
                       onChange={e => update(p.id, 'anio', e.target.value)}
                       className="w-24 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
--                    />
+                    />
                   </td>
                   <td className="px-3 py-2 text-right font-mono text-xs text-gray-500">
                     {edad !== null ? `${edad} a` : '—'}
