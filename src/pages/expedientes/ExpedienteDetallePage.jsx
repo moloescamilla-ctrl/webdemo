@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
-import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -67,6 +65,10 @@ export function ExpedienteDetallePage() {
   async function handleDownloadPDF() {
     setPdfLoading(true)
     try {
+      const [{ pdf }, { AvaluoPDF }] = await Promise.all([
+        import('@react-pdf/renderer'),
+        import('@/features/pdf/AvaluoPDF'),
+      ])
       const blob = await pdf(
         <AvaluoPDF
           expediente={expediente}
@@ -81,6 +83,9 @@ export function ExpedienteDetallePage() {
       a.download = `avaluo-${folio}.pdf`
       a.click()
       URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Error generando PDF:', err)
+      alert('No se pudo generar el PDF. Intenta de nuevo.')
     } finally {
       setPdfLoading(false)
     }
