@@ -84,3 +84,17 @@ export function calcularMetodoFisico({ superficieConstruccion, superficieTerreno
     valorFisicoTotal: valorTerreno + va,
   }
 }
+
+export function calcularTerrenoSolo({ superficieTerreno, valorUnitarioTerreno }) {
+  const valorTerreno = superficieTerreno * valorUnitarioTerreno
+  return {
+    valorReposicionNuevo: 0,
+    valorTerreno,
+    factorA: 0,
+    depreciacion: 0,
+    porcentajeDepreciacion: 0,
+    factorDepreciacion: 0,
+    valorActualConstruccion: 0,
+    valorFisicoTotal: valorTerreno,
+  }
+}

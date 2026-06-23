@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, FileDown } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle } from 'lucide-react'
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -33,7 +31,6 @@ function Row({ label, value }) {
 export function ExpedienteDetallePage() {
   const { id } = useParams()
   const { expediente, metodoFisico, inspeccion, metodoComparativo, loading, error } = useExpediente(id)
-  const [pdfLoading, setPdfLoading] = useState(false)
 
   if (loading) {
     return (
@@ -58,38 +55,10 @@ export function ExpedienteDetallePage() {
     )
   }
 
-  const folio = expediente.folio || expediente.id.slice(0, 8).toUpperCase()
   const dir = [expediente.calle, expediente.colonia, expediente.municipio, expediente.estado_rep]
     .filter(Boolean).join(', ')
 
-  async function handleDownloadPDF() {
-    setPdfLoading(true)
-    try {
-      const [{ pdf }, { AvaluoPDF }] = await Promise.all([
-        import('@react-pdf/renderer'),
-        import('@/features/pdf/AvaluoPDF'),
-      ])
-      const blob = await pdf(
-        <AvaluoPDF
-          expediente={expediente}
-          metodoFisico={metodoFisico}
-          inspeccion={inspeccion}
-          metodoComparativo={metodoComparativo}
-        />
-      ).toBlob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `avaluo-${folio}.pdf`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch (err) {
-      console.error('Error generando PDF:', err)
-      alert(`Error PDF: ${err?.message || String(err)}`)
-    } finally {
-      setPdfLoading(false)
-    }
-  }
+  const esTerrenoSolo = metodoFisico && metodoFisico.superficie_construccion === 0
 
   return (
     <div className="p-6 max-w-4xl space-y-5">
@@ -99,20 +68,17 @@ export function ExpedienteDetallePage() {
         </Link>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-gray-900">{folio}</h1>
+            <h1 className="text-xl font-bold text-gray-900">
+              {expediente.folio || expediente.id.slice(0, 8).toUpperCase()}
+            </h1>
             <Badge variant={ESTADO_VARIANT[expediente.estado]}>
               {ESTADO_LABEL[expediente.estado]}
             </Badge>
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{dir || 'Sin dirección'}</p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleDownloadPDF} disabled={pdfLoading}>
-          <FileDown className="h-4 w-4" />
-          {pdfLoading ? 'Generando...' : 'Descargar PDF'}
-        </Button>
       </div>
 
-      {/* Datos generales */}
       <Card>
         <CardHeader><CardTitle>Datos generales</CardTitle></CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
@@ -132,17 +98,35 @@ export function ExpedienteDetallePage() {
         </CardContent>
       </Card>
 
-      {/* Método Físico */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-blue-600" />
-            <CardTitle>Método Físico — Ross Heidecke</CardTitle>
+            <CardTitle>
+              {esTerrenoSolo
+                ? 'Método Físico — Terreno sin construcción'
+                : 'Método Físico — Ross Heidecke'
+              }
+            </CardTitle>
           </div>
         </CardHeader>
         <CardContent>
           {!metodoFisico ? (
             <p className="text-sm text-gray-400">Sin datos del Método Físico guardados.</p>
+          ) : esTerrenoSolo ? (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+                <div>
+                  <Row label="Superficie terreno" value={`${formatNumber(metodoFisico.superficie_terreno, 2)} m²`} />
+                  <Row label="Valor unitario terreno /m²" value={formatCurrency(metodoFisico.valor_unitario_terreno)} />
+                </div>
+              </div>
+              <div className="bg-blue-600 text-white rounded-md p-4">
+                <p className="text-sm text-blue-100">Valor del terreno</p>
+                <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_fisico_total)}</p>
+                <p className="text-xs text-blue-200 mt-1">Terreno sin construcción (solo suelo)</p>
+              </div>
+            </div>
           ) : (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
@@ -203,7 +187,6 @@ export function ExpedienteDetallePage() {
         </CardContent>
       </Card>
 
-      {/* Método Comparativo */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
