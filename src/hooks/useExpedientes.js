@@ -19,7 +19,6 @@ export function useExpedientes() {
       .from('expedientes')
       .select('*')
       .order('created_at', { ascending: false })
-
     if (error) setError(error.message)
     else setExpedientes(data || [])
     setLoading(false)
@@ -31,10 +30,32 @@ export function useExpedientes() {
       .insert({ ...datos, perito_id: user.id })
       .select()
       .single()
-
     if (error) throw new Error(error.message)
     setExpedientes(prev => [data, ...prev])
     return data
+  }
+
+  async function actualizarExpediente(id, datos) {
+    const { data, error } = await supabase
+      .from('expedientes')
+      .update(datos)
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw new Error(error.message)
+    setExpedientes(prev => prev.map(e => e.id === id ? data : e))
+    return data
+  }
+
+  async function eliminarExpediente(id) {
+    await Promise.all([
+      supabase.from('metodos_comparativos').delete().eq('expediente_id', id),
+      supabase.from('metodos_fisicos').delete().eq('expediente_id', id),
+      supabase.from('inspecciones_fisicas').delete().eq('expediente_id', id),
+    ])
+    const { error } = await supabase.from('expedientes').delete().eq('id', id)
+    if (error) throw new Error(error.message)
+    setExpedientes(prev => prev.filter(e => e.id !== id))
   }
 
   async function guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs) {
@@ -52,7 +73,6 @@ export function useExpedientes() {
           estado_manual: inspeccion.estadoManualNombre,
           coeficiente_c_manual: inspeccion.coeficienteCManual,
         }, { onConflict: 'expediente_id' })
-
       if (eInsp) throw new Error(eInsp.message)
     }
 
@@ -77,7 +97,6 @@ export function useExpedientes() {
         valor_terreno: resultado.valorTerreno,
         valor_fisico_total: resultado.valorFisicoTotal,
       }, { onConflict: 'expediente_id' })
-
     if (eMf) throw new Error(eMf.message)
 
     await supabase
@@ -100,7 +119,6 @@ export function useExpedientes() {
         valor_unitario_ponderado: resultado.valorUnitarioPonderado,
         valor_comparativo_total: resultado.valorComparativoTotal,
       }, { onConflict: 'expediente_id' })
-
     if (error) throw new Error(error.message)
 
     await supabase
@@ -111,5 +129,9 @@ export function useExpedientes() {
     await fetchExpedientes()
   }
 
-  return { expedientes, loading, error, crearExpediente, guardarMetodoFisico, guardarMetodoComparativo }
+  return {
+    expedientes, loading, error,
+    crearExpediente, actualizarExpediente, eliminarExpediente,
+    guardarMetodoFisico, guardarMetodoComparativo,
+  }
 }

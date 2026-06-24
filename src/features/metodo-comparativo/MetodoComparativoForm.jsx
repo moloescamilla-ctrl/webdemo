@@ -30,9 +30,16 @@ function factorColor(f) {
 
 const inlineNum = 'bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 text-gray-800 placeholder-gray-300 h-auto py-0 rounded-none'
 
-export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '' }) {
-  const [supSujeto, setSupSujeto] = useState(String(superficieInicial || ''))
-  const [comps, setComps] = useState([newComp(), newComp(), newComp()])
+export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null }) {
+  const [supSujeto, setSupSujeto] = useState(
+    initialValues ? String(initialValues.superficieSujeto || '') : String(superficieInicial || '')
+  )
+  const [comps, setComps] = useState(() => {
+    if (initialValues?.comparables?.length) {
+      return initialValues.comparables.map(c => ({ ...c, id: cuid() }))
+    }
+    return [newComp(), newComp(), newComp()]
+  })
 
   const updateSupSujeto = (val) => {
     setSupSujeto(val)
