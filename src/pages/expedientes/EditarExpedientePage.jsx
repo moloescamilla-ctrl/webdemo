@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
+import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
 import { ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
@@ -61,6 +62,8 @@ export function EditarExpedientePage() {
     uso: expediente.uso || 'Habitacional',
     solicitante: expediente.solicitante || '',
     fecha_inspeccion: expediente.fecha_inspeccion || '',
+    latitud: expediente.latitud ?? null,
+    longitud: expediente.longitud ?? null,
   })
 
   const d = datos ?? fromExpediente()
@@ -164,6 +167,16 @@ export function EditarExpedientePage() {
               <div className="space-y-1"><Label>Municipio / Delegación</Label><Input name="municipio" value={d.municipio} onChange={handleDatos} /></div>
               <div className="space-y-1"><Label>Estado</Label><Input name="estado_rep" value={d.estado_rep} onChange={handleDatos} /></div>
               <div className="space-y-1"><Label>Código postal</Label><Input name="cp" value={d.cp} onChange={handleDatos} maxLength={5} /></div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Georeferencia del predio</CardTitle></CardHeader>
+            <CardContent>
+              <UbicacionMapaInput
+                latitud={d.latitud}
+                longitud={d.longitud}
+                onChange={coords => setDatos(prev => ({ ...(prev ?? fromExpediente()), ...coords }))}
+              />
             </CardContent>
           </Card>
           <Card>
