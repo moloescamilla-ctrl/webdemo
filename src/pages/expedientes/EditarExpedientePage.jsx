@@ -4,6 +4,8 @@ import { useExpediente } from '@/hooks/useExpediente'
 import { useExpedientes } from '@/hooks/useExpedientes'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
+import { EntornoForm } from '@/features/entorno/EntornoForm'
+import { CaracteristicasTerrenoForm } from '@/features/terreno/CaracteristicasTerrenoForm'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -18,15 +20,25 @@ const TIPOS_INMUEBLE = [
 ]
 
 const TABS = [
-  { id: 'datos', label: '1. Datos generales' },
-  { id: 'fisico', label: '2. Método Físico' },
-  { id: 'comparativo', label: '3. Comparativo' },
+  { id: 'datos',       label: 'Datos' },
+  { id: 'entorno',     label: 'Entorno' },
+  { id: 'terreno',     label: 'Terreno' },
+  { id: 'fisico',      label: 'Método Físico' },
+  { id: 'comparativo', label: 'Comparativo' },
 ]
 
 export function EditarExpedientePage() {
   const { id } = useParams()
-  const { expediente, metodoFisico, inspeccion, metodoComparativo, loading, error } = useExpediente(id)
-  const { actualizarExpediente, guardarMetodoFisico, guardarMetodoComparativo } = useExpedientes()
+  const {
+    expediente, entorno, terreno,
+    metodoFisico, inspeccion, metodoComparativo,
+    loading, error,
+  } = useExpediente(id)
+  const {
+    actualizarExpediente,
+    guardarEntorno, guardarTerreno,
+    guardarMetodoFisico, guardarMetodoComparativo,
+  } = useExpedientes()
 
   const [tab, setTab] = useState('datos')
   const [guardando, setGuardando] = useState(false)
@@ -90,6 +102,20 @@ export function EditarExpedientePage() {
     finally { setGuardando(false) }
   }
 
+  const handleGuardarEntorno = async (payload) => {
+    setGuardando(true); setErrorMsg(null)
+    try { await guardarEntorno(id, payload); flashOk('entorno') }
+    catch (e) { setErrorMsg(e.message) }
+    finally { setGuardando(false) }
+  }
+
+  const handleGuardarTerreno = async (payload) => {
+    setGuardando(true); setErrorMsg(null)
+    try { await guardarTerreno(id, payload); flashOk('terreno') }
+    catch (e) { setErrorMsg(e.message) }
+    finally { setGuardando(false) }
+  }
+
   const handleGuardarFisico = async (resultado, inspeccionData, inputs) => {
     setGuardando(true); setErrorMsg(null)
     try { await guardarMetodoFisico(id, inspeccionData, resultado, inputs); flashOk('fisico') }
@@ -108,12 +134,12 @@ export function EditarExpedientePage() {
     tieneConstruccion: metodoFisico.superficie_construccion !== 0,
     inputs: {
       superficieConstruccion: String(metodoFisico.superficie_construccion || ''),
-      superficieTerreno: String(metodoFisico.superficie_terreno || ''),
-      costoReposicionM2: String(metodoFisico.costo_reposicion_m2 || ''),
-      valorUnitarioTerreno: String(metodoFisico.valor_unitario_terreno || ''),
-      edadAnios: String(metodoFisico.edad_anios || ''),
-      vidaUtilAnios: String(metodoFisico.vida_util_anios || '60'),
-      valorResidual: String(metodoFisico.valor_residual_pct || '15'),
+      superficieTerreno:      String(metodoFisico.superficie_terreno || ''),
+      costoReposicionM2:      String(metodoFisico.costo_reposicion_m2 || ''),
+      valorUnitarioTerreno:   String(metodoFisico.valor_unitario_terreno || ''),
+      edadAnios:              String(metodoFisico.edad_anios || ''),
+      vidaUtilAnios:          String(metodoFisico.vida_util_anios || '60'),
+      valorResidual:          String(metodoFisico.valor_residual_pct || '15'),
     },
     estadosRaw: inspeccion,
   } : null
@@ -139,19 +165,21 @@ export function EditarExpedientePage() {
         </div>
       </div>
 
-      <div className="flex gap-1 mb-6 bg-gray-100 rounded-lg p-1 w-fit">
-        {TABS.map(t => (
-          <button
-            key={t.id}
-            onClick={() => { setTab(t.id); setErrorMsg(null) }}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 ${
-              tab === t.id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {t.label}
-            {okTab === t.id && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
-          </button>
-        ))}
+      <div className="overflow-x-auto mb-6">
+        <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit min-w-full sm:min-w-0">
+          {TABS.map(t => (
+            <button
+              key={t.id}
+              onClick={() => { setTab(t.id); setErrorMsg(null) }}
+              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
+                tab === t.id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {t.label}
+              {okTab === t.id && <CheckCircle2 className="h-3.5 w-3.5 text-green-500" />}
+            </button>
+          ))}
+        </div>
       </div>
 
       {errorMsg && (
@@ -214,6 +242,26 @@ export function EditarExpedientePage() {
             </Button>
           </div>
         </div>
+      )}
+
+      {tab === 'entorno' && (
+        <EntornoForm
+          key={entorno?.id ?? 'entorno-nuevo'}
+          initialValues={entorno}
+          onGuardar={handleGuardarEntorno}
+          guardando={guardando}
+          submitLabel={okTab === 'entorno' ? '✓ Guardado' : (entorno ? 'Actualizar entorno' : 'Guardar entorno')}
+        />
+      )}
+
+      {tab === 'terreno' && (
+        <CaracteristicasTerrenoForm
+          key={terreno?.id ?? 'terreno-nuevo'}
+          initialValues={terreno}
+          onGuardar={handleGuardarTerreno}
+          guardando={guardando}
+          submitLabel={okTab === 'terreno' ? '✓ Guardado' : (terreno ? 'Actualizar terreno' : 'Guardar terreno')}
+        />
       )}
 
       {tab === 'fisico' && (

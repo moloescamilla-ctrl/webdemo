@@ -52,10 +52,34 @@ export function useExpedientes() {
       supabase.from('metodos_comparativos').delete().eq('expediente_id', id),
       supabase.from('metodos_fisicos').delete().eq('expediente_id', id),
       supabase.from('inspecciones_fisicas').delete().eq('expediente_id', id),
+      supabase.from('entorno_inmueble').delete().eq('expediente_id', id),
+      supabase.from('caracteristicas_terreno').delete().eq('expediente_id', id),
+      supabase.from('descripcion_construccion').delete().eq('expediente_id', id),
     ])
     const { error } = await supabase.from('expedientes').delete().eq('id', id)
     if (error) throw new Error(error.message)
     setExpedientes(prev => prev.filter(e => e.id !== id))
+  }
+
+  async function guardarEntorno(expedienteId, datos) {
+    const { error } = await supabase
+      .from('entorno_inmueble')
+      .upsert({ expediente_id: expedienteId, ...datos }, { onConflict: 'expediente_id' })
+    if (error) throw new Error(error.message)
+  }
+
+  async function guardarTerreno(expedienteId, datos) {
+    const { error } = await supabase
+      .from('caracteristicas_terreno')
+      .upsert({ expediente_id: expedienteId, ...datos }, { onConflict: 'expediente_id' })
+    if (error) throw new Error(error.message)
+  }
+
+  async function guardarDescripcionConstruccion(expedienteId, datos) {
+    const { error } = await supabase
+      .from('descripcion_construccion')
+      .upsert({ expediente_id: expedienteId, ...datos }, { onConflict: 'expediente_id' })
+    if (error) throw new Error(error.message)
   }
 
   async function guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs) {
@@ -132,6 +156,7 @@ export function useExpedientes() {
   return {
     expedientes, loading, error,
     crearExpediente, actualizarExpediente, eliminarExpediente,
+    guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
     guardarMetodoFisico, guardarMetodoComparativo,
   }
 }
