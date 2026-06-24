@@ -79,7 +79,13 @@ export function EditarExpedientePage() {
 
   const handleGuardarDatos = async () => {
     setGuardando(true); setErrorMsg(null)
-    try { await actualizarExpediente(id, d); flashOk('datos') }
+    try {
+      await actualizarExpediente(id, {
+        ...d,
+        fecha_inspeccion: d.fecha_inspeccion || null,
+      })
+      flashOk('datos')
+    }
     catch (e) { setErrorMsg(e.message) }
     finally { setGuardando(false) }
   }

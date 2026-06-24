@@ -62,6 +62,8 @@ export function NuevoExpedientePage() {
         uso: datos.uso,
         solicitante: datos.solicitante,
         fecha_inspeccion: datos.fecha_inspeccion || null,
+        latitud: datos.latitud ?? null,
+        longitud: datos.longitud ?? null,
         estado: 'borrador',
       })
       setExpedienteId(exp.id)
