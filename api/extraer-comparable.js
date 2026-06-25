@@ -206,7 +206,11 @@ export default async function handler(req, res) {
     console.error('extraer-comparable error:', err)
     return res.status(500).json({
       success: false,
-      error: 'Error interno al procesar el anuncio. Intenta de nuevo.',
+      error: `Error interno: ${err.message}`,
+      debug: {
+        name: err.name,
+        stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined,
+      },
     })
   }
 }
