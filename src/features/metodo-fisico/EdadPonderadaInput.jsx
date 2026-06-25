@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
+import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { PlusCircle, Trash2, Calculator } from 'lucide-react'
 
@@ -26,16 +27,21 @@ export function EdadPonderadaInput({ value, onChange }) {
     sup: parseFloat(p.superficie) || 0,
   }))
 
+  const conEdad = calc.filter(p => p.edad !== null)
   const totalSup = calc.reduce((s, p) => s + p.sup, 0)
-  const edadPonderada = totalSup > 0
-    ? calc.reduce((s, p) => s + p.sup * (p.edad ?? 0), 0) / totalSup
-    : 0
+  const usaPonderado = totalSup > 0
+
+  const edadPonderada = conEdad.length === 0
+    ? 0
+    : usaPonderado
+      ? calc.reduce((s, p) => s + p.sup * (p.edad ?? 0), 0) / totalSup
+      : conEdad.reduce((s, p) => s + p.edad, 0) / conEdad.length
 
   const emitPonderada = useCallback(() => {
-    if (totalSup > 0) {
+    if (conEdad.length > 0) {
       onChange({ target: { name: 'edadAnios', value: edadPonderada.toFixed(2) } })
     }
-  }, [edadPonderada, totalSup])
+  }, [edadPonderada, conEdad.length])
 
   useEffect(() => {
     if (modo === 'ponderado') emitPonderada()
@@ -98,7 +104,10 @@ export function EdadPonderadaInput({ value, onChange }) {
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Tipo de construcción</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-28">Año</th>
               <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-20">Edad</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-32">Superficie m²</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-32">
+                Sup m²
+                <span className="ml-1 font-normal text-gray-400">(opcional)</span>
+              </th>
               <th className="px-2 py-2 w-8" />
             </tr>
           </thead>
@@ -131,13 +140,11 @@ export function EdadPonderadaInput({ value, onChange }) {
                     {edad !== null ? `${edad} a` : '—'}
                   </td>
                   <td className="px-3 py-2">
-                    <input
-                      type="number"
-                      min="0"
-                      placeholder="0"
+                    <NumericInput
                       value={p.superficie}
                       onChange={e => update(p.id, 'superficie', e.target.value)}
-                      className="w-24 text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
+                      placeholder="—"
+                      className="w-24 text-sm bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 rounded-none text-gray-800 placeholder-gray-300 h-auto py-0"
                     />
                   </td>
                   <td className="px-2 py-2">
@@ -155,7 +162,7 @@ export function EdadPonderadaInput({ value, onChange }) {
               )
             })}
           </tbody>
-          {totalSup > 0 && (
+          {conEdad.length > 0 && (
             <tfoot className="bg-gray-50 border-t border-gray-200">
               <tr>
                 <td className="px-3 py-1.5 text-xs text-gray-500 font-medium" colSpan={2}>Total</td>
@@ -163,7 +170,7 @@ export function EdadPonderadaInput({ value, onChange }) {
                   {edadPonderada.toFixed(2)} a
                 </td>
                 <td className="px-3 py-1.5 font-mono text-xs text-gray-700">
-                  {totalSup.toFixed(2)} m²
+                  {usaPonderado ? `${totalSup.toFixed(2)} m²` : ''}
                 </td>
                 <td />
               </tr>
@@ -181,9 +188,12 @@ export function EdadPonderadaInput({ value, onChange }) {
           <PlusCircle className="h-3.5 w-3.5" />
           Agregar partida
         </button>
-        {totalSup > 0 && (
+        {conEdad.length > 0 && (
           <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-md px-3 py-1.5">
-            <span className="text-xs text-blue-600">Edad efectiva adoptada:</span>
+            <span className="text-xs text-blue-600">
+              Edad efectiva adoptada
+              {usaPonderado ? ' (ponderada por m²):' : ' (promedio simple):'}
+            </span>
             <span className="text-sm font-bold text-blue-800 font-mono">
               {edadPonderada.toFixed(2)} años
             </span>
@@ -192,8 +202,10 @@ export function EdadPonderadaInput({ value, onChange }) {
       </div>
 
       <p className="text-xs text-gray-400">
-        La superficie de cada partida debe sumar la superficie total de construcción.
-        Edad = Σ(sup × edad) / Σ(sup)
+        {usaPonderado
+          ? 'Edad = Σ(sup × edad) / Σ(sup). Superficie de cada partida debe sumar el total de construcción.'
+          : 'Sin superficie por partida se usa promedio simple. Ingresa m² para ponderar por área.'
+        }
       </p>
     </div>
   )

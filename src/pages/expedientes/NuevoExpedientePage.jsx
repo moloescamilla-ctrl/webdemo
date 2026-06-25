@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { useExpedientes } from '@/hooks/useExpedientes'
+import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
 import { ChevronRight, Loader2 } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
@@ -39,6 +40,7 @@ export function NuevoExpedientePage() {
     calle: '', colonia: '', municipio: '', estado_rep: '', cp: '',
     tipo_inmueble: 'Casa habitación', uso: 'Habitacional',
     solicitante: '', fecha_inspeccion: '',
+    latitud: null, longitud: null,
   })
 
   const handleDatos = (e) => {
@@ -63,6 +65,8 @@ export function NuevoExpedientePage() {
         uso: datos.uso,
         solicitante: datos.solicitante,
         fecha_inspeccion: datos.fecha_inspeccion || null,
+        latitud: datos.latitud ?? null,
+        longitud: datos.longitud ?? null,
         estado: 'borrador',
       })
       setExpedienteId(exp.id)
@@ -80,9 +84,14 @@ export function NuevoExpedientePage() {
     setError(null)
     try {
       await guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs)
-      setSuperficieFisico(inputs.superficieConstruccion || '')
+      const conConstruccion = inspeccion.tieneConstruccion !== false
+      setSuperficieFisico(
+        conConstruccion
+          ? (inputs.superficieConstruccion || '')
+          : (inputs.superficieTerreno || '')
+      )
       setFisicoGuardado(true)
-      setTab('comparativo')
+      setTab('comparables')
     } catch (e) {
       setError(e.message)
     } finally {
@@ -115,7 +124,7 @@ export function NuevoExpedientePage() {
   return (
     <div className="p-6 max-w-5xl">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Nuevo Avalúo</h1>
+        <h1 className="text-xl font-bold text-gray-900">Nuevo Avaúlo</h1>
         <p className="text-sm text-gray-500 mt-0.5">Completa los datos del expediente</p>
       </div>
 
@@ -156,6 +165,17 @@ export function NuevoExpedientePage() {
               <div className="space-y-1"><Label>Municipio / Delegación</Label><Input name="municipio" value={datos.municipio} onChange={handleDatos} /></div>
               <div className="space-y-1"><Label>Estado</Label><Input name="estado_rep" value={datos.estado_rep} onChange={handleDatos} /></div>
               <div className="space-y-1"><Label>Código postal</Label><Input name="cp" value={datos.cp} onChange={handleDatos} maxLength={5} /></div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle>Georeferencia del predio</CardTitle></CardHeader>
+            <CardContent>
+              <UbicacionMapaInput
+                latitud={datos.latitud}
+                longitud={datos.longitud}
+                onChange={coords => setDatos(prev => ({ ...prev, ...coords }))}
+              />
             </CardContent>
           </Card>
 

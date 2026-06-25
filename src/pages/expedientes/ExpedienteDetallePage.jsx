@@ -4,7 +4,7 @@ import { ComparableCaptura } from '@/features/comparables/ComparableCaptura'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Link2 } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Link2, Pencil } from 'lucide-react'
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -78,6 +78,13 @@ export function ExpedienteDetallePage() {
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{dir || 'Sin dirección'}</p>
         </div>
+        <Link
+          to={`/expedientes/${id}/editar`}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
+        >
+          <Pencil className="h-3.5 w-3.5" />
+          Editar
+        </Link>
       </div>
 
       <Card>
@@ -113,7 +120,15 @@ export function ExpedienteDetallePage() {
         </CardHeader>
         <CardContent>
           {!metodoFisico ? (
-            <p className="text-sm text-gray-400">Sin datos del Método Físico guardados.</p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-400">Sin datos del Método Físico guardados.</p>
+              <Link
+                to={`/expedientes/${id}/editar`}
+                className="text-xs text-blue-600 hover:underline"
+              >
+                Agregar →
+              </Link>
+            </div>
           ) : esTerrenoSolo ? (
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
@@ -209,7 +224,15 @@ export function ExpedienteDetallePage() {
         </CardHeader>
         <CardContent>
           {!metodoComparativo ? (
-            <p className="text-sm text-gray-400">Sin datos del Método Comparativo guardados.</p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-400">Sin datos del Método Comparativo guardados.</p>
+              <Link
+                to={`/expedientes/${id}/editar`}
+                className="text-xs text-blue-600 hover:underline"
+              >
+                Agregar →
+              </Link>
+            </div>
           ) : (
             <div className="space-y-4">
               <Row label="Superficie sujeto" value={`${formatNumber(metodoComparativo.superficie_sujeto, 2)} m²`} />

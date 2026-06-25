@@ -3,7 +3,7 @@ import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
 import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
@@ -26,11 +26,9 @@ function Campo({ label, name, value, onChange, suffix, hint }) {
     <div className="space-y-1">
       <Label htmlFor={name}>{label}</Label>
       <div className="relative">
-        <Input
+        <NumericInput
           id={name}
           name={name}
-          type="number"
-          min="0"
           value={value}
           onChange={onChange}
           className={suffix ? 'pr-12' : ''}
@@ -47,10 +45,15 @@ function Campo({ label, name, value, onChange, suffix, hint }) {
   )
 }
 
-export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente' }) {
-  const [tieneConstruccion, setTieneConstruccion] = useState(true)
-  const [inputs, setInputs] = useState(defaultInputs)
-  const [estadosChecklist, setEstadosChecklist] = useState(initialEstados)
+export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente', initialValues = null }) {
+  const [tieneConstruccion, setTieneConstruccion] = useState(initialValues?.tieneConstruccion ?? true)
+  const [inputs, setInputs] = useState(initialValues?.inputs ?? defaultInputs)
+  const [estadosChecklist, setEstadosChecklist] = useState(() => {
+    if (initialValues?.estadosRaw) {
+      return Object.fromEntries(PARTIDAS_INSPECCION.map(p => [p.id, initialValues.estadosRaw[p.id] ?? 0]))
+    }
+    return initialEstados
+  })
   const [estadoManual, setEstadoManual] = useState(null)
 
   const handleInput = (e) => setInputs(prev => ({ ...prev, [e.target.name]: e.target.value }))
