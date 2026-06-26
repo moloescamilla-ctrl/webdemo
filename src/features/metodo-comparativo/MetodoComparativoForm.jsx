@@ -2,15 +2,31 @@ import { useState, useMemo } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { PlusCircle, Trash2, TrendingUp, Info, Loader2 } from 'lucide-react'
+import { PlusCircle, Trash2, TrendingUp, Info, Loader2, ClipboardList } from 'lucide-react'
 import { calcularMetodoComparativo, calcFactorSuperficie } from './calculosComparativo'
 
 let _cid = 1
 const cuid = () => _cid++
 
-const newComp = () => ({
+const FUENTES = [
+  'Inmuebles24', 'Lamudi', 'Metros Cúbicos', 'Vivanuncios',
+  'easybroker', 'Oferta directa', 'Escritura pública', 'Otro',
+]
+
+const emptyCaptura = {
+  descripcion: '',
+  superficie: '',
+  precioTotal: '',
+  fuente: '',
+  fecha: '',
+  notas: '',
+}
+
+const newComp = (override = {}) => ({
   id: cuid(),
   descripcion: '',
   superficie: '',
@@ -19,6 +35,9 @@ const newComp = () => ({
   factorSuperficie: '1.00',
   factorEdad: '1.00',
   factorConservacion: '1.00',
+  fuente: '',
+  fecha: '',
+  ...override,
 })
 
 const n = (v) => parseFloat(v) || 0
@@ -40,7 +59,10 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     }
     return [newComp(), newComp(), newComp()]
   })
+  const [captura, setCaptura] = useState(emptyCaptura)
+  const [capturaError, setCapturaError] = useState(null)
 
+  // ── Superficie del sujeto ────────────────────────────────────────────────
   const updateSupSujeto = (val) => {
     setSupSujeto(val)
     const sup = parseFloat(val) || 0
@@ -52,6 +74,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     }
   }
 
+  // ── Tabla de homologación ────────────────────────────────────────────────
   const updateComp = (id, field, val) => {
     setComps(prev => prev.map(c => {
       if (c.id !== id) return c
@@ -66,13 +89,42 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     }))
   }
 
+  // ── Captura de comparable ────────────────────────────────────────────────
+  const handleCaptura = (e) => {
+    const { name, value } = e.target
+    setCaptura(prev => ({ ...prev, [name]: value }))
+    if (capturaError) setCapturaError(null)
+  }
+
+  const agregarDesdeCaptura = () => {
+    if (!captura.descripcion.trim()) { setCapturaError('Agrega una descripción o dirección.'); return }
+    if (!captura.superficie)         { setCapturaError('Ingresa la superficie del comparable.'); return }
+    if (!captura.precioTotal)        { setCapturaError('Ingresa el precio total del comparable.'); return }
+
+    const sup = parseFloat(captura.superficie) || 0
+    const supS = parseFloat(supSujeto) || 0
+    const fs = supS > 0 && sup > 0 ? calcFactorSuperficie(supS, sup).toFixed(4) : '1.00'
+
+    setComps(prev => [...prev, newComp({
+      descripcion: captura.descripcion.trim(),
+      superficie:  captura.superficie,
+      precioTotal: captura.precioTotal,
+      factorSuperficie: fs,
+      fuente: captura.fuente,
+      fecha:  captura.fecha,
+    })])
+    setCaptura(emptyCaptura)
+    setCapturaError(null)
+  }
+
+  // ── Cálculo ──────────────────────────────────────────────────────────────
   const parsedComps = comps.map(c => ({
     ...c,
-    superficie: n(c.superficie),
-    precioTotal: n(c.precioTotal),
-    factorZona: n(c.factorZona) || 1,
-    factorSuperficie: n(c.factorSuperficie) || 1,
-    factorEdad: n(c.factorEdad) || 1,
+    superficie:        n(c.superficie),
+    precioTotal:       n(c.precioTotal),
+    factorZona:        n(c.factorZona) || 1,
+    factorSuperficie:  n(c.factorSuperficie) || 1,
+    factorEdad:        n(c.factorEdad) || 1,
     factorConservacion: n(c.factorConservacion) || 1,
   }))
 
@@ -83,8 +135,10 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
 
   return (
     <div className="space-y-5">
+
+      {/* ── Superficie del sujeto ── */}
       <Card>
-        <CardHeader><CardTitle>Datos del Sujeto</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Inmueble Sujeto</CardTitle></CardHeader>
         <CardContent>
           <div className="max-w-xs space-y-1">
             <Label htmlFor="supSujeto">Superficie a comparar</Label>
@@ -98,33 +152,131 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">m²</span>
             </div>
-            <p className="text-xs text-gray-400">
-              Construcción para inmuebles edificados · Terreno para lotes
-            </p>
+            <p className="text-xs text-gray-400">Construcción para inmuebles edificados · Terreno para lotes</p>
           </div>
         </CardContent>
       </Card>
 
+      {/* ── Captura de comparable ── */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <ClipboardList className="h-4 w-4 text-blue-600" />
+            <CardTitle>Captura de comparable</CardTitle>
+          </div>
+          <p className="text-xs text-gray-400">Registra los datos de la fuente; al confirmar se agrega a la tabla de homologación.</p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2 space-y-1">
+              <Label>Descripción / Dirección</Label>
+              <Input
+                name="descripcion"
+                value={captura.descripcion}
+                onChange={handleCaptura}
+                placeholder="Av. Reforma 123 Col. Centro, casa 3 rec."
+              />
+            </div>
+            <div className="space-y-1">
+              <Label>Superficie</Label>
+              <div className="relative">
+                <NumericInput
+                  name="superficie"
+                  value={captura.superficie}
+                  onChange={e => handleCaptura({ target: { name: 'superficie', value: e.target.value } })}
+                  placeholder="0"
+                  className="pr-10"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">m²</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Precio total</Label>
+              <div className="relative">
+                <NumericInput
+                  name="precioTotal"
+                  value={captura.precioTotal}
+                  onChange={e => handleCaptura({ target: { name: 'precioTotal', value: e.target.value } })}
+                  placeholder="0"
+                  className="pr-2"
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label>Fuente</Label>
+              <Select name="fuente" value={captura.fuente} onChange={handleCaptura}>
+                <option value="">— Seleccionar —</option>
+                {FUENTES.map(f => <option key={f} value={f}>{f}</option>)}
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label>Fecha de información</Label>
+              <Input name="fecha" type="date" value={captura.fecha} onChange={handleCaptura} />
+            </div>
+            <div className="sm:col-span-2 space-y-1">
+              <Label>Notas <span className="text-gray-400 font-normal">(opcional)</span></Label>
+              <Input
+                name="notas"
+                value={captura.notas}
+                onChange={handleCaptura}
+                placeholder="Observaciones sobre el comparable: estado, negociación, etc."
+              />
+            </div>
+          </div>
+
+          {capturaError && (
+            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">{capturaError}</p>
+          )}
+
+          {captura.superficie && captura.precioTotal && (
+            <div className="text-xs text-gray-500 bg-gray-50 rounded px-3 py-2 flex gap-6">
+              <span>
+                $/m²: <strong className="text-gray-800">{formatNumber(n(captura.precioTotal) / n(captura.superficie), 2)}</strong>
+              </span>
+              {supSujeto && (
+                <span>
+                  F.Sup auto: <strong className="text-blue-700">
+                    {calcFactorSuperficie(n(supSujeto), n(captura.superficie)).toFixed(4)}
+                  </strong>
+                </span>
+              )}
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={agregarDesdeCaptura}
+              className="flex items-center gap-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition-colors"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Agregar a tabla de homologación
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Tabla de homologación ── */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Inmuebles Comparables</CardTitle>
+            <CardTitle>Tabla de homologación</CardTitle>
             <button
               type="button"
               onClick={() => setComps(p => [...p, newComp()])}
-              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+              className="flex items-center gap-1 text-xs text-gray-400 hover:text-blue-600 transition-colors"
             >
               <PlusCircle className="h-3.5 w-3.5" />
-              Agregar comparable
+              Fila vacía
             </button>
           </div>
           <p className="text-xs text-gray-400">
-            Mínimo 3 comparables. Factor &gt; 1 = sujeto superior al comparable en ese atributo.
+            Factor &gt; 1 = el sujeto es superior al comparable en ese atributo.
           </p>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[820px]">
+            <table className="w-full text-sm min-w-[860px]">
               <thead className="bg-gray-50 border-y border-gray-200">
                 <tr>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Descripción</th>
@@ -153,7 +305,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                   const precioHomo = precioM2 ? precioM2 * factorTotal : null
                   return (
                     <tr key={comp.id} className="hover:bg-gray-50">
-                      <td className="px-3 py-2">
+                      <td className="px-3 py-2 max-w-[200px]">
                         <input
                           type="text"
                           placeholder={`Comparable ${idx + 1}`}
@@ -161,6 +313,11 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                           onChange={e => updateComp(comp.id, 'descripcion', e.target.value)}
                           className="w-full text-sm bg-transparent border-0 focus:outline-none text-gray-800 placeholder-gray-300"
                         />
+                        {(comp.fuente || comp.fecha) && (
+                          <p className="text-[10px] text-gray-400 mt-0.5 leading-tight">
+                            {[comp.fuente, comp.fecha].filter(Boolean).join(' · ')}
+                          </p>
+                        )}
                       </td>
                       <td className="px-3 py-2">
                         <NumericInput
@@ -203,7 +360,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                         {precioHomo ? formatNumber(precioHomo, 2) : '—'}
                       </td>
                       <td className="px-2 py-2">
-                        {comps.length > 3 && (
+                        {comps.length > 1 && (
                           <button
                             type="button"
                             onClick={() => setComps(p => p.filter(c => c.id !== comp.id))}
@@ -222,6 +379,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
         </CardContent>
       </Card>
 
+      {/* ── Resultado ── */}
       <Card className="sticky top-6">
         <CardHeader>
           <div className="flex items-center gap-2">
