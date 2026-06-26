@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
+import { ComparableCaptura } from '@/features/comparables/ComparableCaptura'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
@@ -209,19 +210,12 @@ export function ExpedienteDetallePage() {
             <CardTitle>Método Comparativo de Mercado</CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
-          {!metodoComparativo ? (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-400">Sin datos del Método Comparativo guardados.</p>
-              <Link
-                to={`/expedientes/${id}/editar`}
-                className="text-xs text-blue-600 hover:underline"
-              >
-                Agregar →
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
+        <CardContent className="space-y-5">
+          <ComparableCaptura expedienteId={id} />
+
+          {metodoComparativo && (
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Resultado guardado</p>
               <Row label="Superficie sujeto" value={`${formatNumber(metodoComparativo.superficie_sujeto, 2)} m²`} />
               <Row label="Comparables utilizados" value={metodoComparativo.comparables?.length ?? 0} />
 

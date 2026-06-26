@@ -49,7 +49,22 @@ function factorColor(f) {
 
 const inlineNum = 'bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 text-gray-800 placeholder-gray-300 h-auto py-0 rounded-none'
 
-export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null, comparablesImportados = null }) {
+function fromComparable(comp) {
+  const sup = comp.superficie_construccion ?? comp.superficie_total ?? comp.superficie_terreno ?? ''
+  const desc = [comp.colonia, comp.municipio].filter(Boolean).join(', ') || comp.portal || ''
+  return {
+    id: cuid(),
+    descripcion: desc,
+    superficie: sup !== '' ? String(sup) : '',
+    precioTotal: comp.precio_total != null ? String(comp.precio_total) : '',
+    factorZona: '1.00',
+    factorSuperficie: '1.00',
+    factorEdad: '1.00',
+    factorConservacion: '1.00',
+  }
+}
+
+export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialComparables = [], initialValues = null }) {
   const [supSujeto, setSupSujeto] = useState(
     initialValues ? String(initialValues.superficieSujeto || '') : String(superficieInicial || '')
   )
@@ -57,13 +72,9 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     if (initialValues?.comparables?.length) {
       return initialValues.comparables.map(c => ({ ...c, id: cuid() }))
     }
-    if (comparablesImportados?.length) {
-      return comparablesImportados.map(c => newComp({
-        descripcion: c.titulo_anuncio || [c.colonia, c.municipio].filter(Boolean).join(', ') || '',
-        superficie: c.superficie_total_m2 ? String(c.superficie_total_m2) : '',
-        precioTotal: c.precio_total ? String(c.precio_total) : '',
-        fuente: c.portal || '',
-      }))
+    if (initialComparables.length > 0) {
+      const mapped = initialComparables.map(fromComparable)
+      return mapped.length >= 3 ? mapped : [...mapped, ...Array(3 - mapped.length).fill(null).map(newComp)]
     }
     return [newComp(), newComp(), newComp()]
   })
