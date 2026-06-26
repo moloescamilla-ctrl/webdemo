@@ -12,7 +12,7 @@ export function ComparableBuffer({ comparables, onRevisar, onEliminar }) {
   if (!comparables.length) {
     return (
       <p className="text-sm text-gray-400 text-center py-8">
-        Aún no has capturado ningún comparable. Pega el texto de un anuncio arriba para comenzar.
+        Aún no hay comparables. Usa Claude for Chrome desde un portal inmobiliario, o pega el texto del anuncio.
       </p>
     )
   }
@@ -32,9 +32,16 @@ export function ComparableBuffer({ comparables, onRevisar, onEliminar }) {
             <Icon className={`h-4 w-4 shrink-0 ${cfg.color}`} />
 
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800 truncate">
-                {c.titulo_anuncio || [c.colonia, c.municipio].filter(Boolean).join(', ') || 'Sin título'}
-              </p>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-medium text-gray-800 truncate">
+                  {c.titulo_anuncio || [c.colonia, c.municipio].filter(Boolean).join(', ') || 'Sin título'}
+                </p>
+                {c.fuente_captura === 'chrome' && (
+                  <span className="shrink-0 text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">
+                    Chrome
+                  </span>
+                )}
+              </div>
               <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                 {c.precio_total > 0 && (
                   <span className="text-xs text-gray-500">{formatCurrency(c.precio_total)}</span>
