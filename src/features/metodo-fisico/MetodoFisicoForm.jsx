@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
-import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
+import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, calcularFactorRoss, calcularRossHeidecke, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
@@ -11,10 +11,13 @@ import { Calculator, Info, Loader2 } from 'lucide-react'
 
 const initialEstados = Object.fromEntries(PARTIDAS_INSPECCION.map(p => [p.id, 0]))
 
+const VU_ACCESORIA = 50
+
 const defaultInputs = {
   superficieConstruccion: '',
   superficieTerreno: '',
   costoReposicionM2: '',
+  costoReposicionAccesoriaM2: '',
   valorUnitarioTerreno: '',
   edadAnios: '',
   vidaUtilAnios: '60',
@@ -55,6 +58,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
     return initialEstados
   })
   const [estadoManual, setEstadoManual] = useState(null)
+  const [accesoriaData, setAccesoriaData] = useState({ edadAccesoria: 0, superficieAccesoria: 0 })
 
   const handleInput = (e) => setInputs(prev => ({ ...prev, [e.target.name]: e.target.value }))
   const handleChecklist = (id, val) => setEstadosChecklist(prev => ({ ...prev, [id]: val }))
@@ -92,10 +96,27 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
     })
   }, [inputs, estadoFinal, coeficienteC, tieneConstruccion])
 
+  const resultadoAccesoria = useMemo(() => {
+    if (!accesoriaData.superficieAccesoria) return null
+    const cr_acc = parseFloat(inputs.costoReposicionAccesoriaM2) || 0
+    if (!cr_acc) return null
+    const vr = (parseFloat(inputs.valorResidual) || 15) / 100
+    const vr_acc = accesoriaData.superficieAccesoria * cr_acc
+    const A_acc = calcularFactorRoss(accesoriaData.edadAccesoria, VU_ACCESORIA)
+    const C = estadoFinal?.c ?? coeficienteC
+    const { va, depreciacion, porcentajeDepreciacion } = calcularRossHeidecke(vr_acc, vr, A_acc, C)
+    return { valorReposicionNuevo: vr_acc, factorA: A_acc, depreciacion, porcentajeDepreciacion, valorActualAccesoria: va }
+  }, [accesoriaData, inputs.costoReposicionAccesoriaM2, inputs.valorResidual, estadoFinal, coeficienteC])
+
   const handleGuardar = () => {
     if (!resultado || !onGuardar) return
+    const accVA = resultadoAccesoria?.valorActualAccesoria ?? 0
+    const resultadoFinal = {
+      ...resultado,
+      valorFisicoTotal: resultado.valorFisicoTotal + accVA,
+    }
     if (!tieneConstruccion) {
-      onGuardar(resultado, { tieneConstruccion: false }, inputs)
+      onGuardar(resultadoFinal, { tieneConstruccion: false }, inputs)
       return
     }
     const inspeccion = {
@@ -108,7 +129,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       coeficienteCManual: estadoManual !== null ? estadoFinal?.c : null,
       coeficienteCAdoptado: estadoFinal?.c ?? coeficienteC,
     }
-    onGuardar(resultado, inspeccion, inputs)
+    onGuardar(resultadoFinal, inspeccion, inputs)
   }
 
   return (
@@ -135,8 +156,24 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                   <Campo label="Costo reposición nuevo" name="costoReposicionM2" value={inputs.costoReposicionM2} onChange={handleInput} suffix="$/m²" hint="Costo de construir 1 m² nuevo hoy" />
                   <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
                   <div className="col-span-2">
-                    <EdadPonderadaInput value={inputs.edadAnios} onChange={handleInput} />
+                    <EdadPonderadaInput
+                      value={inputs.edadAnios}
+                      onChange={handleInput}
+                      onAccesoriaChange={setAccesoriaData}
+                    />
                   </div>
+                  {accesoriaData.superficieAccesoria > 0 && (
+                    <div className="col-span-2">
+                      <Campo
+                        label={`Costo reposición techo accesorio (lámina) — ${accesoriaData.superficieAccesoria.toFixed(2)} m²`}
+                        name="costoReposicionAccesoriaM2"
+                        value={inputs.costoReposicionAccesoriaM2}
+                        onChange={handleInput}
+                        suffix="$/m²"
+                        hint="Costo por m² nuevo de techo de lámina"
+                      />
+                    </div>
+                  )}
                   <Campo label="Vida útil" name="vidaUtilAnios" value={inputs.vidaUtilAnios} onChange={handleInput} suffix="años" hint="Típico: 60 años" />
                   <div className="col-span-2">
                     <Campo label="Valor residual" name="valorResidual" value={inputs.valorResidual} onChange={handleInput} suffix="%" hint="Típico: 15%" />
@@ -223,16 +260,36 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                     <span className="text-gray-600">Valor actual construcción (VA)</span>
                     <span className="font-semibold">{formatCurrency(resultado.valorActualConstruccion)}</span>
                   </div>
+                  {resultadoAccesoria && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-amber-700">Valor actual accesoria (lámina)</span>
+                      <span className="font-semibold text-amber-800">{formatCurrency(resultadoAccesoria.valorActualAccesoria)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Valor del terreno</span>
                     <span className="font-semibold">{formatCurrency(resultado.valorTerreno)}</span>
                   </div>
                 </div>
 
+                {resultadoAccesoria && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-md p-3 space-y-1 text-xs">
+                    <p className="font-semibold text-amber-700 uppercase tracking-wide">Depreciación accesoria — VU 50 años</p>
+                    <div className="flex justify-between text-amber-800">
+                      <span>Factor Ross (edad {accesoriaData.edadAccesoria.toFixed(1)} a / 50)</span>
+                      <span className="font-mono">{formatNumber(resultadoAccesoria.factorA)}</span>
+                    </div>
+                    <div className="flex justify-between text-amber-800">
+                      <span>Depreciación</span>
+                      <span className="font-mono">{resultadoAccesoria.porcentajeDepreciacion.toFixed(2)}%</span>
+                    </div>
+                  </div>
+                )}
+
                 <div className="bg-blue-600 text-white rounded-md p-4">
                   <p className="text-sm text-blue-100">Valor físico total del inmueble</p>
-                  <p className="text-2xl font-bold mt-1">{formatCurrency(resultado.valorFisicoTotal)}</p>
-                  <p className="text-xs text-blue-200 mt-1">Terreno + Construcción depreciada</p>
+                  <p className="text-2xl font-bold mt-1">{formatCurrency(resultado.valorFisicoTotal + (resultadoAccesoria?.valorActualAccesoria ?? 0))}</p>
+                  <p className="text-xs text-blue-200 mt-1">Terreno + Construcción{resultadoAccesoria ? ' + Accesoria' : ''} depreciada</p>
                 </div>
 
                 {onGuardar && (

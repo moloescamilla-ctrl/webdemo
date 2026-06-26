@@ -14,6 +14,7 @@ const defaultDatos = {
   pavimentacion: '', banquetas: false, guarniciones: false,
   tipo_vialidad: '', nombre_vialidad: '', ancho_vialidad_m: '',
   uso_predominante_zona: '', nivel_socioeconomico: '', densidad_construccion: '',
+  tipo_construccion_predominante: '', contaminacion_ambiental: '', vias_acceso: '', referencia_proximidad: '',
   dist_escuelas_m: '', dist_hospitales_m: '', dist_bancos_m: '',
   dist_comercios_m: '', dist_iglesias_m: '',
   dist_transporte_m: '', dist_parque_m: '',
@@ -43,6 +44,10 @@ function fromDB(row) {
     uso_predominante_zona:  row.uso_predominante_zona || '',
     nivel_socioeconomico:   row.nivel_socioeconomico || '',
     densidad_construccion:  row.densidad_construccion || '',
+    tipo_construccion_predominante: row.tipo_construccion_predominante || '',
+    contaminacion_ambiental:        row.contaminacion_ambiental || '',
+    vias_acceso:                    row.vias_acceso || '',
+    referencia_proximidad:          row.referencia_proximidad || '',
     dist_escuelas_m:        row.dist_escuelas_m != null ? String(row.dist_escuelas_m) : '',
     dist_hospitales_m:      row.dist_hospitales_m != null ? String(row.dist_hospitales_m) : '',
     dist_bancos_m:          row.dist_bancos_m != null ? String(row.dist_bancos_m) : '',
@@ -252,6 +257,46 @@ export function EntornoForm({
               <option value="baja">Baja</option>
               <option value="media">Media</option>
               <option value="alta">Alta</option>
+            </Select>
+          </Campo>
+          <Campo label="Tipo de construcción predominante" name="tipo_construccion_predominante" value={datos.tipo_construccion_predominante} onChange={handleChange}>
+            <Select name="tipo_construccion_predominante" value={datos.tipo_construccion_predominante} onChange={handleChange}>
+              <option value="">— Seleccionar —</option>
+              <option value="concreto_losa">Concreto / losa</option>
+              <option value="tabique_losa">Tabique y losa</option>
+              <option value="adobe">Adobe</option>
+              <option value="madera">Madera</option>
+              <option value="lamina_metalica">Lámina metálica</option>
+              <option value="mixto">Mixto</option>
+            </Select>
+          </Campo>
+          <Campo label="Contaminación ambiental" name="contaminacion_ambiental" value={datos.contaminacion_ambiental} onChange={handleChange}>
+            <Select name="contaminacion_ambiental" value={datos.contaminacion_ambiental} onChange={handleChange}>
+              <option value="">— Seleccionar —</option>
+              <option value="ninguna">Sin contaminación</option>
+              <option value="ruido">Ruido</option>
+              <option value="visual">Visual</option>
+              <option value="quimica">Química / industrial</option>
+              <option value="mixta">Mixta</option>
+            </Select>
+          </Campo>
+          <Campo label="Vías de acceso" name="vias_acceso" value={datos.vias_acceso} onChange={handleChange}>
+            <Select name="vias_acceso" value={datos.vias_acceso} onChange={handleChange}>
+              <option value="">— Seleccionar —</option>
+              <option value="excelentes">Excelentes</option>
+              <option value="buenas">Buenas</option>
+              <option value="regulares">Regulares</option>
+              <option value="deficientes">Deficientes</option>
+            </Select>
+          </Campo>
+          <Campo label="Referencia de proximidad" name="referencia_proximidad" value={datos.referencia_proximidad} onChange={handleChange}>
+            <Select name="referencia_proximidad" value={datos.referencia_proximidad} onChange={handleChange}>
+              <option value="">— Seleccionar —</option>
+              <option value="centrica">Céntrica</option>
+              <option value="intermedia">Intermedia</option>
+              <option value="periferica">Periférica</option>
+              <option value="expansion">De expansión</option>
+              <option value="rural">Rural</option>
             </Select>
           </Campo>
         </CardContent>
