@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useExpedientes } from '@/hooks/useExpedientes'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
-import { ArrowLeft, CheckCircle2, Loader2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Loader2, Sparkles } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
@@ -29,6 +29,8 @@ const TABS = [
 
 export function EditarExpedientePage() {
   const { id } = useParams()
+  const location = useLocation()
+  const navState = location.state ?? {}
   const {
     expediente, entorno, terreno,
     metodoFisico, inspeccion, metodoComparativo,
@@ -40,7 +42,7 @@ export function EditarExpedientePage() {
     guardarMetodoFisico, guardarMetodoComparativo,
   } = useExpedientes()
 
-  const [tab, setTab] = useState('datos')
+  const [tab, setTab] = useState(navState.tab ?? 'datos')
   const [guardando, setGuardando] = useState(false)
   const [okTab, setOkTab] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
@@ -277,12 +279,30 @@ export function EditarExpedientePage() {
       )}
 
       {tab === 'comparativo' && (
-        <MetodoComparativoForm
-          key={metodoComparativo?.id ?? 'comp-nuevo'}
-          onGuardar={handleGuardarComparativo}
-          guardando={guardando}
-          initialValues={comparativoInitial}
-        />
+        <div className="space-y-4">
+          <div className="flex justify-end">
+            <Link
+              to={`/expedientes/${id}/captura-comparables`}
+              className="flex items-center gap-1.5 text-sm text-purple-700 border border-purple-200 rounded-md px-3 py-1.5 hover:bg-purple-50 transition-colors"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Capturar comparables con IA
+            </Link>
+          </div>
+          {navState.comparablesImportados?.length > 0 && (
+            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-800">
+              <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
+              {navState.comparablesImportados.length} comparable{navState.comparablesImportados.length !== 1 ? 's' : ''} importado{navState.comparablesImportados.length !== 1 ? 's' : ''} del buffer — revisa los factores de homologación.
+            </div>
+          )}
+          <MetodoComparativoForm
+            key={metodoComparativo?.id ?? 'comp-nuevo'}
+            onGuardar={handleGuardarComparativo}
+            guardando={guardando}
+            initialValues={comparativoInitial}
+            comparablesImportados={navState.comparablesImportados ?? null}
+          />
+        </div>
       )}
     </div>
   )

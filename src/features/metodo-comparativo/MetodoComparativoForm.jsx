@@ -49,13 +49,21 @@ function factorColor(f) {
 
 const inlineNum = 'bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 text-gray-800 placeholder-gray-300 h-auto py-0 rounded-none'
 
-export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null }) {
+export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null, comparablesImportados = null }) {
   const [supSujeto, setSupSujeto] = useState(
     initialValues ? String(initialValues.superficieSujeto || '') : String(superficieInicial || '')
   )
   const [comps, setComps] = useState(() => {
     if (initialValues?.comparables?.length) {
       return initialValues.comparables.map(c => ({ ...c, id: cuid() }))
+    }
+    if (comparablesImportados?.length) {
+      return comparablesImportados.map(c => newComp({
+        descripcion: c.titulo_anuncio || [c.colonia, c.municipio].filter(Boolean).join(', ') || '',
+        superficie: c.superficie_total_m2 ? String(c.superficie_total_m2) : '',
+        precioTotal: c.precio_total ? String(c.precio_total) : '',
+        fuente: c.portal || '',
+      }))
     }
     return [newComp(), newComp(), newComp()]
   })
