@@ -62,3 +62,6 @@ CREATE POLICY "perito_own_descripcion_construccion" ON descripcion_construccion
   WITH CHECK (
     expediente_id IN (SELECT id FROM expedientes WHERE perito_id = auth.uid())
   );
+
+-- Forzar recarga del schema cache de PostgREST
+NOTIFY pgrst, 'reload schema';
