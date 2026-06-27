@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { CheckCircle2, XCircle, Clock, Eye, Trash2 } from 'lucide-react'
+import { CheckCircle2, XCircle, Clock, Eye, Trash2, Check } from 'lucide-react'
 
 const ESTADO = {
   pendiente:  { Icon: Clock,        color: 'text-yellow-500', variant: 'warning',   label: 'Pendiente' },
@@ -8,17 +8,27 @@ const ESTADO = {
   descartado: { Icon: XCircle,      color: 'text-gray-400',   variant: 'secondary', label: 'Descartado' },
 }
 
-export function ComparableBuffer({ comparables, onRevisar, onEliminar }) {
+export function ComparableBuffer({ comparables, onRevisar, onAprobarRapido, onEliminar }) {
   if (!comparables.length) {
     return (
       <p className="text-sm text-gray-400 text-center py-8">
-        Aún no hay comparables. Usa Claude for Chrome desde un portal inmobiliario, o pega el texto del anuncio.
+        Aún no hay comparables. Usa Claude for Chrome desde un portal inmobiliario.
       </p>
     )
   }
 
+  const hayPendientes = comparables.some(c => c.estado_revision === 'pendiente')
+  const hayAprobados  = comparables.some(c => c.estado_revision === 'aprobado')
+
   return (
     <div className="space-y-2">
+      {hayPendientes && !hayAprobados && (
+        <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-3 py-2">
+          Aprueba al menos un comparable para habilitar la transferencia a homologación.
+          Usa <strong>✓</strong> para aprobar sin editar, o el ojo para revisar primero.
+        </p>
+      )}
+
       {comparables.map(c => {
         const cfg = ESTADO[c.estado_revision] ?? ESTADO.pendiente
         const { Icon } = cfg
@@ -58,7 +68,25 @@ export function ComparableBuffer({ comparables, onRevisar, onEliminar }) {
             <Badge variant={cfg.variant} className="text-xs shrink-0">{cfg.label}</Badge>
 
             <div className="flex items-center gap-0.5 shrink-0">
-              {c.estado_revision !== 'descartado' && (
+              {c.estado_revision === 'pendiente' && (
+                <>
+                  <button
+                    onClick={() => onAprobarRapido(c.id)}
+                    className="p-1.5 text-gray-300 hover:text-green-600 transition-colors rounded"
+                    title="Aprobar sin revisar"
+                  >
+                    <Check className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onRevisar(c)}
+                    className="p-1.5 text-gray-300 hover:text-blue-600 transition-colors rounded"
+                    title="Revisar y editar antes de aprobar"
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                  </button>
+                </>
+              )}
+              {c.estado_revision === 'aprobado' && (
                 <button
                   onClick={() => onRevisar(c)}
                   className="p-1.5 text-gray-300 hover:text-blue-600 transition-colors rounded"

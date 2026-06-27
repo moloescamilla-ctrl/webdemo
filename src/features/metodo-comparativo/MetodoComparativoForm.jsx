@@ -54,17 +54,18 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     initialValues ? String(initialValues.superficieSujeto || '') : String(superficieInicial || '')
   )
   const [comps, setComps] = useState(() => {
-    if (initialValues?.comparables?.length) {
-      return initialValues.comparables.map(c => ({ ...c, id: cuid() }))
-    }
-    if (comparablesImportados?.length) {
-      return comparablesImportados.map(c => newComp({
-        descripcion: c.titulo_anuncio || [c.colonia, c.municipio].filter(Boolean).join(', ') || '',
-        superficie: c.superficie_total_m2 ? String(c.superficie_total_m2) : '',
-        precioTotal: c.precio_total ? String(c.precio_total) : '',
-        fuente: c.portal || '',
-      }))
-    }
+    const existing = initialValues?.comparables?.length
+      ? initialValues.comparables.map(c => ({ ...c, id: cuid() }))
+      : []
+    const imported = comparablesImportados?.length
+      ? comparablesImportados.map(c => newComp({
+          descripcion: c.titulo_anuncio || [c.colonia, c.municipio].filter(Boolean).join(', ') || '',
+          superficie: c.superficie_total_m2 ? String(c.superficie_total_m2) : '',
+          precioTotal: c.precio_total ? String(c.precio_total) : '',
+          fuente: c.portal || '',
+        }))
+      : []
+    if (existing.length || imported.length) return [...existing, ...imported]
     return [newComp(), newComp(), newComp()]
   })
   const [captura, setCaptura] = useState(emptyCaptura)

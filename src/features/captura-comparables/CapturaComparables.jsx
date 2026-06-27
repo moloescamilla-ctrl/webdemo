@@ -29,6 +29,10 @@ export function CapturaComparables({ expedienteId, onTransferir }) {
     setEnRevision(null)
   }
 
+  const handleAprobarRapido = async (id) => {
+    await actualizarComparable(id, { estado_revision: 'aprobado' })
+  }
+
   const handleCopiarToken = async () => {
     const { data: { session } } = await supabase.auth.getSession()
     if (session?.access_token) {
@@ -163,6 +167,7 @@ Cuando el usuario pida capturar un comparable:
             <ComparableBuffer
               comparables={comparables}
               onRevisar={setEnRevision}
+              onAprobarRapido={handleAprobarRapido}
               onEliminar={eliminarComparable}
             />
           )}
