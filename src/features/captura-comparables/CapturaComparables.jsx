@@ -8,7 +8,7 @@ import { useCapturaComparables } from './useCapturaComparables'
 import { extraerComparableDeTexto } from './claudeExtractor'
 import { PanelRevision } from './PanelRevision'
 import { ComparableBuffer } from './ComparableBuffer'
-import { Sparkles, Key, ChevronDown, ChevronUp, Loader2, Info, ArrowRight, Chrome, Copy, Check } from 'lucide-react'
+import { Sparkles, Key, ChevronDown, ChevronUp, Loader2, Info, ArrowRight, Chrome, Copy, Check, RefreshCw } from 'lucide-react'
 
 const API_KEY_KEY = 'anthropic_api_key'
 const ENDPOINT_CHROME = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/capturar-comparable`
@@ -26,7 +26,7 @@ export function CapturaComparables({ expedienteId, onTransferir }) {
 
   const {
     comparables, loading,
-    guardarComparable, actualizarComparable, eliminarComparable,
+    guardarComparable, actualizarComparable, eliminarComparable, refetch,
   } = useCapturaComparables(expedienteId)
 
   const handleGuardarKey = () => {
@@ -262,7 +262,17 @@ Cuando el usuario pida capturar un comparable:
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle>Buffer de comparables</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>Buffer de comparables</CardTitle>
+              <button
+                onClick={refetch}
+                disabled={loading}
+                className="p-1 text-gray-400 hover:text-blue-600 transition-colors rounded"
+                title="Actualizar — muestra comparables nuevos de Claude for Chrome"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
             {aprobados.length > 0 && onTransferir && (
               <Button
                 size="sm"
