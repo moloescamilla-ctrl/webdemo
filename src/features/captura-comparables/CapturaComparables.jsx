@@ -8,7 +8,7 @@ import { useCapturaComparables } from './useCapturaComparables'
 import { extraerComparableDeTexto } from './claudeExtractor'
 import { PanelRevision } from './PanelRevision'
 import { ComparableBuffer } from './ComparableBuffer'
-import { Sparkles, Key, ChevronDown, ChevronUp, Loader2, Info, ArrowRight, Chrome, Copy, Check, RefreshCw } from 'lucide-react'
+import { Sparkles, Key, ChevronDown, ChevronUp, Loader2, Info, ArrowRight, Globe, Copy, Check, RefreshCw } from 'lucide-react'
 
 const API_KEY_KEY = 'anthropic_api_key'
 const ENDPOINT_CHROME = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/capturar-comparable`
@@ -87,7 +87,7 @@ export function CapturaComparables({ expedienteId, onTransferir }) {
             onClick={() => setShowChrome(v => !v)}
           >
             <div className="flex items-center gap-2">
-              <Chrome className="h-4 w-4 text-purple-500" />
+              <Globe className="h-4 w-4 text-purple-500" />
               <CardTitle className="text-sm text-purple-800">Claude for Chrome — captura directa desde portales</CardTitle>
               <span className="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">Recomendado</span>
             </div>
