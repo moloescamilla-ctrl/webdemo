@@ -109,6 +109,10 @@ function Checkbox({ name, label, checked, onChange }) {
 
 export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, guardando, submitLabel = 'Guardar terreno' }) {
   const [datos, setDatos] = useState(() => fromDB(initialValues))
+  const [esCondominio, setEsCondominio] = useState(() => {
+    if (!initialValues) return false
+    return !!(initialValues.indiviso || initialValues.area_privativa_m2 || initialValues.sup_accesoria_m2)
+  })
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -138,9 +142,9 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
       altura_maxima_m:    pfn(datos.altura_maxima_m),
       sup_planta_baja_m2: pfn(datos.sup_planta_baja_m2),
       sup_total_const_m2: pfn(datos.sup_total_const_m2),
-      indiviso:           pfn(datos.indiviso),
-      area_privativa_m2:  pfn(datos.area_privativa_m2),
-      sup_accesoria_m2:   pfn(datos.sup_accesoria_m2),
+      indiviso:           esCondominio ? pfn(datos.indiviso) : null,
+      area_privativa_m2:  esCondominio ? pfn(datos.area_privativa_m2) : null,
+      sup_accesoria_m2:   esCondominio ? pfn(datos.sup_accesoria_m2) : null,
       fecha_escritura:    datos.fecha_escritura || null,
     }
     onGuardar(payload)
@@ -226,12 +230,19 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
 
       {/* Condominio */}
       <Card>
-        <CardHeader><CardTitle>Régimen de condominio</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-          <NumCampo label="Indiviso" name="indiviso" value={datos.indiviso} onChange={handleChange} suffix="%" />
-          <NumCampo label="Área privativa" name="area_privativa_m2" value={datos.area_privativa_m2} onChange={handleChange} suffix="m²" />
-          <NumCampo label="Superficie accesoria" name="sup_accesoria_m2" value={datos.sup_accesoria_m2} onChange={handleChange} suffix="m²" />
-        </CardContent>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Régimen de condominio</CardTitle>
+            <Checkbox name="esCondominio" label="Es condominio" checked={esCondominio} onChange={e => setEsCondominio(e.target.checked)} />
+          </div>
+        </CardHeader>
+        {esCondominio && (
+          <CardContent className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <NumCampo label="Indiviso" name="indiviso" value={datos.indiviso} onChange={handleChange} suffix="%" />
+            <NumCampo label="Área privativa" name="area_privativa_m2" value={datos.area_privativa_m2} onChange={handleChange} suffix="m²" />
+            <NumCampo label="Superficie accesoria" name="sup_accesoria_m2" value={datos.sup_accesoria_m2} onChange={handleChange} suffix="m²" />
+          </CardContent>
+        )}
       </Card>
 
       {/* Colindancias */}
