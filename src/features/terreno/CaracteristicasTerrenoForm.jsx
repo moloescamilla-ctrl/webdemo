@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { NumericInput } from '@/components/ui/numeric-input'
-import { Loader2 } from 'lucide-react'
+import { Loader2, Plus, Trash2 } from 'lucide-react'
 
 const defaultDatos = {
   frente_m: '', fondo_m: '', superficie_m2: '',
@@ -114,6 +114,24 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
     return !!(initialValues.indiviso || initialValues.area_privativa_m2 || initialValues.sup_accesoria_m2)
   })
 
+  const defaultColindancias = [
+    { rumbo: 'Norte',    metros: '', descripcion: '' },
+    { rumbo: 'Sur',      metros: '', descripcion: '' },
+    { rumbo: 'Oriente',  metros: '', descripcion: '' },
+    { rumbo: 'Poniente', metros: '', descripcion: '' },
+  ]
+  const [colindancias, setColindancias] = useState(() => {
+    if (initialValues?.colindancias_json?.length) return initialValues.colindancias_json
+    // migrate from legacy fixed fields
+    const legacy = [
+      { rumbo: 'Norte',    metros: '', descripcion: initialValues?.colindancia_norte    || '' },
+      { rumbo: 'Sur',      metros: '', descripcion: initialValues?.colindancia_sur      || '' },
+      { rumbo: 'Oriente',  metros: '', descripcion: initialValues?.colindancia_oriente  || '' },
+      { rumbo: 'Poniente', metros: '', descripcion: initialValues?.colindancia_poniente || '' },
+    ]
+    return legacy.some(r => r.descripcion) ? legacy : defaultColindancias
+  })
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setDatos(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
@@ -128,6 +146,13 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
   const cusCalculado  = supTerreno > 0 && pf(datos.sup_total_const_m2) > 0
     ? (pf(datos.sup_total_const_m2) / supTerreno).toFixed(4)
     : null
+
+  const updateColindancia = (idx, field, value) =>
+    setColindancias(prev => prev.map((r, i) => i === idx ? { ...r, [field]: value } : r))
+  const addColindancia = () =>
+    setColindancias(prev => [...prev, { rumbo: 'Norte', metros: '', descripcion: '' }])
+  const removeColindancia = (idx) =>
+    setColindancias(prev => prev.filter((_, i) => i !== idx))
 
   const handleGuardar = () => {
     if (!onGuardar) return
@@ -146,6 +171,7 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
       area_privativa_m2:  esCondominio ? pfn(datos.area_privativa_m2) : null,
       sup_accesoria_m2:   esCondominio ? pfn(datos.sup_accesoria_m2) : null,
       fecha_escritura:    datos.fecha_escritura || null,
+      colindancias_json:  colindancias.filter(r => r.descripcion || r.metros),
     }
     onGuardar(payload)
   }
@@ -247,12 +273,75 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
 
       {/* Colindancias */}
       <Card>
-        <CardHeader><CardTitle>Colindancias</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Campo label="Norte" name="colindancia_norte"    value={datos.colindancia_norte}    onChange={handleChange} placeholder="Con calle, propiedad, etc." />
-          <Campo label="Sur"   name="colindancia_sur"      value={datos.colindancia_sur}      onChange={handleChange} placeholder="Con calle, propiedad, etc." />
-          <Campo label="Oriente" name="colindancia_oriente" value={datos.colindancia_oriente} onChange={handleChange} placeholder="Con calle, propiedad, etc." />
-          <Campo label="Poniente" name="colindancia_poniente" value={datos.colindancia_poniente} onChange={handleChange} placeholder="Con calle, propiedad, etc." />
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Colindancias</CardTitle>
+            <button
+              type="button"
+              onClick={addColindancia}
+              className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Agregar
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {colindancias.map((col, idx) => (
+            <div key={idx} className="flex gap-2 items-start">
+              {/* "Al" label */}
+              <span className="mt-2 text-sm text-gray-500 shrink-0">Al</span>
+
+              {/* Rumbo */}
+              <select
+                value={col.rumbo}
+                onChange={e => updateColindancia(idx, 'rumbo', e.target.value)}
+                className="mt-1 h-9 rounded-md border border-gray-200 px-2 text-sm focus:outline-none focus:border-blue-400 shrink-0"
+              >
+                <option value="Norte">Norte</option>
+                <option value="Noreste">Noreste</option>
+                <option value="Noroeste">Noroeste</option>
+                <option value="Sur">Sur</option>
+                <option value="Sureste">Sureste</option>
+                <option value="Suroeste">Suroeste</option>
+                <option value="Oriente">Oriente</option>
+                <option value="Poniente">Poniente</option>
+              </select>
+
+              {/* Metros */}
+              <div className="flex items-center gap-1 shrink-0">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  value={col.metros}
+                  onChange={e => updateColindancia(idx, 'metros', e.target.value)}
+                  placeholder="0.00"
+                  className="mt-1 h-9 w-20 rounded-md border border-gray-200 px-2 text-sm text-right focus:outline-none focus:border-blue-400"
+                />
+                <span className="mt-1 text-sm text-gray-400">m</span>
+              </div>
+
+              {/* Descripción */}
+              <textarea
+                value={col.descripcion}
+                onChange={e => updateColindancia(idx, 'descripcion', e.target.value)}
+                placeholder="Con calle, propiedad, etc."
+                rows={2}
+                className="flex-1 rounded-md border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:border-blue-400 resize-none"
+              />
+
+              {/* Eliminar */}
+              {colindancias.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeColindancia(idx)}
+                  className="mt-2 text-gray-300 hover:text-red-400 shrink-0"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          ))}
         </CardContent>
       </Card>
 
