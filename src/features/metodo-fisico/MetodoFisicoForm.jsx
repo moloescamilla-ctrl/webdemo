@@ -216,7 +216,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
 
                   {/* Selector de tabulador de costos */}
                   <div className="col-span-2 space-y-1">
-                    <Label>Tipo de construcción — tabulador ABBA</Label>
+                    <Label>Tipo de construcción — tabulador de costos</Label>
                     {cargandoCostos ? (
                       <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Cargando tabulador…</div>
                     ) : costos.length === 0 ? (

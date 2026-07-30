@@ -14,20 +14,37 @@ export default function Portada({ expediente }) {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      {/* Logo / marca */}
-      <View style={{
-        backgroundColor: COLORES.primario,
-        paddingVertical: 14,
-        paddingHorizontal: 40,
-        borderRadius: 4,
-        marginBottom: 32,
-        alignItems: 'center',
-      }}>
-        <Text style={{ fontSize: 22, fontFamily: 'Helvetica-Bold', color: COLORES.blanco, letterSpacing: 4 }}>
-          ABBA
+      {/* Logo COVINSA */}
+      <View style={{ alignItems: 'center', marginBottom: 32 }}>
+        {/* Ícono de casa (chevrons anidados) */}
+        <View style={{ alignItems: 'center', marginBottom: 6 }}>
+          {/* Chevron exterior */}
+          <View style={{
+            width: 44, height: 22,
+            borderLeftWidth: 3, borderRightWidth: 3, borderTopWidth: 3,
+            borderColor: COLORES.primario,
+            borderTopLeftRadius: 2, borderTopRightRadius: 2,
+          }} />
+          {/* Chevron interior */}
+          <View style={{
+            width: 30, height: 15, marginTop: -4,
+            borderLeftWidth: 3, borderRightWidth: 3, borderTopWidth: 3,
+            borderColor: COLORES.secundario,
+            borderTopLeftRadius: 1, borderTopRightRadius: 1,
+          }} />
+          {/* Base / puerta */}
+          <View style={{
+            width: 16, height: 10, marginTop: -2,
+            borderLeftWidth: 3, borderRightWidth: 3, borderTopWidth: 3,
+            borderColor: COLORES.primario,
+          }} />
+        </View>
+
+        <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold', color: COLORES.primario, letterSpacing: 3 }}>
+          COVINSA
         </Text>
-        <Text style={{ fontSize: 9, color: '#93c5fd', marginTop: 2, letterSpacing: 1 }}>
-          PERITOS VALUADORES
+        <Text style={{ fontSize: 8, color: COLORES.secundario, marginTop: 2, letterSpacing: 1 }}>
+          Construccion, Valuacion e Ingenieria
         </Text>
       </View>
 

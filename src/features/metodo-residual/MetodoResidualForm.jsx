@@ -279,7 +279,7 @@ export function MetodoResidualForm({
 
           {!cargandoCostos && costos.length > 0 && (
             <div className="space-y-1">
-              <Label>Tipo de construcción (tabulador ABBA)</Label>
+              <Label>Tipo de construcción (tabulador de costos)</Label>
               <select
                 value={costoSeleccionado?.id ?? ''}
                 onChange={e => handleSeleccionCosto(e.target.value)}

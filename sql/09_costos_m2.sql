@@ -1,4 +1,4 @@
--- Tabulador de costos por m² de construcción (multi-fuente: ABBA, SHF, INDAABIN, etc.)
+-- Tabulador de costos por m² de construcción (multi-fuente: COVINSA, SHF, INDAABIN, etc.)
 CREATE TABLE IF NOT EXISTS costos_construccion_m2 (
   id                  uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   fuente              text NOT NULL,
@@ -43,64 +43,64 @@ ALTER TABLE metodos_fisicos
   ADD COLUMN IF NOT EXISTS costo_m2_tabulador numeric,
   ADD COLUMN IF NOT EXISTS costo_m2_ajustado  boolean DEFAULT false;
 
--- Tabulador ABBA agosto 2025
+-- Tabulador COVINSA agosto 2025
 INSERT INTO costos_construccion_m2
   (fuente, clave, tipo, descripcion, precio_m2, tipo_inmueble, num_niveles_min, num_niveles_max, fecha_vigencia, notas)
 VALUES
-  ('ABBA','ECO-L-PP','Económica',
+  ('COVINSA','ECO-L-PP','Económica',
    'Casa Habitación 1 Nivel: Sala, comedor, cocina, 1 baño y 2 recámaras. Techo lámina y piso pulido.',
    8000,'Casa habitación',1,1,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','ECO-L-PL','Económica',
+  ('COVINSA','ECO-L-PL','Económica',
    'Casa Habitación 1 Nivel: Sala, comedor, cocina, 1 baño y 2 recámaras. Techo lámina y piso loseta.',
    8500,'Casa habitación',1,1,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','EIS-LC-PP','Económica Interés Social',
+  ('COVINSA','EIS-LC-PP','Económica Interés Social',
    'Casa Habitación 1-2 Niveles: Sala, comedor, cocina, 1 baño y 2 recámaras. Techo losa de concreto y piso pulido.',
    11000,'Casa habitación',1,2,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','EIS-LC-PL','Económica Interés Social',
+  ('COVINSA','EIS-LC-PL','Económica Interés Social',
    'Casa Habitación 1-2 Niveles: Sala, comedor, cocina, 1 baño y 2 recámaras. Techo losa de concreto y piso loseta.',
    12000,'Casa habitación',1,2,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','EIS-LC2B-PP','Económica Interés Social',
+  ('COVINSA','EIS-LC2B-PP','Económica Interés Social',
    'Casa Habitación 1-2 Niveles: Sala, comedor, cocina, 2 baños y 3 recámaras. Techo losa de concreto y piso pulido.',
    12500,'Casa habitación',1,2,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','EIS-LC2B-PL','Económica Interés Social',
+  ('COVINSA','EIS-LC2B-PL','Económica Interés Social',
    'Casa Habitación 1-2 Niveles: Sala, comedor, cocina, 2 baños y 3 recámaras. Techo losa de concreto y piso loseta.',
    13500,'Casa habitación',1,2,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','ISM-3R','Interés Social Media',
+  ('COVINSA','ISM-3R','Interés Social Media',
    'Casa Habitación 2 Niveles: Sala, comedor, cocina, 2 1/2 baños, 3 recámaras y cuarto de lavado.',
    14300,'Casa habitación',2,2,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','ISM-4R','Interés Social Media',
+  ('COVINSA','ISM-4R','Interés Social Media',
    'Casa Habitación 2 Niveles: Sala, comedor, cocina, 2 1/2 baños, 4 recámaras y cuarto de lavado.',
    15700,'Casa habitación',2,2,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','DIS-2R','Departamento Interés Social',
+  ('COVINSA','DIS-2R','Departamento Interés Social',
    'Departamento en condominio: Sala, comedor, cocina, 1 baño, 2 recámaras y área de lavado.',
    10500,'Departamento',null,null,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','DIS-3R','Departamento Interés Social',
+  ('COVINSA','DIS-3R','Departamento Interés Social',
    'Departamento en condominio: Sala, comedor, cocina, 1 baño, 3 recámaras y área de lavado.',
    11500,'Departamento',null,null,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández'),
 
-  ('ABBA','DIM-3R','Departamento Interés Medio',
+  ('COVINSA','DIM-3R','Departamento Interés Medio',
    'Departamento en condominio: Sala, comedor, cocina, 2 baños, 3 recámaras y cuarto de lavado.',
    12200,'Departamento',null,null,'2025-08-01',
-   'Tabulador ABBA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández')
+   'Tabulador COVINSA agosto 2025 — C.P. Ing. Arq. Ignacio López Fernández')
 
 ON CONFLICT (fuente, clave, fecha_vigencia) DO NOTHING;
 

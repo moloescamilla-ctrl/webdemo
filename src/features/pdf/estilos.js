@@ -1,8 +1,8 @@
 import { StyleSheet } from '@react-pdf/renderer'
 
 export const COLORES = {
-  primario:   '#1F3864',
-  secundario: '#2E5496',
+  primario:   '#1B2D4E',
+  secundario: '#2A4A7F',
   acento:     '#16A34A',
   gris:       '#6B7280',
   grisClaro:  '#F3F4F6',
