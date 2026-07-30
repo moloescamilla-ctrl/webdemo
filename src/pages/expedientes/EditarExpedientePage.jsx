@@ -6,6 +6,7 @@ import { getPeritoPerfil, savePeritoPerfil } from '@/hooks/usePeritoPerfil'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
 import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
+import { MetodoResidualForm } from '@/features/metodo-residual/MetodoResidualForm'
 import { EntornoForm } from '@/features/entorno/EntornoForm'
 import { CaracteristicasTerrenoForm } from '@/features/terreno/CaracteristicasTerrenoForm'
 import { DescripcionConstruccionForm } from '@/features/construccion/DescripcionConstruccionForm'
@@ -68,6 +69,7 @@ const TABS = [
   { id: 'construccion', label: 'Construcción' },
   { id: 'fisico',       label: 'Método Físico' },
   { id: 'rentas',       label: 'Rentas' },
+  { id: 'residual',     label: 'Residual' },
   { id: 'comparativo',  label: 'Comparativo' },
 ]
 
@@ -77,14 +79,14 @@ export function EditarExpedientePage() {
   const navState = location.state ?? {}
   const {
     expediente, entorno, terreno, descripcionConstruccion,
-    metodoFisico, inspeccion, metodoComparativo, metodoRentas,
+    metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
     loading, error,
   } = useExpediente(id)
   const {
     actualizarExpediente,
     guardarEntorno, guardarTerreno,
     guardarDescripcionConstruccion,
-    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas,
+    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
   } = useExpedientes()
 
   const [tab, setTab] = useState(navState.tab ?? 'datos')
@@ -202,6 +204,13 @@ export function EditarExpedientePage() {
     finally { setGuardando(false) }
   }
 
+  const handleGuardarResidual = async (datos) => {
+    setGuardando(true); setErrorMsg(null)
+    try { await guardarMetodoResidual(id, datos); flashOk('residual') }
+    catch (e) { setErrorMsg(e.message) }
+    finally { setGuardando(false) }
+  }
+
   const handleGuardarComparativo = async (resultado, superficieSujeto) => {
     setGuardando(true); setErrorMsg(null)
     try { await guardarMetodoComparativo(id, resultado, superficieSujeto); flashOk('comparativo') }
@@ -225,6 +234,8 @@ export function EditarExpedientePage() {
   } : null
 
   const rentasInitial = metodoRentas ?? null
+
+  const residualInitial = metodoResidual ?? null
 
   const comparativoInitial = metodoComparativo ? {
     superficieSujeto: String(metodoComparativo.superficie_sujeto || ''),
@@ -438,6 +449,19 @@ export function EditarExpedientePage() {
           guardando={guardando}
           submitLabel={okTab === 'rentas' ? '✓ Guardado' : (metodoRentas ? 'Actualizar Método Rentas' : 'Guardar Método Rentas')}
           initialValues={rentasInitial}
+        />
+      )}
+
+      {tab === 'residual' && (
+        <MetodoResidualForm
+          key={metodoResidual?.id ?? 'residual-nuevo'}
+          onGuardar={handleGuardarResidual}
+          guardando={guardando}
+          submitLabel={okTab === 'residual' ? '✓ Guardado' : (metodoResidual ? 'Actualizar Método Residual' : 'Guardar Método Residual')}
+          initialValues={residualInitial}
+          superficieTerrenoDefecto={terreno?.superficie_total_m2 ?? null}
+          costoM2Defecto={metodoFisico?.costo_reposicion_m2 ?? null}
+          vmSugerido={metodoComparativo?.valor_comparativo_total ?? null}
         />
       )}
 

@@ -6,6 +6,7 @@ import { DescripcionConstruccionForm } from '@/features/construccion/Descripcion
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
 import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
+import { MetodoResidualForm } from '@/features/metodo-residual/MetodoResidualForm'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -73,6 +74,7 @@ const PASOS_COMPLETOS = [
   { id: 'construccion', label: 'Construcciones' },
   { id: 'fisico',       label: 'Método Físico' },
   { id: 'rentas',       label: 'Rentas' },
+  { id: 'residual',     label: 'Residual' },
   { id: 'comparativo',  label: 'Comparativo' },
 ]
 
@@ -148,7 +150,7 @@ export function NuevoExpedientePage() {
   const {
     crearExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
-    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas,
+    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
   } = useExpedientes()
 
   const [paso, setPaso] = useState(0)
@@ -275,6 +277,13 @@ export function NuevoExpedientePage() {
   const handleGuardarRentas = async (datos) => {
     setGuardando(true); setError(null)
     try { await guardarMetodoRentas(expedienteId, datos); avanzar() }
+    catch (e) { setError(e.message) }
+    finally { setGuardando(false) }
+  }
+
+  const handleGuardarResidual = async (datos) => {
+    setGuardando(true); setError(null)
+    try { await guardarMetodoResidual(expedienteId, datos); avanzar() }
     catch (e) { setError(e.message) }
     finally { setGuardando(false) }
   }
@@ -507,6 +516,18 @@ export function NuevoExpedientePage() {
         <div className="space-y-3">
           <MetodoRentasForm
             onGuardar={handleGuardarRentas}
+            guardando={guardando}
+            submitLabel="Guardar y continuar"
+          />
+          <NavPaso onBack={retroceder} onOmitir={omitir} />
+        </div>
+      )}
+
+      {/* ── Paso: Residual ────────────────────────────────────────────────── */}
+      {pasoId === 'residual' && expedienteId && (
+        <div className="space-y-3">
+          <MetodoResidualForm
+            onGuardar={handleGuardarResidual}
             guardando={guardando}
             submitLabel="Guardar y continuar"
           />

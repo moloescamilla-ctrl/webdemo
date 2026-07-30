@@ -52,6 +52,7 @@ export function useExpedientes() {
       supabase.from('metodos_comparativos').delete().eq('expediente_id', id),
       supabase.from('metodos_fisicos').delete().eq('expediente_id', id),
       supabase.from('metodos_rentas').delete().eq('expediente_id', id),
+      supabase.from('metodos_residual').delete().eq('expediente_id', id),
       supabase.from('inspecciones_fisicas').delete().eq('expediente_id', id),
       supabase.from('entorno_inmueble').delete().eq('expediente_id', id),
       supabase.from('caracteristicas_terreno').delete().eq('expediente_id', id),
@@ -196,10 +197,46 @@ export function useExpedientes() {
     await fetchExpedientes()
   }
 
+  async function guardarMetodoResidual(expedienteId, datos) {
+    const { error } = await supabase
+      .from('metodos_residual')
+      .upsert({
+        expediente_id:                expedienteId,
+        caso_uso:                     datos.casoUso,
+        descripcion_proyecto:         datos.descripcionProyecto,
+        vm_total:                     datos.vmTotal,
+        vm_fuente:                    datos.vmFuente,
+        superficie_proyecto_m2:       datos.superficieProyectoM2,
+        superficie_terreno_m2:        datos.superficieTerrenoM2,
+        costo_construccion_m2:        datos.costoConstuccionM2,
+        costo_construccion_total:     datos.costoConstuccionTotal,
+        proyecto_pct:                 datos.proyectoPct,
+        permisos_pct:                 datos.permisosPct,
+        gestion_pct:                  datos.gestionPct,
+        comercializacion_pct:         datos.comercializacionPct,
+        financiamiento_pct:           datos.financiamientoPct,
+        imprevistos_pct:              datos.imprevistoPct,
+        ci_total:                     datos.ciTotal,
+        utilidad_pct:                 datos.utilidadPct,
+        utilidad_pesos:               datos.utilidadPesos,
+        valor_residual:               datos.valorResidual,
+        valor_residual_m2_terreno:    datos.valorResidualM2Terreno,
+        notas_valuador:               datos.notasValuador,
+      }, { onConflict: 'expediente_id' })
+    if (error) throw new Error(error.message)
+
+    await supabase
+      .from('expedientes')
+      .update({ estado: 'en_proceso' })
+      .eq('id', expedienteId)
+
+    await fetchExpedientes()
+  }
+
   return {
     expedientes, loading, error,
     crearExpediente, actualizarExpediente, eliminarExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
-    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas,
+    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
   }
 }
