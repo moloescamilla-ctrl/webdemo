@@ -44,7 +44,7 @@ export default function Declaraciones() {
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
         {VERIFICACIONES_SHF.map((item, i) => (
           <View key={i} style={[i % 2 === 0 ? styles.filaPar : styles.filaImpar, { flexDirection: 'row', alignItems: 'center' }]}>
-            <View style={{ width: 6, height: 6, backgroundColor: COLORES.acento, marginHorizontal: 6, borderRadius: 1, flexShrink: 0 }} />
+            <View style={{ width: 6, height: 6, backgroundColor: COLORES.acento, marginLeft: 6, marginRight: 6 }} />
             <Text style={[styles.celda, { flex: 1, borderRightWidth: 0 }]}>{item}</Text>
           </View>
         ))}

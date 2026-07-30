@@ -83,13 +83,13 @@ export default function Entorno({ entorno }) {
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
         {serviciosPresentes.map(([, label]) => (
           <View key={label} style={{ flexDirection: 'row', width: '50%', marginBottom: 2, alignItems: 'center' }}>
-            <View style={{ width: 6, height: 6, backgroundColor: '#16A34A', marginRight: 4, borderRadius: 1, flexShrink: 0 }} />
+            <View style={{ width: 6, height: 6, backgroundColor: '#16A34A', marginRight: 4 }} />
             <Text style={{ fontSize: 7 }}>{label}</Text>
           </View>
         ))}
         {serviciosAusentes.map(([, label]) => (
           <View key={label} style={{ flexDirection: 'row', width: '50%', marginBottom: 2, alignItems: 'center' }}>
-            <View style={{ width: 6, height: 6, backgroundColor: '#E5E7EB', marginRight: 4, borderRadius: 1, flexShrink: 0 }} />
+            <View style={{ width: 6, height: 6, backgroundColor: '#E5E7EB', marginRight: 4 }} />
             <Text style={{ fontSize: 7, color: '#9CA3AF' }}>{label}</Text>
           </View>
         ))}

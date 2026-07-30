@@ -14,7 +14,7 @@ function Campo({ label, value }) {
 function Check({ label, value }) {
   return (
     <View style={[styles.campoFila, { marginBottom: 2, alignItems: 'center' }]}>
-      <View style={{ width: 6, height: 6, backgroundColor: value ? '#16A34A' : '#E5E7EB', marginRight: 4, borderRadius: 1, flexShrink: 0 }} />
+      <View style={{ width: 6, height: 6, backgroundColor: value ? '#16A34A' : '#E5E7EB', marginRight: 4 }} />
       <Text style={{ fontSize: 8, color: value ? '#111827' : '#9CA3AF' }}>{label}</Text>
     </View>
   )
