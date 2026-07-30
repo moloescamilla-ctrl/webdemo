@@ -29,6 +29,7 @@ export function AvaluoPDF({ datos }) {
     metodoRentas,
     metodoResidual,
     fotos,
+    croquisSrc,
   } = datos
 
   const folio = expediente?.folio || expediente?.id?.slice(0, 8).toUpperCase() || 'AVALUO'
@@ -48,7 +49,7 @@ export function AvaluoPDF({ datos }) {
       {/* Página 2: Datos generales + Croquis */}
       <Page size="A4" style={styles.pagina}>
         <DatosGenerales expediente={expediente} />
-        <CroquisLocalizacion lat={expediente?.latitud} lng={expediente?.longitud} />
+        <CroquisLocalizacion croquisSrc={croquisSrc} lat={expediente?.latitud} lng={expediente?.longitud} />
         <PiePagina expediente={expediente} />
       </Page>
 

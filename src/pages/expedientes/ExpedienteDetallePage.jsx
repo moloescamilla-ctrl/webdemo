@@ -4,10 +4,23 @@ import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
+import { obtenerCroquisURL } from '@/features/pdf/utils'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown } from 'lucide-react'
+
+async function fetchBase64(url) {
+  const res = await fetch(url)
+  if (!res.ok) return null
+  const blob = await res.blob()
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result)
+    reader.onerror = () => resolve(null)
+    reader.readAsDataURL(blob)
+  })
+}
 
 function BotonDescargarPDF({ datos, fileName }) {
   const [generando, setGenerando] = useState(false)
@@ -17,7 +30,20 @@ function BotonDescargarPDF({ datos, fileName }) {
     setGenerando(true)
     setErrorPdf(null)
     try {
-      const blob = await pdf(<AvaluoPDF datos={datos} />).toBlob()
+      // Pre-fetch external images as base64 to avoid CORS issues in react-pdf
+      let croquisSrc = null
+      const lat = datos.expediente?.latitud
+      const lng = datos.expediente?.longitud
+      if (lat && lng) {
+        const croquisURL = obtenerCroquisURL({ lat, lng })
+        if (croquisURL) {
+          croquisSrc = await fetchBase64(croquisURL).catch(() => null)
+        }
+      }
+
+      const blob = await pdf(
+        <AvaluoPDF datos={{ ...datos, croquisSrc }} />
+      ).toBlob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
