@@ -46,7 +46,7 @@ function BotonDescargarPDF({ datos, fileName }) {
       URL.revokeObjectURL(url)
     } catch (err) {
       console.error('Error generando PDF:', err)
-      setErrorPdf('Error al generar el PDF. Intenta de nuevo.')
+      setErrorPdf(err?.message || String(err))
     } finally {
       setGenerando(false)
     }
