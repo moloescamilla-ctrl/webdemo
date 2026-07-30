@@ -3,11 +3,16 @@ import { useFotosExpediente } from '@/hooks/useFotosExpediente'
 import { Camera, Loader2, X, ImageOff } from 'lucide-react'
 
 const CATEGORIAS = [
-  { id: 'fachada',      label: 'Fachada' },
-  { id: 'interior',     label: 'Interior' },
-  { id: 'entorno',      label: 'Entorno' },
-  { id: 'construccion', label: 'Construcción' },
-  { id: 'adicionales',  label: 'Extras' },
+  { id: 'fachada',   label: 'Fachada' },
+  { id: 'entorno',   label: 'Entorno' },
+  { id: 'acceso',    label: 'Acceso al inmueble' },
+  { id: 'sala',      label: 'Sala' },
+  { id: 'comedor',   label: 'Comedor' },
+  { id: 'cocina',    label: 'Cocina' },
+  { id: 'bano',      label: 'Baño' },
+  { id: 'recamara1', label: 'Recámara 1' },
+  { id: 'recamara2', label: 'Recámara 2' },
+  { id: 'extra',     label: 'Extra', btnLabel: 'Agregar extra' },
 ]
 
 export function FotosUploader({ expedienteId }) {
@@ -60,6 +65,7 @@ export function FotosUploader({ expedienteId }) {
         const fotosCategoria = fotos.filter(f => f.categoria === cat.id)
         const cargando = subiendo[cat.id]
         const error = errores[cat.id]
+        const btnLabel = cat.btnLabel ?? 'Agregar'
 
         return (
           <div key={cat.id}>
@@ -74,7 +80,7 @@ export function FotosUploader({ expedienteId }) {
                   ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
                   : <Camera className="h-3.5 w-3.5" />
                 }
-                {cargando ? 'Subiendo...' : 'Agregar'}
+                {cargando ? 'Subiendo...' : btnLabel}
                 <input
                   ref={el => { refs.current[cat.id] = el }}
                   type="file"
