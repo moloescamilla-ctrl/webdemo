@@ -4,6 +4,30 @@ import { Label } from '@/components/ui/label'
 import { formatNumber } from '@/lib/utils'
 import { PlusCircle, Trash2 } from 'lucide-react'
 import { calcularHomologacionRentas } from './calculosRentas'
+import { FormulaPanel } from '@/components/ui/formula-panel'
+
+const FORMULAS_HOMOLOGACION_RENTAS = [
+  {
+    titulo: 'Renta Unitaria ($/m²/mes)',
+    formula: 'Renta Unit. = Renta Mensual / Superficie',
+  },
+  {
+    titulo: 'Factor Total',
+    formula: 'F.Total = F.Zona × F.Sup × F.Edad × F.Cons\n\nF > 1 → sujeto superior al comparable\nF < 1 → comparable superior al sujeto',
+  },
+  {
+    titulo: 'Renta Unitaria Homologada',
+    formula: 'Renta Homo = Renta Unitaria × F.Total',
+  },
+  {
+    titulo: 'Renta Unitaria Ponderada',
+    formula: 'RUP = Σ(Renta Homo) / n comparables',
+  },
+  {
+    titulo: 'Renta Mensual Estimada del Sujeto',
+    formula: 'Renta Sujeto = RUP × Superficie Sujeto',
+  },
+]
 
 let _cid = 1
 const cuid = () => _cid++
@@ -94,6 +118,7 @@ export function ComparablesRentaForm({ initialComparables = [], initialSuperfici
 
   return (
     <div className="space-y-3">
+      <FormulaPanel grupos={FORMULAS_HOMOLOGACION_RENTAS} />
       <div className="flex items-end gap-6">
         <div className="max-w-xs space-y-1">
           <Label>Superficie del inmueble sujeto</Label>

@@ -13,6 +13,36 @@ import {
   calcularVCComponentes,
 } from './calculosRentas'
 import { ComparablesRentaForm } from './ComparablesRentaForm'
+import { FormulaPanel } from '@/components/ui/formula-panel'
+
+const FORMULAS_RENTAS = [
+  {
+    titulo: 'Renta Bruta Anual (RBA)',
+    formula: 'RBA = Renta Mensual × 12',
+  },
+  {
+    titulo: 'Renta Efectiva Anual (REA)',
+    formula: 'REA = RBA × (1 − Vacancia / 100)',
+  },
+  {
+    titulo: 'Renta Neta Anual (RNA)',
+    formula: 'RNA = REA × (1 − Gastos Op. / 100)',
+  },
+  {
+    titulo: 'TC por componentes',
+    formula: 'TC = i + r + iliq + d + g\n\ni    = tasa libre de riesgo\nr    = prima de riesgo inmueble\niliq = prima de iliquidez\nd    = depreciación\ng    = gastos no recuperables',
+  },
+  {
+    titulo: 'Capitalización Directa',
+    formula: 'VC = RNA / (TC / 100)',
+    nota: 'TC puede ser global o suma de componentes.',
+  },
+  {
+    titulo: 'Capitalización por Componentes',
+    formula: 'TC tierra = i + r + iliq\nTC const. = i + r + iliq + d + g\n\nVC tierra = (RNA × %Tierra/100) / (TC tierra/100)\nVC const. = (RNA × %Const./100) / (TC const./100)\nVC total  = VC tierra + VC construcción',
+    nota: 'La tierra no se deprecia: excluye d y g.',
+  },
+]
 
 const n = (v) => parseFloat(v) || 0
 
@@ -167,6 +197,8 @@ export function MetodoRentasForm({ onGuardar, guardando, submitLabel, initialVal
 
   return (
     <div className="space-y-5">
+
+      <FormulaPanel grupos={FORMULAS_RENTAS} />
 
       {/* ── Configuración ── */}
       <Card>

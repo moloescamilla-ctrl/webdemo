@@ -9,6 +9,36 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { Calculator, Info, Loader2 } from 'lucide-react'
+import { FormulaPanel } from '@/components/ui/formula-panel'
+
+const FORMULAS_FISICO = [
+  {
+    titulo: 'Valor de Reposición Nuevo',
+    formula: 'VRN = Sup. Construcción (m²)\n      × Costo Rep. Nuevo ($/m²)',
+  },
+  {
+    titulo: 'Factor Ross (a)',
+    formula: 'a = Edad / Vida Útil Total',
+    nota: 'Representa el desgaste por antigüedad.',
+  },
+  {
+    titulo: 'Coef. Heidecke (C)',
+    formula: 'C = determinado por el checklist\nde conservación por partidas.',
+    nota: 'Óptimo=0.000 · Pésimo=0.950',
+  },
+  {
+    titulo: 'Factor de Depreciación',
+    formula: 'F.Dep = (1 − VR%) × (a + (1 − a) × C)\ndonde VR = valor residual (%)',
+  },
+  {
+    titulo: 'Valor Actual Construcción',
+    formula: 'VAC = VRN × (1 − F.Dep)',
+  },
+  {
+    titulo: 'Valor Físico Total',
+    formula: 'VFT = VAC\n    + Sup. Terreno × Valor Unitario ($/m²)',
+  },
+]
 
 const initialEstados = Object.fromEntries(PARTIDAS_INSPECCION.map(p => [p.id, 0]))
 
@@ -161,6 +191,8 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   }
 
   return (
+    <div className="space-y-5">
+    <FormulaPanel grupos={FORMULAS_FISICO} />
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div className="space-y-5">
         <Card>
@@ -403,6 +435,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
           </CardContent>
         </Card>
       </div>
+    </div>
     </div>
   )
 }

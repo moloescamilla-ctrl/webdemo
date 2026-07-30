@@ -8,6 +8,35 @@ import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { PlusCircle, Trash2, TrendingUp, Info, Loader2, ClipboardList } from 'lucide-react'
 import { calcularMetodoComparativo, calcFactorSuperficie } from './calculosComparativo'
+import { FormulaPanel } from '@/components/ui/formula-panel'
+
+const FORMULAS_COMPARATIVO = [
+  {
+    titulo: 'Factor de Superficie',
+    formula: 'F.Sup = (Sup Sujeto / Sup Comparable) ^ 0.12',
+    nota: 'Un sujeto más grande que el comparable produce F.Sup > 1.',
+  },
+  {
+    titulo: 'Factor de Zona · Edad · Conservación',
+    formula: 'Criterio del valuador.\nF > 1 → el sujeto es superior al comparable\nF < 1 → el comparable es superior al sujeto',
+  },
+  {
+    titulo: 'Factor Total',
+    formula: 'F.Total = F.Zona × F.Sup × F.Edad × F.Cons',
+  },
+  {
+    titulo: '$/m² Homologado',
+    formula: '$/m² Homo = (Precio Total / Superficie)\n            × F.Total',
+  },
+  {
+    titulo: 'Valor Unitario Ponderado',
+    formula: 'VUP = Σ($/m² Homo) / n comparables',
+  },
+  {
+    titulo: 'Valor Comparativo Total',
+    formula: 'VC = VUP × Superficie Sujeto',
+  },
+]
 
 let _cid = 1
 const cuid = () => _cid++
@@ -144,6 +173,8 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
 
   return (
     <div className="space-y-5">
+
+      <FormulaPanel grupos={FORMULAS_COMPARATIVO} />
 
       {/* ── Superficie del sujeto ── */}
       <Card>
