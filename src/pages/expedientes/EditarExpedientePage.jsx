@@ -7,6 +7,7 @@ import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
 import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
 import { MetodoResidualForm } from '@/features/metodo-residual/MetodoResidualForm'
+import { CroquisUploader } from '@/features/croquis/CroquisUploader'
 import { EntornoForm } from '@/features/entorno/EntornoForm'
 import { CaracteristicasTerrenoForm } from '@/features/terreno/CaracteristicasTerrenoForm'
 import { DescripcionConstruccionForm } from '@/features/construccion/DescripcionConstruccionForm'
@@ -16,7 +17,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
-import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
@@ -94,6 +95,7 @@ export function EditarExpedientePage() {
   const [okTab, setOkTab] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
   const [datos, setDatos] = useState(null)
+  const [croquisUrl, setCroquisUrl] = useState(undefined)
 
   if (loading) {
     return (
@@ -362,6 +364,22 @@ export function EditarExpedientePage() {
                 latitud={d.latitud}
                 longitud={d.longitud}
                 onChange={coords => setDatos(prev => ({ ...(prev ?? fromExpediente()), ...coords }))}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-gray-500" />
+                <CardTitle>Croquis de localización</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <CroquisUploader
+                expedienteId={id}
+                currentUrl={croquisUrl !== undefined ? croquisUrl : (expediente.croquis_url ?? null)}
+                onSaved={setCroquisUrl}
               />
             </CardContent>
           </Card>

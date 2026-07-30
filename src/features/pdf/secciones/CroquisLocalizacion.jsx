@@ -1,8 +1,7 @@
 import { View, Image, Text } from '@react-pdf/renderer'
-import { styles, COLORES } from '../estilos'
-import { obtenerCroquisURL } from '../utils'
+import { styles } from '../estilos'
 
-export default function CroquisLocalizacion({ lat, lng, croquisSrc }) {
+export default function CroquisLocalizacion({ croquisSrc }) {
   if (!croquisSrc) return null
 
   return (
@@ -12,11 +11,6 @@ export default function CroquisLocalizacion({ lat, lng, croquisSrc }) {
         src={croquisSrc}
         style={{ width: '100%', height: 180, objectFit: 'cover' }}
       />
-      {lat && lng && (
-        <Text style={styles.nota}>
-          {`Coordenadas: ${lat}, ${lng} | Mapa de referencia (no a escala)`}
-        </Text>
-      )}
     </View>
   )
 }

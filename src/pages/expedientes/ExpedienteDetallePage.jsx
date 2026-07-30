@@ -4,7 +4,6 @@ import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
-import { obtenerCroquisURL } from '@/features/pdf/utils'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
@@ -30,15 +29,10 @@ function BotonDescargarPDF({ datos, fileName }) {
     setGenerando(true)
     setErrorPdf(null)
     try {
-      // Pre-fetch external images as base64 to avoid CORS issues in react-pdf
+      // Pre-fetch croquis as base64 to avoid CORS issues in react-pdf
       let croquisSrc = null
-      const lat = datos.expediente?.latitud
-      const lng = datos.expediente?.longitud
-      if (lat && lng) {
-        const croquisURL = obtenerCroquisURL({ lat, lng })
-        if (croquisURL) {
-          croquisSrc = await fetchBase64(croquisURL).catch(() => null)
-        }
+      if (datos.expediente?.croquis_url) {
+        croquisSrc = await fetchBase64(datos.expediente.croquis_url).catch(() => null)
       }
 
       const blob = await pdf(
