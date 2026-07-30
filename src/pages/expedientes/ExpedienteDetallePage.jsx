@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { PDFDownloadLink } from '@react-pdf/renderer'
+import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
@@ -7,6 +8,46 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown } from 'lucide-react'
+
+function BotonDescargarPDF({ datos, fileName }) {
+  const [generando, setGenerando] = useState(false)
+  const [errorPdf, setErrorPdf] = useState(null)
+
+  async function handleClick() {
+    setGenerando(true)
+    setErrorPdf(null)
+    try {
+      const blob = await pdf(<AvaluoPDF datos={datos} />).toBlob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = fileName
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Error generando PDF:', err)
+      setErrorPdf('Error al generar el PDF. Intenta de nuevo.')
+    } finally {
+      setGenerando(false)
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-end gap-1">
+      <button
+        onClick={handleClick}
+        disabled={generando}
+        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+      >
+        {generando
+          ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generando...</>
+          : <><FileDown className="h-3.5 w-3.5" /> Descargar dictamen</>
+        }
+      </button>
+      {errorPdf && <span className="text-xs text-red-500">{errorPdf}</span>}
+    </div>
+  )
+}
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -92,25 +133,10 @@ export function ExpedienteDetallePage() {
           <Pencil className="h-3.5 w-3.5" />
           Editar
         </Link>
-        <PDFDownloadLink
-          document={<AvaluoPDF datos={{
-            expediente, entorno, terreno, descripcionConstruccion,
-            inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos,
-          }} />}
+        <BotonDescargarPDF
+          datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos }}
           fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
-        >
-          {({ loading: pdfLoading }) => (
-            <button
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
-              disabled={pdfLoading}
-            >
-              {pdfLoading
-                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generando...</>
-                : <><FileDown className="h-3.5 w-3.5" /> Descargar dictamen</>
-              }
-            </button>
-          )}
-        </PDFDownloadLink>
+        />
       </div>
 
       <Card>
