@@ -51,6 +51,7 @@ export function useExpedientes() {
     await Promise.all([
       supabase.from('metodos_comparativos').delete().eq('expediente_id', id),
       supabase.from('metodos_fisicos').delete().eq('expediente_id', id),
+      supabase.from('metodos_rentas').delete().eq('expediente_id', id),
       supabase.from('inspecciones_fisicas').delete().eq('expediente_id', id),
       supabase.from('entorno_inmueble').delete().eq('expediente_id', id),
       supabase.from('caracteristicas_terreno').delete().eq('expediente_id', id),
@@ -158,10 +159,47 @@ export function useExpedientes() {
     await fetchExpedientes()
   }
 
+  async function guardarMetodoRentas(expedienteId, datos) {
+    const { error } = await supabase
+      .from('metodos_rentas')
+      .upsert({
+        expediente_id: expedienteId,
+        variante: datos.variante,
+        modo_rna: datos.modoRNA,
+        modo_tc: datos.modoTC,
+        renta_mensual_bruta: datos.rentaMensualBruta,
+        vacancia_pct: datos.vacanciaPct,
+        gastos_operacion_pct: datos.gastosOperacionPct,
+        comparables_renta: datos.comparablesRenta,
+        tc_global: datos.tcGlobal,
+        tc_tasa_libre_riesgo: datos.tcTasaLibreRiesgo,
+        tc_prima_riesgo_inmueble: datos.tcPrimaRiesgoInmueble,
+        tc_prima_iliquidez: datos.tcPrimaIliquidez,
+        tc_depreciacion: datos.tcDepreciacion,
+        tc_gastos_no_recuperables: datos.tcGastosNoRecuperables,
+        proporcion_tierra_pct: datos.proporcionTierraPct,
+        rna: datos.rna,
+        valor_capitalizacion: datos.valorCapitalizacion,
+        valor_tierra_capitalizacion: datos.valorTierraCapitalizacion,
+        valor_construccion_capitalizacion: datos.valorConstruccionCapitalizacion,
+        fecha_tasa_referencia: datos.fechaTasaReferencia,
+        fuente_tasa_referencia: datos.fuenteTasaReferencia,
+        notas_valuador: datos.notasValuador,
+      }, { onConflict: 'expediente_id' })
+    if (error) throw new Error(error.message)
+
+    await supabase
+      .from('expedientes')
+      .update({ estado: 'en_proceso' })
+      .eq('id', expedienteId)
+
+    await fetchExpedientes()
+  }
+
   return {
     expedientes, loading, error,
     crearExpediente, actualizarExpediente, eliminarExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
-    guardarMetodoFisico, guardarMetodoComparativo,
+    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas,
   }
 }

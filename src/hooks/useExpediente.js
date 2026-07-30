@@ -9,6 +9,7 @@ export function useExpediente(id) {
   const [metodoFisico, setMetodoFisico] = useState(null)
   const [inspeccion, setInspeccion] = useState(null)
   const [metodoComparativo, setMetodoComparativo] = useState(null)
+  const [metodoRentas, setMetodoRentas] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -28,6 +29,7 @@ export function useExpediente(id) {
       { data: mf },
       { data: insp },
       { data: mc },
+      { data: mr },
     ] = await Promise.all([
       supabase.from('expedientes').select('*').eq('id', id).single(),
       supabase.from('entorno_inmueble').select('*').eq('expediente_id', id).maybeSingle(),
@@ -36,6 +38,7 @@ export function useExpediente(id) {
       supabase.from('metodos_fisicos').select('*').eq('expediente_id', id).maybeSingle(),
       supabase.from('inspecciones_fisicas').select('*').eq('expediente_id', id).maybeSingle(),
       supabase.from('metodos_comparativos').select('*').eq('expediente_id', id).maybeSingle(),
+      supabase.from('metodos_rentas').select('*').eq('expediente_id', id).maybeSingle(),
     ])
     if (e1) { setError(e1.message); setLoading(false); return }
     setExpediente(exp)
@@ -45,12 +48,13 @@ export function useExpediente(id) {
     setMetodoFisico(mf)
     setInspeccion(insp)
     setMetodoComparativo(mc)
+    setMetodoRentas(mr)
     setLoading(false)
   }
 
   return {
     expediente, entorno, terreno, descripcionConstruccion,
-    metodoFisico, inspeccion, metodoComparativo,
+    metodoFisico, inspeccion, metodoComparativo, metodoRentas,
     loading, error,
   }
 }

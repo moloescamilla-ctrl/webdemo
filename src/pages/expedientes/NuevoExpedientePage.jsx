@@ -5,6 +5,7 @@ import { CaracteristicasTerrenoForm } from '@/features/terreno/CaracteristicasTe
 import { DescripcionConstruccionForm } from '@/features/construccion/DescripcionConstruccionForm'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
+import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -71,6 +72,7 @@ const PASOS_COMPLETOS = [
   { id: 'terreno',      label: 'Terreno' },
   { id: 'construccion', label: 'Construcciones' },
   { id: 'fisico',       label: 'Método Físico' },
+  { id: 'rentas',       label: 'Rentas' },
   { id: 'comparativo',  label: 'Comparativo' },
 ]
 
@@ -146,7 +148,7 @@ export function NuevoExpedientePage() {
   const {
     crearExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
-    guardarMetodoFisico, guardarMetodoComparativo,
+    guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas,
   } = useExpedientes()
 
   const [paso, setPaso] = useState(0)
@@ -267,6 +269,13 @@ export function NuevoExpedientePage() {
       )
       avanzar()
     } catch (e) { setError(e.message) }
+    finally { setGuardando(false) }
+  }
+
+  const handleGuardarRentas = async (datos) => {
+    setGuardando(true); setError(null)
+    try { await guardarMetodoRentas(expedienteId, datos); avanzar() }
+    catch (e) { setError(e.message) }
     finally { setGuardando(false) }
   }
 
@@ -490,6 +499,18 @@ export function NuevoExpedientePage() {
               </button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ── Paso: Rentas ──────────────────────────────────────────────────── */}
+      {pasoId === 'rentas' && expedienteId && (
+        <div className="space-y-3">
+          <MetodoRentasForm
+            onGuardar={handleGuardarRentas}
+            guardando={guardando}
+            submitLabel="Guardar y continuar"
+          />
+          <NavPaso onBack={retroceder} onOmitir={omitir} />
         </div>
       )}
 
