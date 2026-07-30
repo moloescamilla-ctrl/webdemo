@@ -8,6 +8,7 @@ import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoCompa
 import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
 import { MetodoResidualForm } from '@/features/metodo-residual/MetodoResidualForm'
 import { CroquisUploader } from '@/features/croquis/CroquisUploader'
+import { FotosUploader } from '@/features/fotos/FotosUploader'
 import { EntornoForm } from '@/features/entorno/EntornoForm'
 import { CaracteristicasTerrenoForm } from '@/features/terreno/CaracteristicasTerrenoForm'
 import { DescripcionConstruccionForm } from '@/features/construccion/DescripcionConstruccionForm'
@@ -72,6 +73,7 @@ const TABS = [
   { id: 'rentas',       label: 'Rentas' },
   { id: 'residual',     label: 'Residual' },
   { id: 'comparativo',  label: 'Comparativo' },
+  { id: 'fotos',        label: 'Fotos' },
 ]
 
 export function EditarExpedientePage() {
@@ -508,6 +510,14 @@ export function EditarExpedientePage() {
             comparablesImportados={navState.comparablesImportados ?? null}
           />
         </div>
+      )}
+      {tab === 'fotos' && (
+        <Card>
+          <CardHeader><CardTitle>Fotos del inmueble</CardTitle></CardHeader>
+          <CardContent>
+            <FotosUploader expedienteId={id} />
+          </CardContent>
+        </Card>
       )}
     </div>
   )
