@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
 import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, calcularFactorRoss, calcularRossHeidecke, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
+import { useCostosM2 } from '@/hooks/useCostosM2'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
@@ -24,7 +25,7 @@ const defaultInputs = {
   valorResidual: '15',
 }
 
-function Campo({ label, name, value, onChange, suffix, hint }) {
+function Campo({ label, name, value, onChange, suffix, hint, hintWarning }) {
   return (
     <div className="space-y-1">
       <Label htmlFor={name}>{label}</Label>
@@ -44,6 +45,7 @@ function Campo({ label, name, value, onChange, suffix, hint }) {
         )}
       </div>
       {hint && <p className="text-xs text-gray-400">{hint}</p>}
+      {hintWarning && <p className="text-xs text-amber-600">{hintWarning}</p>}
     </div>
   )
 }
@@ -60,7 +62,25 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   const [estadoManual, setEstadoManual] = useState(null)
   const [accesoriaData, setAccesoriaData] = useState({ edadAccesoria: 0, superficieAccesoria: 0 })
 
+  const { costos, porFuente, cargando: cargandoCostos } = useCostosM2()
+  const [costoSeleccionado, setCostoSeleccionado] = useState(null)
+  const [costoManual, setCostoManual] = useState(false)
+
   const handleInput = (e) => setInputs(prev => ({ ...prev, [e.target.name]: e.target.value }))
+
+  const handleSeleccionTipo = (costoId) => {
+    if (!costoId) { setCostoSeleccionado(null); return }
+    const costo = costos.find(c => c.id === costoId)
+    if (!costo) return
+    setCostoSeleccionado(costo)
+    setCostoManual(false)
+    setInputs(prev => ({ ...prev, costoReposicionM2: String(costo.precio_m2) }))
+  }
+
+  const handleCostoInput = (e) => {
+    setCostoManual(true)
+    setInputs(prev => ({ ...prev, costoReposicionM2: e.target.value }))
+  }
   const handleChecklist = (id, val) => setEstadosChecklist(prev => ({ ...prev, [id]: val }))
 
   const { coeficienteC, estadoHeidecke, puntaje } = useMemo(
@@ -115,8 +135,16 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       ...resultado,
       valorFisicoTotal: resultado.valorFisicoTotal + accVA,
     }
+    const inputsConCosto = {
+      ...inputs,
+      costo_m2_fuente:    costoSeleccionado?.fuente    ?? null,
+      costo_m2_clave:     costoSeleccionado?.clave     ?? null,
+      costo_m2_tipo:      costoSeleccionado?.tipo      ?? null,
+      costo_m2_tabulador: costoSeleccionado ? Number(costoSeleccionado.precio_m2) : null,
+      costo_m2_ajustado:  costoManual && !!costoSeleccionado,
+    }
     if (!tieneConstruccion) {
-      onGuardar(resultadoFinal, { tieneConstruccion: false }, inputs)
+      onGuardar(resultadoFinal, { tieneConstruccion: false }, inputsConCosto)
       return
     }
     const inspeccion = {
@@ -129,7 +157,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       coeficienteCManual: estadoManual !== null ? estadoFinal?.c : null,
       coeficienteCAdoptado: estadoFinal?.c ?? coeficienteC,
     }
-    onGuardar(resultadoFinal, inspeccion, inputs)
+    onGuardar(resultadoFinal, inspeccion, inputsConCosto)
   }
 
   return (
@@ -153,7 +181,49 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                 <>
                   <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
                   <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
-                  <Campo label="Costo reposición nuevo" name="costoReposicionM2" value={inputs.costoReposicionM2} onChange={handleInput} suffix="$/m²" hint="Costo de construir 1 m² nuevo hoy" />
+
+                  {/* Selector de tabulador de costos */}
+                  <div className="col-span-2 space-y-1">
+                    <Label>Tipo de construcción — tabulador ABBA</Label>
+                    {cargandoCostos ? (
+                      <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Cargando tabulador…</div>
+                    ) : costos.length === 0 ? (
+                      <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Sin tabulador — ingresa el costo manualmente</div>
+                    ) : (
+                      <select
+                        value={costoSeleccionado?.id ?? ''}
+                        onChange={e => handleSeleccionTipo(e.target.value)}
+                        className="w-full h-9 rounded-md border border-gray-200 px-3 text-sm focus:outline-none focus:border-blue-400"
+                      >
+                        <option value="">— Seleccionar tipo de construcción —</option>
+                        {Object.entries(porFuente).map(([fuente, items]) => (
+                          <optgroup key={fuente} label={fuente}>
+                            {items.map(c => (
+                              <option key={c.id} value={c.id}>
+                                {c.tipo} — {c.clave} · ${Number(c.precio_m2).toLocaleString('es-MX')}/m²
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    )}
+                    {costoSeleccionado && (
+                      <p className="text-xs text-gray-500">{costoSeleccionado.descripcion}</p>
+                    )}
+                  </div>
+
+                  <Campo
+                    label="Costo reposición nuevo"
+                    name="costoReposicionM2"
+                    value={inputs.costoReposicionM2}
+                    onChange={handleCostoInput}
+                    suffix="$/m²"
+                    hint="Costo de construir 1 m² nuevo hoy"
+                    hintWarning={costoManual && costoSeleccionado
+                      ? `⚠ Ajustado manualmente. Tabulador ${costoSeleccionado.fuente}: $${Number(costoSeleccionado.precio_m2).toLocaleString('es-MX')}/m²`
+                      : null
+                    }
+                  />
                   <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
                   <div className="col-span-2">
                     <EdadPonderadaInput
