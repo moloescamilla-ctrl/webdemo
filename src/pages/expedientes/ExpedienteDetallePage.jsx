@@ -1,9 +1,12 @@
 import { useParams, Link } from 'react-router-dom'
+import { PDFDownloadLink } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
+import { useFotosExpediente } from '@/hooks/useFotosExpediente'
+import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown } from 'lucide-react'
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -30,7 +33,12 @@ function Row({ label, value }) {
 
 export function ExpedienteDetallePage() {
   const { id } = useParams()
-  const { expediente, metodoFisico, inspeccion, metodoComparativo, loading, error } = useExpediente(id)
+  const {
+    expediente, entorno, terreno, descripcionConstruccion,
+    metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
+    loading, error,
+  } = useExpediente(id)
+  const { fotos } = useFotosExpediente(id)
 
   if (loading) {
     return (
@@ -84,6 +92,25 @@ export function ExpedienteDetallePage() {
           <Pencil className="h-3.5 w-3.5" />
           Editar
         </Link>
+        <PDFDownloadLink
+          document={<AvaluoPDF datos={{
+            expediente, entorno, terreno, descripcionConstruccion,
+            inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos,
+          }} />}
+          fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
+        >
+          {({ loading: pdfLoading }) => (
+            <button
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              disabled={pdfLoading}
+            >
+              {pdfLoading
+                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generando...</>
+                : <><FileDown className="h-3.5 w-3.5" /> Descargar dictamen</>
+              }
+            </button>
+          )}
+        </PDFDownloadLink>
       </div>
 
       <Card>
