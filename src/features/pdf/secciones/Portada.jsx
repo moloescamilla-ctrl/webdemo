@@ -1,33 +1,25 @@
 import '../fonts'
-import { Text, View, Image } from '@react-pdf/renderer'
+import { Text, View, Image, Svg, Polygon } from '@react-pdf/renderer'
 import { COLORES } from '../estilos'
 import { sa, formatDate } from '../utils'
 
-const PAD = 45  // padding horizontal igual al resto del documento
+const PAD = 45
 
-// Sustituye este componente por <Image src={tuLogoUrl} style={{ width: 56, height: 56 }} />
-// cuando tengas el archivo de logotipo disponible
-function LogoPlaceholder() {
+// Símbolo geométrico extraído del SVG oficial de COVINSA
+// Renderizado en blanco sobre el fondo azul oscuro del header
+function LogoMark({ width = 56 }) {
+  const height = width * (238 / 345)
   return (
-    <View style={{
-      width: 52,
-      height: 52,
-      borderWidth: 1.5,
-      borderColor: 'rgba(255,255,255,0.5)',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'rgba(255,255,255,0.1)',
-    }}>
-      <Text style={{
-        fontSize: 26,
-        fontFamily: 'Helvetica-Bold',
-        color: COLORES.blanco,
-      }}>C</Text>
-    </View>
+    <Svg viewBox="226 77 345 238" width={width} height={height}>
+      <Polygon
+        points="570.56 315.16 507.14 315.16 507.14 208.79 398.35 153.51 289.57 208.79 289.57 292.57 306.92 292.57 306.92 224.52 398.35 178.06 489.79 224.52 489.79 315.16 467.2 315.16 467.2 238.38 398.35 203.4 329.51 238.38 329.51 315.16 266.98 315.16 266.98 194.93 398.35 128.17 529.73 194.93 529.73 292.57 547.96 292.57 547.96 178.55 398.35 102.52 248.74 178.55 248.74 315.16 226.15 315.16 226.15 164.69 398.35 77.19 570.56 164.69 570.56 315.16"
+        fill="white"
+      />
+    </Svg>
   )
 }
 
-export default function Portada({ expediente, fotoFachada, logoSrc }) {
+export default function Portada({ expediente, fotoFachada }) {
   const dir = [
     expediente.calle,
     expediente.numero_oficial,
@@ -40,39 +32,36 @@ export default function Portada({ expediente, fotoFachada, logoSrc }) {
   return (
     <View style={{ flex: 1 }}>
 
-      {/* ── Cabecera de marca: Logo | COVINSA | Tipo documento ── */}
+      {/* ── Header: Logo | COVINSA Montserrat | Tipo documento ── */}
       <View style={{
         backgroundColor: COLORES.primario,
-        paddingTop: 24,
-        paddingBottom: 20,
+        paddingTop: 22,
+        paddingBottom: 18,
         paddingHorizontal: PAD,
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-        {/* Logo (izquierda) */}
-        <View style={{ width: 64 }}>
-          {logoSrc
-            ? <Image src={logoSrc} style={{ width: 52, height: 52, objectFit: 'contain' }} />
-            : <LogoPlaceholder />
-          }
+        {/* Símbolo geométrico COVINSA (izquierda) */}
+        <View style={{ width: 68, justifyContent: 'center' }}>
+          <LogoMark width={54} />
         </View>
 
-        {/* COVINSA (centro) */}
+        {/* COVINSA en Montserrat Bold (centro) */}
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={{
             fontFamily: 'Montserrat',
             fontWeight: 700,
-            fontSize: 28,
+            fontSize: 27,
             color: COLORES.blanco,
-            letterSpacing: 6,
+            letterSpacing: 7,
           }}>
             COVINSA
           </Text>
           <Text style={{
             fontSize: 7.5,
             color: '#93c5fd',
-            marginTop: 4,
-            letterSpacing: 0.8,
+            marginTop: 5,
+            letterSpacing: 0.6,
           }}>
             Construccion, Valuacion e Ingenieria
           </Text>
@@ -80,20 +69,20 @@ export default function Portada({ expediente, fotoFachada, logoSrc }) {
 
         {/* Tipo de documento (derecha) */}
         <View style={{ width: 96, alignItems: 'flex-end' }}>
-          <Text style={{ fontSize: 7, color: '#93c5fd', marginBottom: 3 }}>
+          <Text style={{ fontSize: 6.5, color: '#93c5fd', marginBottom: 2, letterSpacing: 0.5 }}>
             DICTAMEN
           </Text>
-          <Text style={{ fontSize: 7, color: '#93c5fd', marginBottom: 3 }}>
+          <Text style={{ fontSize: 6.5, color: '#93c5fd', marginBottom: 6, letterSpacing: 0.5 }}>
             VALUATORIO
           </Text>
-          <View style={{ height: 0.5, backgroundColor: 'rgba(255,255,255,0.25)', width: '100%', marginVertical: 4 }} />
+          <View style={{ height: 0.5, backgroundColor: 'rgba(255,255,255,0.2)', width: '100%', marginBottom: 6 }} />
           <Text style={{ fontSize: 7, color: COLORES.blanco, textAlign: 'right' }}>
             {sa(expediente.proposito_avaluo || 'Avaluo Inmobiliario')}
           </Text>
         </View>
       </View>
 
-      {/* ── Banda de acento ── */}
+      {/* Banda de acento verde */}
       <View style={{ backgroundColor: COLORES.acento, height: 3 }} />
 
       {/* ── Foto de fachada ── */}
@@ -103,7 +92,6 @@ export default function Portada({ expediente, fotoFachada, logoSrc }) {
             src={fotoFachada}
             style={{ width: '100%', height: 234, objectFit: 'cover' }}
           />
-          {/* Leyenda sobre overlay oscuro */}
           <View style={{
             position: 'absolute',
             bottom: 0,
@@ -138,10 +126,10 @@ export default function Portada({ expediente, fotoFachada, logoSrc }) {
         </View>
       )}
 
-      {/* ── Cuerpo: datos del inmueble ── */}
+      {/* ── Datos del inmueble ── */}
       <View style={{ flex: 1, paddingHorizontal: PAD, paddingTop: 18 }}>
 
-        {/* Folio con acento verde */}
+        {/* Folio */}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
           <View style={{ width: 3, height: 34, backgroundColor: COLORES.acento, marginRight: 10 }} />
           <View>
@@ -152,7 +140,7 @@ export default function Portada({ expediente, fotoFachada, logoSrc }) {
           </View>
         </View>
 
-        {/* Tipo + propósito en dos columnas */}
+        {/* Tipo + propósito */}
         <View style={{
           flexDirection: 'row',
           borderTopWidth: 0.5,
@@ -211,7 +199,6 @@ export default function Portada({ expediente, fotoFachada, logoSrc }) {
             </Text>
           )}
         </View>
-
         {expediente.clave_perito && (
           <View style={{
             borderWidth: 0.5,
