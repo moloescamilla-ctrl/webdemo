@@ -1,23 +1,10 @@
 import '../fonts'
-import { Text, View, Image, Svg, Polygon } from '@react-pdf/renderer'
+import { Text, View, Image } from '@react-pdf/renderer'
+import logoCovinsa from '@/assets/logo-covinsa.png'
 import { COLORES } from '../estilos'
 import { sa, formatDate } from '../utils'
 
 const PAD = 45
-
-// Símbolo geométrico extraído del SVG oficial de COVINSA
-// Renderizado en blanco sobre el fondo azul oscuro del header
-function LogoMark({ width = 56 }) {
-  const height = width * (238 / 345)
-  return (
-    <Svg viewBox="226 77 345 238" width={width} height={height}>
-      <Polygon
-        points="570.56 315.16 507.14 315.16 507.14 208.79 398.35 153.51 289.57 208.79 289.57 292.57 306.92 292.57 306.92 224.52 398.35 178.06 489.79 224.52 489.79 315.16 467.2 315.16 467.2 238.38 398.35 203.4 329.51 238.38 329.51 315.16 266.98 315.16 266.98 194.93 398.35 128.17 529.73 194.93 529.73 292.57 547.96 292.57 547.96 178.55 398.35 102.52 248.74 178.55 248.74 315.16 226.15 315.16 226.15 164.69 398.35 77.19 570.56 164.69 570.56 315.16"
-        fill="white"
-      />
-    </Svg>
-  )
-}
 
 export default function Portada({ expediente, fotoFachada }) {
   const dir = [
@@ -41,9 +28,19 @@ export default function Portada({ expediente, fotoFachada }) {
         flexDirection: 'row',
         alignItems: 'center',
       }}>
-        {/* Símbolo geométrico COVINSA (izquierda) */}
-        <View style={{ width: 68, justifyContent: 'center' }}>
-          <LogoMark width={54} />
+        {/* Logo COVINSA en caja blanca (izquierda) */}
+        <View style={{
+          backgroundColor: COLORES.blanco,
+          paddingHorizontal: 8,
+          paddingVertical: 6,
+          marginRight: 18,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Image
+            src={logoCovinsa}
+            style={{ width: 82, height: 64, objectFit: 'contain' }}
+          />
         </View>
 
         {/* COVINSA en Montserrat Bold (centro) */}
