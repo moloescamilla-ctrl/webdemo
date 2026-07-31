@@ -43,7 +43,7 @@ export function AvaluoPDF({ datos }) {
       subject="Avaluo inmobiliario"
     >
       {/* Portada — Síntesis Informativa */}
-      <Page size="A4" style={styles.paginaPortada}>
+      <Page size="LETTER" style={styles.paginaPortada}>
         <Portada
           expediente={expediente}
           fotoFachada={fotoFachada}
@@ -58,7 +58,7 @@ export function AvaluoPDF({ datos }) {
       </Page>
 
       {/* Contenido completo en una sola página — react-pdf pagina automáticamente */}
-      <Page size="A4" style={styles.pagina}>
+      <Page size="LETTER" style={styles.pagina}>
         <DatosGenerales expediente={expediente} />
         <CroquisLocalizacion croquisSrc={croquisSrc} lat={expediente?.latitud} lng={expediente?.longitud} />
         <Entorno entorno={entorno} />
