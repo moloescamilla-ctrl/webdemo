@@ -1,10 +1,33 @@
+import '../fonts'
 import { Text, View, Image } from '@react-pdf/renderer'
 import { COLORES } from '../estilos'
 import { sa, formatDate } from '../utils'
 
 const PAD = 45  // padding horizontal igual al resto del documento
 
-export default function Portada({ expediente, fotoFachada }) {
+// Sustituye este componente por <Image src={tuLogoUrl} style={{ width: 56, height: 56 }} />
+// cuando tengas el archivo de logotipo disponible
+function LogoPlaceholder() {
+  return (
+    <View style={{
+      width: 52,
+      height: 52,
+      borderWidth: 1.5,
+      borderColor: 'rgba(255,255,255,0.5)',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(255,255,255,0.1)',
+    }}>
+      <Text style={{
+        fontSize: 26,
+        fontFamily: 'Helvetica-Bold',
+        color: COLORES.blanco,
+      }}>C</Text>
+    </View>
+  )
+}
+
+export default function Portada({ expediente, fotoFachada, logoSrc }) {
   const dir = [
     expediente.calle,
     expediente.numero_oficial,
@@ -17,67 +40,87 @@ export default function Portada({ expediente, fotoFachada }) {
   return (
     <View style={{ flex: 1 }}>
 
-      {/* ── Cabecera de marca ── */}
+      {/* ── Cabecera de marca: Logo | COVINSA | Tipo documento ── */}
       <View style={{
         backgroundColor: COLORES.primario,
-        paddingTop: 28,
-        paddingBottom: 18,
+        paddingTop: 24,
+        paddingBottom: 20,
         paddingHorizontal: PAD,
         flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
+        alignItems: 'center',
       }}>
-        <View>
+        {/* Logo (izquierda) */}
+        <View style={{ width: 64 }}>
+          {logoSrc
+            ? <Image src={logoSrc} style={{ width: 52, height: 52, objectFit: 'contain' }} />
+            : <LogoPlaceholder />
+          }
+        </View>
+
+        {/* COVINSA (centro) */}
+        <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={{
-            fontSize: 26,
-            fontFamily: 'Helvetica-Bold',
+            fontFamily: 'Montserrat',
+            fontWeight: 700,
+            fontSize: 28,
             color: COLORES.blanco,
-            letterSpacing: 5,
+            letterSpacing: 6,
           }}>
             COVINSA
           </Text>
-          <Text style={{ fontSize: 8, color: '#93c5fd', marginTop: 3, letterSpacing: 0.5 }}>
+          <Text style={{
+            fontSize: 7.5,
+            color: '#93c5fd',
+            marginTop: 4,
+            letterSpacing: 0.8,
+          }}>
             Construccion, Valuacion e Ingenieria
           </Text>
         </View>
-        <View style={{ alignItems: 'flex-end' }}>
-          <Text style={{ fontSize: 7, color: '#93c5fd' }}>DICTAMEN VALUATORIO</Text>
-          <Text style={{ fontSize: 7, color: COLORES.blanco, marginTop: 2, fontFamily: 'Helvetica-Bold' }}>
+
+        {/* Tipo de documento (derecha) */}
+        <View style={{ width: 96, alignItems: 'flex-end' }}>
+          <Text style={{ fontSize: 7, color: '#93c5fd', marginBottom: 3 }}>
+            DICTAMEN
+          </Text>
+          <Text style={{ fontSize: 7, color: '#93c5fd', marginBottom: 3 }}>
+            VALUATORIO
+          </Text>
+          <View style={{ height: 0.5, backgroundColor: 'rgba(255,255,255,0.25)', width: '100%', marginVertical: 4 }} />
+          <Text style={{ fontSize: 7, color: COLORES.blanco, textAlign: 'right' }}>
             {sa(expediente.proposito_avaluo || 'Avaluo Inmobiliario')}
           </Text>
         </View>
       </View>
 
-      {/* ── Banda de color secundario ── */}
-      <View style={{
-        backgroundColor: COLORES.secundario,
-        height: 4,
-      }} />
+      {/* ── Banda de acento ── */}
+      <View style={{ backgroundColor: COLORES.acento, height: 3 }} />
 
       {/* ── Foto de fachada ── */}
       {fotoFachada ? (
         <View>
           <Image
             src={fotoFachada}
-            style={{ width: '100%', height: 230, objectFit: 'cover' }}
+            style={{ width: '100%', height: 234, objectFit: 'cover' }}
           />
+          {/* Leyenda sobre overlay oscuro */}
           <View style={{
-            backgroundColor: 'rgba(0,0,0,0.45)',
             position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
-            paddingVertical: 5,
+            paddingVertical: 6,
             paddingHorizontal: PAD,
+            backgroundColor: 'rgba(0,0,0,0.40)',
           }}>
-            <Text style={{ fontSize: 7, color: COLORES.blanco, opacity: 0.9 }}>
+            <Text style={{ fontSize: 7, color: COLORES.blanco }}>
               Vista exterior del inmueble
             </Text>
           </View>
         </View>
       ) : (
         <View style={{
-          height: 230,
+          height: 234,
           backgroundColor: COLORES.grisClaro,
           borderBottomWidth: 0.5,
           borderBottomColor: COLORES.borde,
@@ -96,23 +139,14 @@ export default function Portada({ expediente, fotoFachada }) {
       )}
 
       {/* ── Cuerpo: datos del inmueble ── */}
-      <View style={{ flex: 1, paddingHorizontal: PAD, paddingTop: 20 }}>
+      <View style={{ flex: 1, paddingHorizontal: PAD, paddingTop: 18 }}>
 
         {/* Folio con acento verde */}
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginBottom: 18,
-        }}>
-          <View style={{
-            width: 3,
-            height: 36,
-            backgroundColor: COLORES.acento,
-            marginRight: 10,
-          }} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+          <View style={{ width: 3, height: 34, backgroundColor: COLORES.acento, marginRight: 10 }} />
           <View>
             <Text style={{ fontSize: 7, color: COLORES.gris, marginBottom: 2 }}>FOLIO DEL EXPEDIENTE</Text>
-            <Text style={{ fontSize: 18, fontFamily: 'Helvetica-Bold', color: COLORES.primario }}>
+            <Text style={{ fontSize: 17, fontFamily: 'Helvetica-Bold', color: COLORES.primario }}>
               {sa(expediente.folio || expediente.id?.slice(0, 8).toUpperCase() || '—')}
             </Text>
           </View>
@@ -143,9 +177,7 @@ export default function Portada({ expediente, fotoFachada }) {
         {/* Dirección */}
         <View style={{ marginBottom: 10 }}>
           <Text style={{ fontSize: 7, color: COLORES.gris, marginBottom: 2 }}>UBICACION DEL INMUEBLE</Text>
-          <Text style={{ fontSize: 9, color: COLORES.texto }}>
-            {dir || '—'}
-          </Text>
+          <Text style={{ fontSize: 9, color: COLORES.texto }}>{dir || '—'}</Text>
         </View>
 
         {/* Fecha */}
