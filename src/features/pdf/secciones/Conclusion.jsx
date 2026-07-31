@@ -1,43 +1,6 @@
 import { Text, View } from '@react-pdf/renderer'
 import { styles, COLORES } from '../estilos'
-import { sa, formatCurrency, formatDate } from '../utils'
-
-// Convierte número a letras (centenas de millones máx)
-function numeroALetras(n) {
-  if (!n || isNaN(n)) return '—'
-  const unidades = ['','UN','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE']
-  const decenas  = ['','DIEZ','VEINTE','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA']
-  const especial  = ['ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISEIS','DIECISIETE','DIECIOCHO','DIECINUEVE']
-  const centenas = ['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS','SETECIENTOS','OCHOCIENTOS','NOVECIENTOS']
-
-  const num = Math.round(Number(n))
-  if (num === 0) return 'CERO'
-  if (num === 100) return 'CIEN'
-  if (num >= 1000000) {
-    const mill = Math.floor(num / 1000000)
-    const rest = num % 1000000
-    const millStr = mill === 1 ? 'UN MILLON' : `${numeroALetras(mill)} MILLONES`
-    return rest > 0 ? `${millStr} ${numeroALetras(rest)}` : millStr
-  }
-  if (num >= 1000) {
-    const miles = Math.floor(num / 1000)
-    const rest  = num % 1000
-    const milesStr = miles === 1 ? 'MIL' : `${numeroALetras(miles)} MIL`
-    return rest > 0 ? `${milesStr} ${numeroALetras(rest)}` : milesStr
-  }
-  if (num >= 100) {
-    const c = Math.floor(num / 100)
-    const r = num % 100
-    return r > 0 ? `${centenas[c]} ${numeroALetras(r)}` : centenas[c]
-  }
-  if (num > 10 && num < 20) return especial[num - 11]
-  if (num >= 10) {
-    const d = Math.floor(num / 10)
-    const u = num % 10
-    return u > 0 ? `${decenas[d]} Y ${unidades[u]}` : decenas[d]
-  }
-  return unidades[num]
-}
+import { sa, formatCurrency, formatDate, numeroALetras } from '../utils'
 
 export default function Conclusion({ metodoFisico, metodoComparativo, metodoRentas, metodoResidual, expediente }) {
   const metodos = [

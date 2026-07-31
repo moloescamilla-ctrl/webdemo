@@ -25,9 +25,23 @@ export function useExpedientes() {
   }
 
   async function crearExpediente(datos) {
+    const now = new Date()
+    const dd = String(now.getDate()).padStart(2, '0')
+    const mm = String(now.getMonth() + 1).padStart(2, '0')
+    const yy = String(now.getFullYear()).slice(-2)
+    const prefijo = `${dd}${mm}${yy}`
+
+    const { data: foliosHoy } = await supabase
+      .from('expedientes')
+      .select('folio')
+      .like('folio', `${prefijo}-%`)
+
+    const consecutivo = String((foliosHoy?.length ?? 0) + 1).padStart(2, '0')
+    const folio = `${prefijo}-${consecutivo}`
+
     const { data, error } = await supabase
       .from('expedientes')
-      .insert({ ...datos, perito_id: user.id })
+      .insert({ ...datos, perito_id: user.id, folio })
       .select()
       .single()
     if (error) throw new Error(error.message)

@@ -1,21 +1,22 @@
 import { Document, Page } from '@react-pdf/renderer'
-import { styles, COLORES } from './estilos'
-import { PiePagina }         from './secciones/PiePagina'
-import Portada               from './secciones/Portada'
-import DatosGenerales        from './secciones/DatosGenerales'
-import CroquisLocalizacion   from './secciones/CroquisLocalizacion'
-import Entorno               from './secciones/Entorno'
-import Terreno               from './secciones/Terreno'
-import Construcciones        from './secciones/Construcciones'
-import Inspeccion            from './secciones/Inspeccion'
-import MetodoFisico          from './secciones/MetodoFisico'
-import MetodoComparativo     from './secciones/MetodoComparativo'
-import MetodoRentasSec       from './secciones/MetodoRentas'
-import MetodoResidualSec     from './secciones/MetodoResidual'
-import Conclusion            from './secciones/Conclusion'
-import Declaraciones         from './secciones/Declaraciones'
-import Fotografias           from './secciones/Fotografias'
-import Firma                 from './secciones/Firma'
+import { styles }               from './estilos'
+import { PiePagina }            from './secciones/PiePagina'
+import Portada                  from './secciones/Portada'
+import DatosGenerales           from './secciones/DatosGenerales'
+import CroquisLocalizacion      from './secciones/CroquisLocalizacion'
+import Entorno                  from './secciones/Entorno'
+import Terreno                  from './secciones/Terreno'
+import Construcciones           from './secciones/Construcciones'
+import Inspeccion               from './secciones/Inspeccion'
+import MetodoFisico             from './secciones/MetodoFisico'
+import MetodoComparativo        from './secciones/MetodoComparativo'
+import MetodoRentasSec          from './secciones/MetodoRentas'
+import MetodoResidualSec        from './secciones/MetodoResidual'
+import Conclusion               from './secciones/Conclusion'
+import Declaraciones            from './secciones/Declaraciones'
+import Fotografias              from './secciones/Fotografias'
+import ResumenEjecutivo         from './secciones/ResumenEjecutivo'
+import Firma                    from './secciones/Firma'
 
 export function AvaluoPDF({ datos }) {
   const {
@@ -41,67 +42,32 @@ export function AvaluoPDF({ datos }) {
       author={expediente?.nombre_perito || 'Perito Valuador'}
       subject="Avaluo inmobiliario"
     >
-      {/* Página 1: Portada */}
+      {/* Portada — sangre completa, sin padding lateral */}
       <Page size="A4" style={styles.paginaPortada}>
         <Portada expediente={expediente} fotoFachada={fotoFachada} />
         <PiePagina expediente={expediente} />
       </Page>
 
-      {/* Página 2: Datos generales + Croquis */}
+      {/* Contenido completo en una sola página — react-pdf pagina automáticamente */}
       <Page size="A4" style={styles.pagina}>
         <DatosGenerales expediente={expediente} />
         <CroquisLocalizacion croquisSrc={croquisSrc} lat={expediente?.latitud} lng={expediente?.longitud} />
-        <PiePagina expediente={expediente} />
-      </Page>
-
-      {/* Página 3: Entorno + Terreno */}
-      <Page size="A4" style={styles.pagina}>
         <Entorno entorno={entorno} />
         <Terreno terreno={terreno} />
-        <PiePagina expediente={expediente} />
-      </Page>
-
-      {/* Página 4: Construcciones + Inspección */}
-      <Page size="A4" style={styles.pagina}>
         <Construcciones descripcion={descripcionConstruccion} />
         <Inspeccion inspeccion={inspeccion} />
-        <PiePagina expediente={expediente} />
-      </Page>
-
-      {/* Página 5: Método Físico */}
-      {metodoFisico && (
-        <Page size="A4" style={styles.pagina}>
+        {metodoFisico && (
           <MetodoFisico metodo={metodoFisico} inspeccion={inspeccion} />
-          <PiePagina expediente={expediente} />
-        </Page>
-      )}
-
-      {/* Página 6: Método Comparativo */}
-      {metodoComparativo && (
-        <Page size="A4" style={styles.pagina}>
+        )}
+        {metodoComparativo && (
           <MetodoComparativo metodo={metodoComparativo} />
-          <PiePagina expediente={expediente} />
-        </Page>
-      )}
-
-      {/* Página 7: Método Rentas (condicional) */}
-      {metodoRentas && (
-        <Page size="A4" style={styles.pagina}>
+        )}
+        {metodoRentas && (
           <MetodoRentasSec metodo={metodoRentas} />
-          <PiePagina expediente={expediente} />
-        </Page>
-      )}
-
-      {/* Página 8: Método Residual (condicional) */}
-      {metodoResidual && (
-        <Page size="A4" style={styles.pagina}>
+        )}
+        {metodoResidual && (
           <MetodoResidualSec metodo={metodoResidual} />
-          <PiePagina expediente={expediente} />
-        </Page>
-      )}
-
-      {/* Página 9: Conclusión + Declaraciones */}
-      <Page size="A4" style={styles.pagina}>
+        )}
         <Conclusion
           metodoFisico={metodoFisico}
           metodoComparativo={metodoComparativo}
@@ -110,19 +76,14 @@ export function AvaluoPDF({ datos }) {
           expediente={expediente}
         />
         <Declaraciones />
-        <PiePagina expediente={expediente} />
-      </Page>
-
-      {/* Página 10: Fotografías (condicional) */}
-      {fotos?.length > 0 && (
-        <Page size="A4" style={styles.pagina}>
-          <Fotografias fotos={fotos} />
-          <PiePagina expediente={expediente} />
-        </Page>
-      )}
-
-      {/* Última página: Firma */}
-      <Page size="A4" style={styles.pagina}>
+        {fotos?.length > 0 && <Fotografias fotos={fotos} />}
+        <ResumenEjecutivo
+          metodoFisico={metodoFisico}
+          metodoComparativo={metodoComparativo}
+          metodoRentas={metodoRentas}
+          metodoResidual={metodoResidual}
+          expediente={expediente}
+        />
         <Firma expediente={expediente} />
         <PiePagina expediente={expediente} />
       </Page>
