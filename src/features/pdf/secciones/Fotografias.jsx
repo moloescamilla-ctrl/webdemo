@@ -3,11 +3,16 @@ import { styles } from '../estilos'
 import { sa } from '../utils'
 
 const CATEGORIAS = {
-  fachada:      'Fachada',
-  entorno:      'Entorno',
-  interior:     'Interior',
-  construccion: 'Construccion',
-  adicionales:  'Elementos adicionales',
+  fachada:   'Fachada',
+  entorno:   'Entorno',
+  acceso:    'Acceso al inmueble',
+  sala:      'Sala',
+  comedor:   'Comedor',
+  cocina:    'Cocina',
+  bano:      'Bano',
+  recamara1: 'Recamara 1',
+  recamara2: 'Recamara 2',
+  extra:     'Extra',
 }
 
 export default function Fotografias({ fotos }) {

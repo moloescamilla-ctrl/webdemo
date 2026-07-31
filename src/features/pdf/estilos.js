@@ -23,6 +23,14 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 45,
   },
 
+  // Página sin padding para portada con header y foto a sangre completa
+  paginaPortada: {
+    fontFamily: 'Helvetica',
+    fontSize: 9,
+    color: COLORES.texto,
+    paddingBottom: 54,
+  },
+
   seccionTitulo: {
     fontSize: 10,
     fontFamily: 'Helvetica-Bold',

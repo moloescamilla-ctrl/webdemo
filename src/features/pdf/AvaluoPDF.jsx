@@ -1,5 +1,5 @@
 import { Document, Page } from '@react-pdf/renderer'
-import { styles } from './estilos'
+import { styles, COLORES } from './estilos'
 import { PiePagina }         from './secciones/PiePagina'
 import Portada               from './secciones/Portada'
 import DatosGenerales        from './secciones/DatosGenerales'
@@ -33,6 +33,7 @@ export function AvaluoPDF({ datos }) {
   } = datos
 
   const folio = expediente?.folio || expediente?.id?.slice(0, 8).toUpperCase() || 'AVALUO'
+  const fotoFachada = fotos?.find(f => f.categoria === 'fachada')?.url_storage ?? null
 
   return (
     <Document
@@ -41,8 +42,8 @@ export function AvaluoPDF({ datos }) {
       subject="Avaluo inmobiliario"
     >
       {/* Página 1: Portada */}
-      <Page size="A4" style={styles.pagina}>
-        <Portada expediente={expediente} />
+      <Page size="A4" style={styles.paginaPortada}>
+        <Portada expediente={expediente} fotoFachada={fotoFachada} />
         <PiePagina expediente={expediente} />
       </Page>
 
