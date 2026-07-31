@@ -19,11 +19,11 @@ export default function Portada({ expediente, fotoFachada }) {
   return (
     <View style={{ flex: 1 }}>
 
-      {/* ── Header: Logo | COVINSA Montserrat | Tipo documento ── */}
+      {/* ── Header: Logo | Datos del despacho | Tipo documento ── */}
       <View style={{
         backgroundColor: COLORES.primario,
-        paddingTop: 22,
-        paddingBottom: 18,
+        paddingTop: 14,
+        paddingBottom: 14,
         paddingHorizontal: PAD,
         flexDirection: 'row',
         alignItems: 'center',
@@ -32,32 +32,28 @@ export default function Portada({ expediente, fotoFachada }) {
         <View style={{ marginRight: 20, justifyContent: 'center' }}>
           <Image
             src={logoCovinsa}
-            style={{ width: 110, height: 86, objectFit: 'contain' }}
+            style={{ width: 100, height: 78, objectFit: 'contain' }}
           />
         </View>
 
-        {/* COVINSA en Montserrat Bold (centro) */}
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={{
-            fontFamily: 'Montserrat',
-            fontSize: 27,
-            color: COLORES.blanco,
-            letterSpacing: 7,
-          }}>
-            COVINSA
+        {/* Datos del despacho (centro) */}
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <Text style={{ fontSize: 7.5, color: COLORES.blanco, marginBottom: 3 }}>
+            RETORNO CITLALLI No. 27
           </Text>
-          <Text style={{
-            fontSize: 7.5,
-            color: '#93c5fd',
-            marginTop: 5,
-            letterSpacing: 0.6,
-          }}>
-            Construccion, Valuacion e Ingenieria
+          <Text style={{ fontSize: 7.5, color: COLORES.blanco, marginBottom: 3 }}>
+            COL. EL ESPINAL, C.P. 94330
+          </Text>
+          <Text style={{ fontSize: 7.5, color: COLORES.blanco, marginBottom: 3 }}>
+            ORIZABA, VER.
+          </Text>
+          <Text style={{ fontSize: 7.5, color: '#93c5fd' }}>
+            TEL. 272 721 69 55
           </Text>
         </View>
 
         {/* Tipo de documento (derecha) */}
-        <View style={{ width: 96, alignItems: 'flex-end' }}>
+        <View style={{ width: 90, alignItems: 'flex-end' }}>
           <Text style={{ fontSize: 6.5, color: '#93c5fd', marginBottom: 2, letterSpacing: 0.5 }}>
             DICTAMEN
           </Text>
