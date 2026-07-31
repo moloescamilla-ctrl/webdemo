@@ -83,7 +83,7 @@ export default function Fotografias({ fotos }) {
       <Text style={styles.seccionTitulo}>15. FOTOGRAFIAS DE LA INSPECCION</Text>
 
       {pares.map((par, rowIdx) => (
-        <View key={rowIdx} style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        <View key={rowIdx} wrap={false} style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
           <TarjetaFoto
             foto={par[0]}
             etiqueta={ETIQUETAS[par[0].categoria] ?? par[0].categoria}
