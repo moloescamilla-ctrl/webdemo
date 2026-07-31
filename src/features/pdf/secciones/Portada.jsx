@@ -29,10 +29,10 @@ export default function Portada({ expediente, fotoFachada }) {
         alignItems: 'center',
       }}>
         {/* Logo COVINSA blanco (izquierda) */}
-        <View style={{ marginRight: 18, justifyContent: 'center' }}>
+        <View style={{ marginRight: 20, justifyContent: 'center' }}>
           <Image
             src={logoCovinsa}
-            style={{ width: 86, height: 68, objectFit: 'contain' }}
+            style={{ width: 110, height: 86, objectFit: 'contain' }}
           />
         </View>
 
@@ -40,7 +40,6 @@ export default function Portada({ expediente, fotoFachada }) {
         <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={{
             fontFamily: 'Montserrat',
-            fontWeight: 700,
             fontSize: 27,
             color: COLORES.blanco,
             letterSpacing: 7,

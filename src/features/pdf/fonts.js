@@ -3,5 +3,5 @@ import MontserratBold from '@fontsource/montserrat/files/montserrat-latin-700-no
 
 Font.register({
   family: 'Montserrat',
-  fonts: [{ src: MontserratBold, fontWeight: 700 }],
+  src: MontserratBold,
 })
