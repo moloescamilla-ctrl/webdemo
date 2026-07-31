@@ -42,9 +42,18 @@ export function AvaluoPDF({ datos }) {
       author={expediente?.nombre_perito || 'Perito Valuador'}
       subject="Avaluo inmobiliario"
     >
-      {/* Portada — sangre completa, sin padding lateral */}
+      {/* Portada — Síntesis Informativa */}
       <Page size="A4" style={styles.paginaPortada}>
-        <Portada expediente={expediente} fotoFachada={fotoFachada} />
+        <Portada
+          expediente={expediente}
+          fotoFachada={fotoFachada}
+          descripcionConstruccion={descripcionConstruccion}
+          metodoFisico={metodoFisico}
+          metodoComparativo={metodoComparativo}
+          metodoRentas={metodoRentas}
+          metodoResidual={metodoResidual}
+          entorno={entorno}
+        />
         <PiePagina expediente={expediente} />
       </Page>
 
