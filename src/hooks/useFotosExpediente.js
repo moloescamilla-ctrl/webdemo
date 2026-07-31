@@ -33,7 +33,7 @@ export function useFotosExpediente(expedienteId) {
 
     const { data: registro, error: dbErr } = await supabase
       .from('fotos_expediente')
-      .insert({ expediente_id: expedienteId, categoria, url_storage: publicUrl, nombre_archivo: file.name, orden: Date.now() })
+      .insert({ expediente_id: expedienteId, categoria, url_storage: publicUrl, nombre_archivo: file.name, orden: Math.floor(Date.now() / 1000)})
       .select()
       .single()
     if (dbErr) throw dbErr
