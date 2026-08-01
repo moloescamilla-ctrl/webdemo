@@ -64,8 +64,16 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 DECLARE
-  v_compartido compartidos%ROWTYPE;
-  v_result     JSON;
+  v_compartido          compartidos%ROWTYPE;
+  v_entorno             JSON := NULL;
+  v_terreno             JSON := NULL;
+  v_descripcion         JSON := NULL;
+  v_inspeccion          JSON := NULL;
+  v_metodo_fisico       JSON := NULL;
+  v_metodo_comparativo  JSON := NULL;
+  v_metodo_rentas       JSON := NULL;
+  v_metodo_residual     JSON := NULL;
+  v_fotos               JSON := '[]'::JSON;
 BEGIN
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'No autenticado';
@@ -79,25 +87,60 @@ BEGIN
     RAISE EXCEPTION 'Enlace invalido o expirado';
   END IF;
 
-  SELECT json_build_object(
+  -- Cada tabla es opcional; si no existe se deja NULL sin romper la función
+  BEGIN
+    SELECT row_to_json(en) INTO v_entorno FROM entorno_inmueble en WHERE en.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(t) INTO v_terreno FROM caracteristicas_terreno t WHERE t.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(d) INTO v_descripcion FROM descripcion_construccion d WHERE d.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(i) INTO v_inspeccion FROM inspecciones_fisicas i WHERE i.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(mf) INTO v_metodo_fisico FROM metodos_fisicos mf WHERE mf.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(mc) INTO v_metodo_comparativo FROM metodos_comparativos mc WHERE mc.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(mr) INTO v_metodo_rentas FROM metodos_rentas mr WHERE mr.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT row_to_json(mres) INTO v_metodo_residual FROM metodos_residual mres WHERE mres.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  BEGIN
+    SELECT COALESCE(json_agg(f ORDER BY f.orden), '[]'::json) INTO v_fotos FROM fotos_expediente f WHERE f.expediente_id = v_compartido.expediente_id;
+  EXCEPTION WHEN undefined_table THEN NULL; END;
+
+  RETURN json_build_object(
     'compartido', json_build_object(
       'id',        v_compartido.id,
       'token',     v_compartido.token,
       'expira_en', v_compartido.expira_en
     ),
-    'expediente',            (SELECT row_to_json(e)  FROM expedientes e             WHERE e.id = v_compartido.expediente_id),
-    'entorno',               (SELECT row_to_json(en) FROM entorno_inmueble en       WHERE en.expediente_id = v_compartido.expediente_id),
-    'terreno',               (SELECT row_to_json(t)  FROM caracteristicas_terreno t WHERE t.expediente_id = v_compartido.expediente_id),
-    'descripcionConstruccion',(SELECT row_to_json(d)  FROM descripcion_construccion d WHERE d.expediente_id = v_compartido.expediente_id),
-    'inspeccion',            (SELECT row_to_json(i)  FROM inspecciones_fisicas i    WHERE i.expediente_id = v_compartido.expediente_id),
-    'metodoFisico',          (SELECT row_to_json(mf) FROM metodos_fisicos mf        WHERE mf.expediente_id = v_compartido.expediente_id),
-    'metodoComparativo',     (SELECT row_to_json(mc) FROM metodos_comparativos mc   WHERE mc.expediente_id = v_compartido.expediente_id),
-    'metodoRentas',          (SELECT row_to_json(mr) FROM metodos_rentas mr         WHERE mr.expediente_id = v_compartido.expediente_id),
-    'metodoResidual',        (SELECT row_to_json(mres) FROM metodos_residual mres   WHERE mres.expediente_id = v_compartido.expediente_id),
-    'fotos',                 (SELECT COALESCE(json_agg(f ORDER BY f.orden), '[]'::json) FROM fotos_expediente f WHERE f.expediente_id = v_compartido.expediente_id)
-  ) INTO v_result;
-
-  RETURN v_result;
+    'expediente',             (SELECT row_to_json(e) FROM expedientes e WHERE e.id = v_compartido.expediente_id),
+    'entorno',                v_entorno,
+    'terreno',                v_terreno,
+    'descripcionConstruccion', v_descripcion,
+    'inspeccion',             v_inspeccion,
+    'metodoFisico',           v_metodo_fisico,
+    'metodoComparativo',      v_metodo_comparativo,
+    'metodoRentas',           v_metodo_rentas,
+    'metodoResidual',         v_metodo_residual,
+    'fotos',                  v_fotos
+  );
 END;
 $$;
 
