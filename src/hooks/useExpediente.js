@@ -11,6 +11,8 @@ export function useExpediente(id) {
   const [metodoComparativo, setMetodoComparativo] = useState(null)
   const [metodoRentas, setMetodoRentas] = useState(null)
   const [metodoResidual, setMetodoResidual] = useState(null)
+  const [esAutor, setEsAutor] = useState(false)
+  const [esRevisor, setEsRevisor] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -22,6 +24,7 @@ export function useExpediente(id) {
   async function fetchAll() {
     setLoading(true)
     setError(null)
+    const { data: { user } } = await supabase.auth.getUser()
     const [
       { data: exp, error: e1 },
       { data: ent },
@@ -32,6 +35,7 @@ export function useExpediente(id) {
       { data: mc },
       { data: mr },
       { data: mresidual },
+      { data: revInvitacion },
     ] = await Promise.all([
       supabase.from('expedientes').select('*').eq('id', id).single(),
       supabase.from('entorno_inmueble').select('*').eq('expediente_id', id).maybeSingle(),
@@ -42,6 +46,13 @@ export function useExpediente(id) {
       supabase.from('metodos_comparativos').select('*').eq('expediente_id', id).maybeSingle(),
       supabase.from('metodos_rentas').select('*').eq('expediente_id', id).maybeSingle(),
       supabase.from('metodos_residual').select('*').eq('expediente_id', id).maybeSingle(),
+      supabase
+        .from('revisiones_expediente')
+        .select('id')
+        .eq('expediente_id', id)
+        .eq('revisor_id', user?.id)
+        .in('estado', ['activa', 'cerrada'])
+        .maybeSingle(),
     ])
     if (e1) { setError(e1.message); setLoading(false); return }
     setExpediente(exp)
@@ -53,12 +64,15 @@ export function useExpediente(id) {
     setMetodoComparativo(mc)
     setMetodoRentas(mr)
     setMetodoResidual(mresidual)
+    setEsAutor(exp?.perito_id === user?.id)
+    setEsRevisor(!!revInvitacion)
     setLoading(false)
   }
 
   return {
     expediente, entorno, terreno, descripcionConstruccion,
     metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
+    esAutor, esRevisor,
     loading, error,
   }
 }

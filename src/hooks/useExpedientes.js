@@ -5,12 +5,14 @@ import { useAuth } from '@/hooks/useAuth'
 export function useExpedientes() {
   const { user } = useAuth()
   const [expedientes, setExpedientes] = useState([])
+  const [expedientesParaRevisar, setExpedientesParaRevisar] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!user) return
     fetchExpedientes()
+    fetchExpedientesParaRevisar()
   }, [user])
 
   async function fetchExpedientes() {
@@ -22,6 +24,22 @@ export function useExpedientes() {
     if (error) setError(error.message)
     else setExpedientes(data || [])
     setLoading(false)
+  }
+
+  async function fetchExpedientesParaRevisar() {
+    const { data: invitaciones } = await supabase
+      .from('revisiones_expediente')
+      .select('expediente_id')
+      .eq('revisor_id', user.id)
+      .eq('estado', 'activa')
+    if (!invitaciones?.length) { setExpedientesParaRevisar([]); return }
+    const ids = invitaciones.map(i => i.expediente_id)
+    const { data } = await supabase
+      .from('expedientes')
+      .select('*')
+      .in('id', ids)
+      .order('created_at', { ascending: false })
+    setExpedientesParaRevisar(data ?? [])
   }
 
   async function crearExpediente(datos) {
@@ -248,7 +266,7 @@ export function useExpedientes() {
   }
 
   return {
-    expedientes, loading, error,
+    expedientes, expedientesParaRevisar, loading, error,
     crearExpediente, actualizarExpediente, eliminarExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
     guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,

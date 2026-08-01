@@ -18,8 +18,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
-import { PanelCompartir } from '@/features/compartidos/PanelCompartir'
-import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin, Share2 } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
@@ -75,7 +74,6 @@ const TABS = [
   { id: 'residual',     label: 'Residual' },
   { id: 'comparativo',  label: 'Comparativo' },
   { id: 'fotos',        label: 'Fotos' },
-  { id: 'compartir',   label: 'Compartir' },
 ]
 
 export function EditarExpedientePage() {
@@ -522,15 +520,6 @@ export function EditarExpedientePage() {
         </Card>
       )}
 
-      {tab === 'compartir' && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 mb-4">
-            <Share2 className="h-4 w-4 text-gray-500" />
-            <h2 className="text-base font-semibold text-gray-800">Compartir para revisión</h2>
-          </div>
-          <PanelCompartir expedienteId={id} />
-        </div>
-      )}
     </div>
   )
 }

@@ -2,12 +2,17 @@ import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
+import { useRevision } from '@/hooks/useRevision'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
+import { BadgeRevision } from '@/features/revision/BadgeRevision'
+import { FormComentario } from '@/features/revision/FormComentario'
+import { PanelComentarios } from '@/features/revision/PanelComentarios'
+import { InvitarRevisorModal } from '@/features/revision/InvitarRevisorModal'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown, UserPlus, MessageSquare } from 'lucide-react'
 
 async function fetchBase64(url) {
   const res = await fetch(url)
@@ -29,15 +34,11 @@ function BotonDescargarPDF({ datos, fileName }) {
     setGenerando(true)
     setErrorPdf(null)
     try {
-      // Pre-fetch croquis as base64 to avoid CORS issues in react-pdf
       let croquisSrc = null
       if (datos.expediente?.croquis_url) {
         croquisSrc = await fetchBase64(datos.expediente.croquis_url).catch(() => null)
       }
-
-      const blob = await pdf(
-        <AvaluoPDF datos={{ ...datos, croquisSrc }} />
-      ).toBlob()
+      const blob = await pdf(<AvaluoPDF datos={{ ...datos, croquisSrc }} />).toBlob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -45,7 +46,6 @@ function BotonDescargarPDF({ datos, fileName }) {
       a.click()
       URL.revokeObjectURL(url)
     } catch (err) {
-      console.error('Error generando PDF:', err)
       setErrorPdf(err?.message || String(err))
     } finally {
       setGenerando(false)
@@ -61,8 +61,7 @@ function BotonDescargarPDF({ datos, fileName }) {
       >
         {generando
           ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generando...</>
-          : <><FileDown className="h-3.5 w-3.5" /> Descargar dictamen</>
-        }
+          : <><FileDown className="h-3.5 w-3.5" /> Descargar dictamen</>}
       </button>
       {errorPdf && <span className="text-xs text-red-500">{errorPdf}</span>}
     </div>
@@ -70,17 +69,10 @@ function BotonDescargarPDF({ datos, fileName }) {
 }
 
 const ESTADO_VARIANT = {
-  borrador: 'secondary',
-  en_proceso: 'warning',
-  completado: 'success',
-  firmado: 'default',
+  borrador: 'secondary', en_proceso: 'warning', completado: 'success', firmado: 'default',
 }
-
 const ESTADO_LABEL = {
-  borrador: 'Borrador',
-  en_proceso: 'En proceso',
-  completado: 'Completado',
-  firmado: 'Firmado',
+  borrador: 'Borrador', en_proceso: 'En proceso', completado: 'Completado', firmado: 'Firmado',
 }
 
 function Row({ label, value }) {
@@ -97,9 +89,17 @@ export function ExpedienteDetallePage() {
   const {
     expediente, entorno, terreno, descripcionConstruccion,
     metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
+    esAutor, esRevisor,
     loading, error,
   } = useExpediente(id)
   const { fotos } = useFotosExpediente(id)
+  const {
+    revisiones, comentarios, pendientes, atendidos,
+    estadoRevision, hayRevisionActiva,
+    invitarRevisor, agregarComentario, atenderComentario, cerrarRevision,
+  } = useRevision(id)
+
+  const [modalInvitar, setModalInvitar] = useState(false)
 
   if (loading) {
     return (
@@ -126,80 +126,114 @@ export function ExpedienteDetallePage() {
 
   const dir = [expediente.calle, expediente.colonia, expediente.municipio, expediente.estado_rep]
     .filter(Boolean).join(', ')
-
   const esTerrenoSolo = metodoFisico && metodoFisico.superficie_construccion === 0
+
+  const mostrarRevision = esAutor || esRevisor
+  const revisionDeshabilitada = !hayRevisionActiva
 
   return (
     <div className="p-6 max-w-4xl space-y-5">
-      <div className="flex items-center gap-3">
-        <Link to="/expedientes" className="text-gray-400 hover:text-gray-600 transition-colors">
+
+      {/* ── Encabezado ── */}
+      <div className="flex items-start gap-3 flex-wrap">
+        <Link to="/expedientes" className="text-gray-400 hover:text-gray-600 transition-colors mt-0.5">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl font-bold text-gray-900">
               {expediente.folio || expediente.id.slice(0, 8).toUpperCase()}
             </h1>
             <Badge variant={ESTADO_VARIANT[expediente.estado]}>
               {ESTADO_LABEL[expediente.estado]}
             </Badge>
+            <BadgeRevision estadoRevision={estadoRevision} pendientes={pendientes.length} />
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{dir || 'Sin dirección'}</p>
         </div>
-        <Link
-          to={`/expedientes/${id}/editar`}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
-        >
-          <Pencil className="h-3.5 w-3.5" />
-          Editar
-        </Link>
-        <BotonDescargarPDF
-          datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos }}
-          fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
-        />
+        <div className="flex items-center gap-2 shrink-0">
+          {esAutor && (
+            <button
+              onClick={() => setModalInvitar(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
+            >
+              <UserPlus className="h-3.5 w-3.5" />
+              Invitar revisor
+            </button>
+          )}
+          {esAutor && (
+            <Link
+              to={`/expedientes/${id}/editar`}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              Editar
+            </Link>
+          )}
+          <BotonDescargarPDF
+            datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos }}
+            fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
+          />
+        </div>
       </div>
 
+      {/* Banner para el revisor */}
+      {esRevisor && !esAutor && (
+        <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
+          <MessageSquare className="h-4 w-4 shrink-0" />
+          Estás revisando este expediente. Puedes agregar comentarios en cada sección. No puedes modificar los datos.
+        </div>
+      )}
+
+      {/* ── Datos generales ── */}
       <Card>
         <CardHeader><CardTitle>Datos generales</CardTitle></CardHeader>
-        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
-          <div>
-            <Row label="Tipo de inmueble" value={expediente.tipo_inmueble} />
-            <Row label="Uso" value={expediente.uso} />
-            <Row label="Solicitante" value={expediente.solicitante} />
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
+            <div>
+              <Row label="Tipo de inmueble" value={expediente.tipo_inmueble} />
+              <Row label="Uso" value={expediente.uso} />
+              <Row label="Solicitante" value={expediente.solicitante} />
+              <Row label="Propietario" value={expediente.nombre_propietario} />
+            </div>
+            <div>
+              <Row label="Fecha de inspección" value={expediente.fecha_inspeccion
+                ? new Date(expediente.fecha_inspeccion + 'T00:00:00').toLocaleDateString('es-MX')
+                : null} />
+              <Row label="Creado" value={new Date(expediente.created_at).toLocaleDateString('es-MX')} />
+              <Row label="Código postal" value={expediente.cp} />
+              <Row label="Perito valuador" value={expediente.nombre_perito} />
+            </div>
           </div>
-          <div>
-            <Row label="Fecha de inspección" value={expediente.fecha_inspeccion
-              ? new Date(expediente.fecha_inspeccion + 'T00:00:00').toLocaleDateString('es-MX')
-              : null}
+          {esRevisor && (
+            <FormComentario
+              seccionActual="datos_generales"
+              onGuardar={agregarComentario}
+              deshabilitado={revisionDeshabilitada}
             />
-            <Row label="Creado" value={new Date(expediente.created_at).toLocaleDateString('es-MX')} />
-            <Row label="Código postal" value={expediente.cp} />
-          </div>
+          )}
         </CardContent>
       </Card>
 
+      {/* ── Método Físico ── */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
             <Building2 className="h-4 w-4 text-blue-600" />
             <CardTitle>
-              {esTerrenoSolo
-                ? 'Método Físico — Terreno sin construcción'
-                : 'Método Físico — Ross Heidecke'
-              }
+              {esTerrenoSolo ? 'Método Físico — Terreno sin construcción' : 'Método Físico — Ross Heidecke'}
             </CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           {!metodoFisico ? (
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-400">Sin datos del Método Físico guardados.</p>
-              <Link
-                to={`/expedientes/${id}/editar`}
-                className="text-xs text-blue-600 hover:underline"
-              >
-                Agregar →
-              </Link>
+              {esAutor && (
+                <Link to={`/expedientes/${id}/editar`} className="text-xs text-blue-600 hover:underline">
+                  Agregar →
+                </Link>
+              )}
             </div>
           ) : esTerrenoSolo ? (
             <div className="space-y-4">
@@ -212,7 +246,6 @@ export function ExpedienteDetallePage() {
               <div className="bg-blue-600 text-white rounded-md p-4">
                 <p className="text-sm text-blue-100">Valor del terreno</p>
                 <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_fisico_total)}</p>
-                <p className="text-xs text-blue-200 mt-1">Terreno sin construcción (solo suelo)</p>
               </div>
             </div>
           ) : (
@@ -231,31 +264,24 @@ export function ExpedienteDetallePage() {
                   <Row label="Coef. Heidecke (C)" value={formatNumber(metodoFisico.coeficiente_c_adoptado)} />
                 </div>
               </div>
-
               {inspeccion && (
                 <div className="text-xs text-gray-400 bg-gray-50 rounded px-3 py-2">
                   Estado conservación: <strong>{inspeccion.estado_heidecke}</strong>
-                  {inspeccion.estado_manual && (
-                    <span> (ajustado por perito: {inspeccion.estado_manual})</span>
-                  )}
+                  {inspeccion.estado_manual && <span> (ajustado: {inspeccion.estado_manual})</span>}
                 </div>
               )}
-
-              <div className="space-y-2 pt-2 border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-gray-100 rounded-full h-2">
-                    <div
-                      className="h-2 bg-red-400 rounded-full"
-                      style={{ width: `${Math.min(metodoFisico.porcentaje_depreciacion, 100)}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium text-red-600 whitespace-nowrap">
-                    {formatNumber(metodoFisico.porcentaje_depreciacion, 2)}% depreciado
-                  </span>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-gray-100 rounded-full h-2">
+                  <div
+                    className="h-2 bg-red-400 rounded-full"
+                    style={{ width: `${Math.min(metodoFisico.porcentaje_depreciacion, 100)}%` }}
+                  />
                 </div>
+                <span className="text-sm font-medium text-red-600 whitespace-nowrap">
+                  {formatNumber(metodoFisico.porcentaje_depreciacion, 2)}% depreciado
+                </span>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gray-50 rounded-md p-3 text-sm">
                   <p className="text-gray-500">Valor actual construcción</p>
                   <p className="font-semibold mt-0.5">{formatCurrency(metodoFisico.valor_actual_construccion)}</p>
@@ -265,16 +291,23 @@ export function ExpedienteDetallePage() {
                   <p className="font-semibold mt-0.5">{formatCurrency(metodoFisico.valor_terreno)}</p>
                 </div>
               </div>
-
               <div className="bg-blue-600 text-white rounded-md p-4">
                 <p className="text-sm text-blue-100">Valor físico total</p>
                 <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_fisico_total)}</p>
               </div>
             </div>
           )}
+          {esRevisor && (
+            <FormComentario
+              seccionActual="metodo_fisico"
+              onGuardar={agregarComentario}
+              deshabilitado={revisionDeshabilitada}
+            />
+          )}
         </CardContent>
       </Card>
 
+      {/* ── Método Comparativo ── */}
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
@@ -282,22 +315,20 @@ export function ExpedienteDetallePage() {
             <CardTitle>Método Comparativo de Mercado</CardTitle>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           {!metodoComparativo ? (
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-400">Sin datos del Método Comparativo guardados.</p>
-              <Link
-                to={`/expedientes/${id}/editar`}
-                className="text-xs text-blue-600 hover:underline"
-              >
-                Agregar →
-              </Link>
+              {esAutor && (
+                <Link to={`/expedientes/${id}/editar`} className="text-xs text-blue-600 hover:underline">
+                  Agregar →
+                </Link>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
               <Row label="Superficie sujeto" value={`${formatNumber(metodoComparativo.superficie_sujeto, 2)} m²`} />
               <Row label="Comparables utilizados" value={metodoComparativo.comparables?.length ?? 0} />
-
               {metodoComparativo.comparables?.length > 0 && (
                 <div className="bg-gray-50 rounded-md overflow-hidden">
                   <table className="w-full text-sm">
@@ -330,15 +361,102 @@ export function ExpedienteDetallePage() {
                   </table>
                 </div>
               )}
-
               <div className="bg-green-600 text-white rounded-md p-4">
                 <p className="text-sm text-green-100">Valor comparativo total</p>
                 <p className="text-2xl font-bold mt-1">{formatCurrency(metodoComparativo.valor_comparativo_total)}</p>
               </div>
             </div>
           )}
+          {esRevisor && (
+            <FormComentario
+              seccionActual="metodo_comparativo"
+              onGuardar={agregarComentario}
+              deshabilitado={revisionDeshabilitada}
+            />
+          )}
         </CardContent>
       </Card>
+
+      {/* ── Otros métodos (resumen) ── */}
+      {(metodoRentas || metodoResidual) && (
+        <Card>
+          <CardHeader><CardTitle>Otros métodos aplicados</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            {metodoRentas && (
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Capitalización de rentas</p>
+                <div className="bg-purple-600 text-white rounded-md p-3">
+                  <p className="text-xs text-purple-200">Valor por capitalización</p>
+                  <p className="text-xl font-bold mt-0.5">{formatCurrency(metodoRentas.valor_capitalizacion)}</p>
+                </div>
+              </div>
+            )}
+            {metodoResidual && (
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Método residual</p>
+                <div className="bg-amber-600 text-white rounded-md p-3">
+                  <p className="text-xs text-amber-200">Valor residual</p>
+                  <p className="text-xl font-bold mt-0.5">{formatCurrency(metodoResidual.valor_residual)}</p>
+                </div>
+              </div>
+            )}
+            {esRevisor && (
+              <FormComentario
+                seccionActual="conclusion"
+                onGuardar={agregarComentario}
+                deshabilitado={revisionDeshabilitada}
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ── Panel de revisión ── */}
+      {mostrarRevision && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <MessageSquare className="h-4 w-4" />
+              Revisión entre pares
+              {pendientes.length > 0 && (
+                <span className="ml-1 px-1.5 py-0.5 text-xs bg-orange-100 text-orange-700 rounded-full font-medium">
+                  {pendientes.length} pendiente{pendientes.length !== 1 ? 's' : ''}
+                </span>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {esRevisor && (
+              <div className="mb-4">
+                <p className="text-xs text-gray-500 mb-2">Comentario general sobre el expediente:</p>
+                <FormComentario
+                  seccionActual="general"
+                  onGuardar={agregarComentario}
+                  deshabilitado={revisionDeshabilitada}
+                />
+              </div>
+            )}
+            <PanelComentarios
+              comentarios={comentarios}
+              pendientes={pendientes}
+              atendidos={atendidos}
+              revisiones={revisiones}
+              esAutor={esAutor}
+              onAtender={atenderComentario}
+              onCerrar={cerrarRevision}
+            />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Modal invitar revisor */}
+      {modalInvitar && (
+        <InvitarRevisorModal
+          revisoresExistentes={revisiones}
+          onInvitar={invitarRevisor}
+          onCerrar={() => setModalInvitar(false)}
+        />
+      )}
     </div>
   )
 }
