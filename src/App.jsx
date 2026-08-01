@@ -9,6 +9,7 @@ import { ExpedienteDetallePage } from '@/pages/expedientes/ExpedienteDetallePage
 import { EditarExpedientePage } from '@/pages/expedientes/EditarExpedientePage'
 import { CapturaComparablesPage } from '@/pages/expedientes/CapturaComparablesPage'
 import { CapturaRapidaPage } from '@/pages/expedientes/CapturaRapidaPage'
+import { RevisarExpedientePage } from '@/pages/compartidos/RevisarExpedientePage'
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
@@ -43,6 +44,14 @@ export default function App() {
           <Route path="expedientes/:id/captura-comparables" element={<CapturaComparablesPage />} />
           <Route path="capturar" element={<CapturaRapidaPage />} />
         </Route>
+        <Route
+          path="/revisar/:token"
+          element={
+            <ProtectedRoute>
+              <RevisarExpedientePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
