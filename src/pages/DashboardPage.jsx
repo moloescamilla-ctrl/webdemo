@@ -40,10 +40,6 @@ export function DashboardPage() {
           </Card>
         </Link>
       </div>
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm font-medium text-blue-800">Módulo activo: Método Físico / Costos</p>
-        <p className="text-xs text-blue-600 mt-1">Calcula el valor de inmuebles mediante depreciación Ross-Heidecke. Los métodos Comparativo, Rentas y Residual estarán disponibles próximamente.</p>
-      </div>
     </div>
   )
 }

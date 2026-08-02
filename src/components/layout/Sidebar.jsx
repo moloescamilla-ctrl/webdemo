@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, Building2 } from 'lucide-react'
+import { LayoutDashboard, FolderOpen, PlusCircle, LogOut } from 'lucide-react'
+import logoCovinsa from '@/assets/logo-covinsa.png'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
@@ -11,12 +12,8 @@ const navItems = [
 export function Sidebar({ onSignOut }) {
   return (
     <aside className="hidden lg:flex w-56 min-h-screen bg-gray-900 text-white flex-col">
-      <div className="px-5 py-5 border-b border-gray-700">
-        <div className="flex items-center gap-2">
-          <Building2 className="h-5 w-5 text-blue-400" />
-          <span className="font-semibold text-sm">Avalúos MX</span>
-        </div>
-        <p className="text-xs text-gray-400 mt-1">Sistema de Valuación</p>
+      <div className="px-5 py-4 border-b border-gray-700">
+        <img src={logoCovinsa} alt="COVINSA" className="h-10 w-auto" />
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navItems.map(({ to, icon: Icon, label }) => (
