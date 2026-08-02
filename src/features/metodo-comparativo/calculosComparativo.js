@@ -9,6 +9,10 @@ function calcComparable(comp) {
     : 0
   const factorTotal =
     (comp.factorZona || 1) *
+    (comp.factorUbicacion || 1) *
+    (comp.factorFrente || 1) *
+    (comp.factorForma || 1) *
+    (comp.factorComerc || 1) *
     (comp.factorSuperficie || 1) *
     (comp.factorEdad || 1) *
     (comp.factorConservacion || 1)

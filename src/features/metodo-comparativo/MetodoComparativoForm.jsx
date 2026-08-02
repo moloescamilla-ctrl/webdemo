@@ -22,7 +22,7 @@ const FORMULAS_COMPARATIVO = [
   },
   {
     titulo: 'Factor Total',
-    formula: 'F.Total = F.Zona × F.Sup × F.Edad × F.Cons',
+    formula: 'F.Total = F.Zona × F.Ubic × F.Frente × F.Forma × F.Comerc × F.Sup × F.Edad × F.Cons',
   },
   {
     titulo: '$/m² Homologado',
@@ -61,6 +61,10 @@ const newComp = (override = {}) => ({
   superficie: '',
   precioTotal: '',
   factorZona: '1.00',
+  factorUbicacion: '1.00',
+  factorFrente: '1.00',
+  factorForma: '1.00',
+  factorComerc: '1.00',
   factorSuperficie: '1.00',
   factorEdad: '1.00',
   factorConservacion: '1.00',
@@ -158,11 +162,15 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
   // ── Cálculo ──────────────────────────────────────────────────────────────
   const parsedComps = comps.map(c => ({
     ...c,
-    superficie:        n(c.superficie),
-    precioTotal:       n(c.precioTotal),
-    factorZona:        n(c.factorZona) || 1,
-    factorSuperficie:  n(c.factorSuperficie) || 1,
-    factorEdad:        n(c.factorEdad) || 1,
+    superficie:         n(c.superficie),
+    precioTotal:        n(c.precioTotal),
+    factorZona:         n(c.factorZona) || 1,
+    factorUbicacion:    n(c.factorUbicacion) || 1,
+    factorFrente:       n(c.factorFrente) || 1,
+    factorForma:        n(c.factorForma) || 1,
+    factorComerc:       n(c.factorComerc) || 1,
+    factorSuperficie:   n(c.factorSuperficie) || 1,
+    factorEdad:         n(c.factorEdad) || 1,
     factorConservacion: n(c.factorConservacion) || 1,
   }))
 
@@ -316,17 +324,21 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[860px]">
+            <table className="w-full text-sm min-w-[1140px]">
               <thead className="bg-gray-50 border-y border-gray-200">
                 <tr>
                   <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Descripción</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-28">Sup m²</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-32">Precio total $</th>
-                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-24 bg-gray-100">$/m²</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-16">F.Zona</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-16">F.Sup</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-16">F.Edad</th>
-                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-16">F.Cons</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-24">Sup m²</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-28">Precio total $</th>
+                  <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-20 bg-gray-100">$/m²</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Zona</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Ubic</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Frente</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Forma</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Comerc</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Sup</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Edad</th>
+                  <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 w-14">F.Cons</th>
                   <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-20 bg-gray-100">F.Total</th>
                   <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-28 bg-blue-50">$/m² Homo</th>
                   <th className="w-8" />
@@ -337,11 +349,15 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                   const sup = n(comp.superficie)
                   const precio = n(comp.precioTotal)
                   const precioM2 = sup > 0 && precio > 0 ? precio / sup : null
-                  const fz = n(comp.factorZona) || 1
-                  const fs = n(comp.factorSuperficie) || 1
-                  const fe = n(comp.factorEdad) || 1
-                  const fc = n(comp.factorConservacion) || 1
-                  const factorTotal = fz * fs * fe * fc
+                  const fz  = n(comp.factorZona) || 1
+                  const fub = n(comp.factorUbicacion) || 1
+                  const ffr = n(comp.factorFrente) || 1
+                  const ffo = n(comp.factorForma) || 1
+                  const fco = n(comp.factorComerc) || 1
+                  const fs  = n(comp.factorSuperficie) || 1
+                  const fe  = n(comp.factorEdad) || 1
+                  const fc  = n(comp.factorConservacion) || 1
+                  const factorTotal = fz * fub * ffr * ffo * fco * fs * fe * fc
                   const precioHomo = precioM2 ? precioM2 * factorTotal : null
                   return (
                     <tr key={comp.id} className="hover:bg-gray-50">
@@ -379,17 +395,21 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                         {precioM2 ? formatNumber(precioM2, 2) : '—'}
                       </td>
                       {[
-                        ['factorZona', fz],
-                        ['factorSuperficie', fs],
-                        ['factorEdad', fe],
-                        ['factorConservacion', fc],
+                        ['factorZona',        fz],
+                        ['factorUbicacion',   fub],
+                        ['factorFrente',      ffr],
+                        ['factorForma',       ffo],
+                        ['factorComerc',      fco],
+                        ['factorSuperficie',  fs],
+                        ['factorEdad',        fe],
+                        ['factorConservacion',fc],
                       ].map(([field, val]) => (
                         <td key={field} className="px-2 py-2">
                           <input
                             type="number" step="0.01" min="0.01" placeholder="1.00"
                             value={comp[field]}
                             onChange={e => updateComp(comp.id, field, e.target.value)}
-                            className={`w-14 text-center text-sm bg-transparent border-0 focus:outline-none placeholder-gray-300 ${factorColor(val)}`}
+                            className={`w-12 text-center text-sm bg-transparent border-0 focus:outline-none placeholder-gray-300 ${factorColor(val)}`}
                           />
                         </td>
                       ))}
