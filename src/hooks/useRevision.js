@@ -14,12 +14,12 @@ export function useRevision(expedienteId) {
     const [{ data: revs }, { data: comms }] = await Promise.all([
       supabase
         .from('revisiones_expediente')
-        .select('*, revisor:revisor_id(id, email, raw_user_meta_data)')
+        .select('*, revisor:revisor_id(id, email, nombre)')
         .eq('expediente_id', expedienteId)
         .order('fecha_invitacion'),
       supabase
         .from('comentarios_revision')
-        .select('*, revisor:revisor_id(id, email, raw_user_meta_data)')
+        .select('*, revisor:revisor_id(id, email, nombre)')
         .eq('expediente_id', expedienteId)
         .order('created_at'),
     ])
@@ -40,7 +40,7 @@ export function useRevision(expedienteId) {
         mensaje_invitacion: mensajeInvitacion || null,
         estado: 'activa',
       })
-      .select('*, revisor:revisor_id(id, email, raw_user_meta_data)')
+      .select('*, revisor:revisor_id(id, email, nombre)')
       .single()
     if (error) throw new Error(error.message)
     setRevisiones(prev => [...prev, data])
@@ -62,7 +62,7 @@ export function useRevision(expedienteId) {
         texto,
         estado: 'pendiente',
       })
-      .select('*, revisor:revisor_id(id, email, raw_user_meta_data)')
+      .select('*, revisor:revisor_id(id, email, nombre)')
       .single()
     if (error) throw new Error(error.message)
     setComentarios(prev => [...prev, data])
@@ -78,7 +78,7 @@ export function useRevision(expedienteId) {
         updated_at: new Date().toISOString(),
       })
       .eq('id', comentarioId)
-      .select('*, revisor:revisor_id(id, email, raw_user_meta_data)')
+      .select('*, revisor:revisor_id(id, email, nombre)')
       .single()
     if (error) throw new Error(error.message)
     setComentarios(prev => prev.map(c => c.id === comentarioId ? data : c))
@@ -90,7 +90,7 @@ export function useRevision(expedienteId) {
       .from('revisiones_expediente')
       .update({ estado: 'cerrada', fecha_cierre: new Date().toISOString() })
       .eq('id', revisionId)
-      .select('*, revisor:revisor_id(id, email, raw_user_meta_data)')
+      .select('*, revisor:revisor_id(id, email, nombre)')
       .single()
     if (error) throw new Error(error.message)
     setRevisiones(prev => prev.map(r => r.id === revisionId ? data : r))

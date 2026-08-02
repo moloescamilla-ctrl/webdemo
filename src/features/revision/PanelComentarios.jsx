@@ -16,7 +16,7 @@ const ETIQUETAS = {
 }
 
 function nombreRevisor(revisor) {
-  return revisor?.raw_user_meta_data?.nombre_perito || revisor?.email || 'Revisor'
+  return revisor?.nombre || revisor?.email || 'Revisor'
 }
 
 function formatHora(iso) {
