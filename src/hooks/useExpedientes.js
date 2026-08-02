@@ -29,9 +29,9 @@ export function useExpedientes() {
   async function fetchExpedientesParaRevisar() {
     const { data: invitaciones } = await supabase
       .from('revisiones_expediente')
-      .select('expediente_id')
+      .select('expediente_id, estado')
       .eq('revisor_id', user.id)
-      .eq('estado', 'activa')
+      .in('estado', ['activa', 'cerrada'])
     if (!invitaciones?.length) { setExpedientesParaRevisar([]); return }
     const ids = invitaciones.map(i => i.expediente_id)
     const { data } = await supabase
@@ -39,23 +39,13 @@ export function useExpedientes() {
       .select('*')
       .in('id', ids)
       .order('created_at', { ascending: false })
-    setExpedientesParaRevisar(data ?? [])
+    const estadoPorId = Object.fromEntries(invitaciones.map(i => [i.expediente_id, i.estado]))
+    setExpedientesParaRevisar((data ?? []).map(exp => ({ ...exp, _estadoRevision: estadoPorId[exp.id] })))
   }
 
   async function crearExpediente(datos) {
-    const now = new Date()
-    const dd = String(now.getDate()).padStart(2, '0')
-    const mm = String(now.getMonth() + 1).padStart(2, '0')
-    const yy = String(now.getFullYear()).slice(-2)
-    const prefijo = `${dd}${mm}${yy}`
-
-    const { data: foliosHoy } = await supabase
-      .from('expedientes')
-      .select('folio')
-      .like('folio', `${prefijo}-%`)
-
-    const consecutivo = String((foliosHoy?.length ?? 0) + 1).padStart(2, '0')
-    const folio = `${prefijo}-${consecutivo}`
+    const { data: folio, error: folioError } = await supabase.rpc('generar_folio')
+    if (folioError) throw new Error(folioError.message)
 
     const { data, error } = await supabase
       .from('expedientes')

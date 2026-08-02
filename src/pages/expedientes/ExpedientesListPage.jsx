@@ -98,38 +98,51 @@ export function ExpedientesListPage() {
       {expedientesParaRevisar.length > 0 && (
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-3">
-            <Eye className="h-4 w-4 text-blue-500" />
-            <h2 className="text-xs font-semibold text-blue-600 uppercase tracking-wide whitespace-nowrap">
+            <Eye className="h-4 w-4 text-yellow-500" />
+            <h2 className="text-xs font-semibold text-yellow-600 uppercase tracking-wide whitespace-nowrap">
               Para revisar
             </h2>
             <span className="text-xs text-gray-300">{expedientesParaRevisar.length} exp.</span>
-            <div className="flex-1 h-px bg-blue-100" />
+            <div className="flex-1 h-px bg-yellow-100" />
           </div>
           <div className="space-y-2">
-            {expedientesParaRevisar.map(exp => (
-              <Link
-                key={exp.id}
-                to={`/expedientes/${exp.id}`}
-                className="bg-blue-50 border border-blue-200 rounded-lg hover:border-blue-400 hover:shadow-sm transition-all flex items-center gap-4 p-4"
-              >
-                <Eye className="h-8 w-8 text-blue-300 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs text-gray-500">
-                      {exp.folio || exp.id.slice(0, 8).toUpperCase()}
-                    </span>
-                    <Badge variant={ESTADO_VARIANT[exp.estado]}>{ESTADO_LABEL[exp.estado]}</Badge>
+            {expedientesParaRevisar.map(exp => {
+              const cerrada = exp._estadoRevision === 'cerrada'
+              return (
+                <Link
+                  key={exp.id}
+                  to={`/expedientes/${exp.id}`}
+                  className={`border rounded-lg hover:shadow-sm transition-all flex items-center gap-4 p-4 ${
+                    cerrada
+                      ? 'bg-green-50 border-green-200 hover:border-green-400'
+                      : 'bg-yellow-50 border-yellow-200 hover:border-yellow-400'
+                  }`}
+                >
+                  <Eye className={`h-8 w-8 shrink-0 ${cerrada ? 'text-green-300' : 'text-yellow-300'}`} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-gray-500">
+                        {exp.folio || exp.id.slice(0, 8).toUpperCase()}
+                      </span>
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        cerrada
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {cerrada ? 'Revisión cerrada' : 'En revisión'}
+                      </span>
+                    </div>
+                    <p className="font-medium text-sm text-gray-900 mt-0.5 truncate">
+                      {[exp.calle, exp.colonia, exp.municipio].filter(Boolean).join(', ') || 'Sin dirección'}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {exp.tipo_inmueble} · {new Date(exp.created_at).toLocaleDateString('es-MX')}
+                    </p>
                   </div>
-                  <p className="font-medium text-sm text-gray-900 mt-0.5 truncate">
-                    {[exp.calle, exp.colonia, exp.municipio].filter(Boolean).join(', ') || 'Sin dirección'}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {exp.tipo_inmueble} · {new Date(exp.created_at).toLocaleDateString('es-MX')}
-                  </p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-blue-300 shrink-0" />
-              </Link>
-            ))}
+                  <ChevronRight className={`h-4 w-4 shrink-0 ${cerrada ? 'text-green-300' : 'text-yellow-300'}`} />
+                </Link>
+              )
+            })}
           </div>
         </div>
       )}
