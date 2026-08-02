@@ -71,6 +71,7 @@ ALTER TABLE public.comentarios_revision
     FOREIGN KEY (revisor_id) REFERENCES public.profiles(id);
 
 -- 6. Actualizar buscar_usuarios_revision para leer de profiles (más rápido)
+DROP FUNCTION IF EXISTS public.buscar_usuarios_revision(TEXT);
 CREATE OR REPLACE FUNCTION public.buscar_usuarios_revision(p_query TEXT)
 RETURNS TABLE(id UUID, nombre TEXT, email TEXT)
 LANGUAGE plpgsql SECURITY DEFINER AS $$
