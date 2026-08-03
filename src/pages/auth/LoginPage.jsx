@@ -43,7 +43,12 @@ export function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <img src={logoCovinsa} alt="COVINSA" className="h-24 w-auto mx-auto mb-3" />
+          <img
+            src={logoCovinsa}
+            alt="COVINSA"
+            className="h-32 w-auto mx-auto mb-3"
+            style={{ filter: 'brightness(0) saturate(100%) invert(15%) sepia(45%) saturate(700%) hue-rotate(185deg)' }}
+          />
           <p className="text-sm text-gray-500 mt-1">Sistema profesional de valuación inmobiliaria</p>
         </div>
 
