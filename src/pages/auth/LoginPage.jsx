@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
-import { Building2, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import logoCovinsa from '@/assets/logo-covinsa.png'
 
 export function LoginPage() {
   const { user, loading: authLoading } = useAuth()
@@ -42,10 +43,7 @@ export function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-xl mb-4">
-            <Building2 className="h-6 w-6 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">Avaluós MX</h1>
+          <img src={logoCovinsa} alt="COVINSA" className="h-24 w-auto mx-auto mb-3" />
           <p className="text-sm text-gray-500 mt-1">Sistema profesional de valuación inmobiliaria</p>
         </div>
 

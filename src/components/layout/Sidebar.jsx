@@ -11,11 +11,13 @@ const navItems = [
 
 export function Sidebar({ onSignOut }) {
   return (
-    <aside className="hidden lg:flex w-56 min-h-screen bg-gray-900 text-white flex-col">
+    <aside className="hidden lg:flex w-72 min-h-screen bg-gray-900 text-white flex-col">
       <div className="px-5 py-4 border-b border-gray-700">
         <div className="flex items-center gap-3">
-          <img src={logoCovinsa} alt="COVINSA" className="h-14 w-auto" />
-          <span className="text-sm font-medium text-gray-200 leading-tight">Avalúos</span>
+          <img src={logoCovinsa} alt="COVINSA" className="h-14 w-auto shrink-0" />
+          <p className="text-xs text-gray-400 leading-snug">
+            Sistema profesional<br />de valuación<br />inmobiliaria
+          </p>
         </div>
       </div>
       <nav className="flex-1 px-3 py-4 space-y-1">
