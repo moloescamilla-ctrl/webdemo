@@ -115,6 +115,7 @@ export function EntornoForm({
   onGuardar,
   guardando,
   submitLabel = 'Guardar entorno',
+  vialidadDelExpediente = '',
 }) {
   const [datos, setDatos] = useState(() => fromDB(initialValues))
   const [cargandoDenue, setCargandoDenue] = useState(false)
@@ -166,6 +167,7 @@ export function EntornoForm({
     if (!onGuardar) return
     onGuardar({
       ...datos,
+      nombre_vialidad: vialidadDelExpediente || datos.nombre_vialidad,
       ancho_vialidad_m:  datos.ancho_vialidad_m  ? parseFloat(datos.ancho_vialidad_m)  : null,
       dist_escuelas_m:   datos.dist_escuelas_m   ? parseInt(datos.dist_escuelas_m)   : null,
       dist_hospitales_m: datos.dist_hospitales_m ? parseInt(datos.dist_hospitales_m) : null,
@@ -223,7 +225,17 @@ export function EntornoForm({
                 <option value="autopista">Autopista / vía rápida</option>
               </Select>
             </Campo>
-            <Campo label="Nombre de la vialidad" name="nombre_vialidad" value={datos.nombre_vialidad} onChange={handleChange} />
+            {vialidadDelExpediente ? (
+              <div className="space-y-1">
+                <Label>Nombre de la vialidad</Label>
+                <div className="flex items-center gap-2 h-9 px-3 rounded-md border border-gray-100 bg-gray-50 text-sm text-gray-700">
+                  {vialidadDelExpediente}
+                  <span className="ml-auto text-xs text-gray-400">datos generales</span>
+                </div>
+              </div>
+            ) : (
+              <Campo label="Nombre de la vialidad" name="nombre_vialidad" value={datos.nombre_vialidad} onChange={handleChange} />
+            )}
             <Campo label="Ancho de vialidad" name="ancho_vialidad_m" value={datos.ancho_vialidad_m} onChange={handleChange} type="number" suffix="m" />
           </div>
         </CardContent>

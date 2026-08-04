@@ -37,15 +37,17 @@ export default function Portada({
   metodoComparativo, metodoRentas, metodoResidual,
   entorno,
 }) {
-  const valoresMetodos = [
-    metodoComparativo?.valor_comparativo_total,
-    metodoFisico?.valor_fisico_total,
-    metodoRentas?.valor_capitalizacion,
-    metodoResidual?.valor_residual,
-  ].map(v => Number(v) || 0).filter(v => v > 0)
-  const valorConcluido = valoresMetodos.length > 0
-    ? Math.round(valoresMetodos.reduce((s, v) => s + v, 0) / valoresMetodos.length)
-    : 0
+  const METODO_VALS = {
+    fisico:      Number(metodoFisico?.valor_fisico_total)            || 0,
+    comparativo: Number(metodoComparativo?.valor_comparativo_total)  || 0,
+    rentas:      Number(metodoRentas?.valor_capitalizacion)          || 0,
+    residual:    Number(metodoResidual?.valor_residual)              || 0,
+  }
+  const metodoElegido = expediente?.metodo_elegido
+  const valoresMetodos = Object.values(METODO_VALS).filter(v => v > 0)
+  const valorConcluido = metodoElegido && METODO_VALS[metodoElegido] > 0
+    ? Math.round(METODO_VALS[metodoElegido])
+    : valoresMetodos.length > 0 ? valoresMetodos[0] : 0
 
   const anoTerminacion = metodoFisico?.edad_anios
     ? String(new Date().getFullYear() - Math.round(Number(metodoFisico.edad_anios)))

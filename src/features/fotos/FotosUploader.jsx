@@ -2,6 +2,31 @@ import { useRef, useState } from 'react'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
 import { Camera, Loader2, X, ImageOff } from 'lucide-react'
 
+async function comprimirImagen(file, maxWidth = 1200, quality = 0.82) {
+  if (file.type === 'image/heic' || file.type === 'image/heif' || file.size < 150 * 1024) {
+    return file
+  }
+  return new Promise((resolve) => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const scale = Math.min(1, maxWidth / img.width)
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(img.width * scale)
+      canvas.height = Math.round(img.height * scale)
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      canvas.toBlob(
+        (blob) => resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg', lastModified: Date.now() })),
+        'image/jpeg',
+        quality
+      )
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
+    img.src = url
+  })
+}
+
 const CATEGORIAS = [
   { id: 'fachada',   label: 'Fachada' },
   { id: 'entorno',   label: 'Entorno' },
@@ -30,7 +55,8 @@ export function FotosUploader({ expedienteId }) {
     setErrores(prev => ({ ...prev, [categoria]: null }))
     try {
       for (const file of files) {
-        await subirFoto(file, categoria)
+        const compressed = await comprimirImagen(file)
+        await subirFoto(compressed, categoria)
       }
     } catch (err) {
       setErrores(prev => ({ ...prev, [categoria]: err.message || 'Error al subir' }))
@@ -111,7 +137,7 @@ export function FotosUploader({ expedienteId }) {
                       type="button"
                       onClick={() => handleEliminar(foto)}
                       disabled={eliminando[foto.id]}
-                      className="absolute top-1 right-1 flex items-center justify-center w-5 h-5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-50 hover:bg-red-700"
+                      className="absolute top-1 right-1 flex items-center justify-center w-5 h-5 bg-red-600 text-white rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity disabled:opacity-50 hover:bg-red-700"
                       title="Eliminar foto"
                     >
                       {eliminando[foto.id]
@@ -138,7 +164,7 @@ export function FotosUploader({ expedienteId }) {
       })}
 
       <p className="text-xs text-gray-400">
-        Formatos aceptados: JPG, PNG, WebP, HEIC. Puedes subir varias fotos a la vez por categoría.
+        Formatos: JPG, PNG, WebP, HEIC. Las imágenes se optimizan automáticamente antes de subir.
       </p>
     </div>
   )

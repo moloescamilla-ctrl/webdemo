@@ -69,10 +69,20 @@ export function useExpediente(id) {
     setLoading(false)
   }
 
+  async function guardarMetodoElegido(metodoElegido) {
+    const { error } = await supabase
+      .from('expedientes')
+      .update({ metodo_elegido: metodoElegido })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    setExpediente(prev => ({ ...prev, metodo_elegido: metodoElegido }))
+  }
+
   return {
     expediente, entorno, terreno, descripcionConstruccion,
     metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
     esAutor, esRevisor,
+    guardarMetodoElegido,
     loading, error,
   }
 }
