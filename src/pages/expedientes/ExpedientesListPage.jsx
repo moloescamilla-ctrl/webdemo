@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useExpedientes } from '@/hooks/useExpedientes'
-import { PlusCircle, FileText, Loader2, ChevronRight, Trash2, Pencil, Eye } from 'lucide-react'
+import { PlusCircle, FileText, Loader2, ChevronRight, Trash2, Eye } from 'lucide-react'
 
 const ESTADO_VARIANT = {
   borrador: 'secondary',
@@ -164,7 +164,7 @@ export function ExpedientesListPage() {
                   key={exp.id}
                   className="bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all flex items-center"
                 >
-                  <Link to={`/expedientes/${exp.id}`} className="flex-1 flex items-center gap-4 p-4 min-w-0">
+                  <Link to={`/expedientes/${exp.id}/editar`} className="flex-1 flex items-center gap-4 p-4 min-w-0">
                     <FileText className="h-8 w-8 text-gray-300 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -187,9 +187,9 @@ export function ExpedientesListPage() {
 
                   <div className="px-3 flex items-center gap-0.5 border-l border-gray-100 shrink-0">
                     <Link
-                      to={`/expedientes/${exp.id}/editar`}
-                      className="p-1.5 text-gray-300 hover:text-blue-500 transition-colors rounded"
-                      title="Editar expediente"
+                      to={`/expedientes/${exp.id}`}
+                      className="p-1.5 text-gray-300 hover:text-gray-500 transition-colors rounded"
+                      title="Ver detalle"
                     >
                       <Pencil className="h-4 w-4" />
                     </Link>

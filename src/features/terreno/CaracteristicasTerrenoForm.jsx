@@ -286,7 +286,8 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
             </button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="overflow-x-auto">
+          <div className="space-y-3 min-w-[480px]">
           {colindancias.map((col, idx) => (
             <div key={idx} className="flex gap-2 items-start">
               {/* "Al" label */}
@@ -342,6 +343,7 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
               )}
             </div>
           ))}
+          </div>
         </CardContent>
       </Card>
 

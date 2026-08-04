@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { PlusCircle, Trash2, TrendingUp, Info, Loader2, ClipboardList } from 'lucide-react'
+import { PlusCircle, Trash2, TrendingUp, Info, Loader2, ClipboardList, Link2 } from 'lucide-react'
 import { calcularMetodoComparativo, calcFactorSuperficie } from './calculosComparativo'
 import { FormulaPanel } from '@/components/ui/formula-panel'
 
@@ -82,10 +82,11 @@ function factorColor(f) {
 
 const inlineNum = 'bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 text-gray-800 placeholder-gray-300 h-auto py-0 rounded-none'
 
-export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null, comparablesImportados = null }) {
-  const [supSujeto, setSupSujeto] = useState(
-    initialValues ? String(initialValues.superficieSujeto || '') : String(superficieInicial || '')
-  )
+export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null, comparablesImportados = null, datosSujeto = null }) {
+  const supInicial = initialValues
+    ? String(initialValues.superficieSujeto || '')
+    : String(superficieInicial || datosSujeto?.supConstruccion || '')
+  const [supSujeto, setSupSujeto] = useState(supInicial)
   const [comps, setComps] = useState(() => {
     const existing = initialValues?.comparables?.length
       ? initialValues.comparables.map(c => ({ ...c, id: cuid() }))
@@ -98,8 +99,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
           fuente: c.portal || '',
         }))
       : []
-    if (existing.length || imported.length) return [...existing, ...imported]
-    return [newComp(), newComp(), newComp()]
+    return [...existing, ...imported]
   })
   const [captura, setCaptura] = useState(emptyCaptura)
   const [capturaError, setCapturaError] = useState(null)
@@ -183,6 +183,18 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     <div className="space-y-5">
 
       <FormulaPanel grupos={FORMULAS_COMPARATIVO} />
+
+      {/* ── Datos del sujeto vinculados ── */}
+      {datosSujeto && (datosSujeto.supTerreno || datosSujeto.supConstruccion || datosSujeto.edad || datosSujeto.direccion) && (
+        <div className="flex flex-wrap items-center gap-2 px-3 py-2.5 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-800">
+          <Link2 className="h-3.5 w-3.5 text-blue-500 shrink-0" />
+          <span className="font-medium text-blue-600">Vinculado:</span>
+          {datosSujeto.direccion && <span>{datosSujeto.direccion}</span>}
+          {datosSujeto.supTerreno && <span className="px-1.5 py-0.5 bg-blue-100 rounded">Terreno {datosSujeto.supTerreno} m²</span>}
+          {datosSujeto.supConstruccion && <span className="px-1.5 py-0.5 bg-blue-100 rounded">Const. {datosSujeto.supConstruccion} m²</span>}
+          {datosSujeto.edad && <span className="px-1.5 py-0.5 bg-blue-100 rounded">{datosSujeto.edad} años</span>}
+        </div>
+      )}
 
       {/* ── Superficie del sujeto ── */}
       <Card>

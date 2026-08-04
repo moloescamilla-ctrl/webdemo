@@ -15,7 +15,8 @@ import { Button } from '@/components/ui/button'
 import { useExpedientes } from '@/hooks/useExpedientes'
 import { getPeritoPerfil } from '@/hooks/usePeritoPerfil'
 import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
-import { Check, ChevronRight, Loader2 } from 'lucide-react'
+import { Check, ChevronRight, Loader2, Sparkles } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
@@ -157,6 +158,7 @@ export function NuevoExpedientePage() {
   const [maxAlcanzado, setMaxAlcanzado] = useState(0)
   const [expedienteId, setExpedienteId] = useState(null)
   const [superficieFisico, setSuperficieFisico] = useState('')
+  const [datosFisico, setDatosFisico] = useState(null)
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState(null)
 
@@ -269,6 +271,12 @@ export function NuevoExpedientePage() {
       setSuperficieFisico(
         conConstruccion ? inputs.superficieConstruccion || '' : inputs.superficieTerreno || ''
       )
+      setDatosFisico({
+        supTerreno: inputs.superficieTerreno || '',
+        supConstruccion: inputs.superficieConstruccion || '',
+        edad: inputs.edadAnios || '',
+        direccion: [datos.calle, datos.colonia].filter(Boolean).join(', '),
+      })
       avanzar()
     } catch (e) { setError(e.message) }
     finally { setGuardando(false) }
@@ -538,10 +546,20 @@ export function NuevoExpedientePage() {
       {/* ── Paso: Comparativo ─────────────────────────────────────────────── */}
       {pasoId === 'comparativo' && expedienteId && (
         <div className="space-y-3">
+          <div className="flex justify-end">
+            <Link
+              to={`/expedientes/${expedienteId}/captura-comparables`}
+              className="flex items-center gap-1.5 text-sm text-purple-700 border border-purple-200 rounded-md px-3 py-1.5 hover:bg-purple-50 transition-colors"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              Capturar comparables con IA
+            </Link>
+          </div>
           <MetodoComparativoForm
             onGuardar={handleGuardarComparativo}
             guardando={guardando}
             superficieInicial={superficieFisico}
+            datosSujeto={datosFisico}
           />
           <div className="flex items-center justify-between pt-1">
             {esCompleto ? (

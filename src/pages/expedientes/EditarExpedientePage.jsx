@@ -405,7 +405,7 @@ export function EditarExpedientePage() {
                   onClick={() => savePeritoPerfil({ nombre_perito: d.nombre_perito, clave_perito: d.clave_perito, cedula_perito: d.cedula_perito })}
                   className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 rounded px-3 py-1.5 hover:bg-blue-50 transition-colors"
                 >
-                  Guardar en perfil (auto-relleno)
+                  Guardar en perfil — a partir de aquí se cargarán automáticamente
                 </button>
               </div>
             </CardContent>
@@ -426,6 +426,7 @@ export function EditarExpedientePage() {
           initialValues={entorno}
           latitud={expediente.latitud ?? null}
           longitud={expediente.longitud ?? null}
+          vialidadDelExpediente={expediente.calle ?? ''}
           onGuardar={handleGuardarEntorno}
           guardando={guardando}
           submitLabel={okTab === 'entorno' ? '✓ Guardado' : (entorno ? 'Actualizar entorno' : 'Guardar entorno')}
@@ -508,6 +509,12 @@ export function EditarExpedientePage() {
             guardando={guardando}
             initialValues={comparativoInitial}
             comparablesImportados={navState.comparablesImportados ?? null}
+            datosSujeto={{
+              supTerreno: String(metodoFisico?.superficie_terreno || terreno?.superficie_m2 || ''),
+              supConstruccion: String(metodoFisico?.superficie_construccion || ''),
+              edad: String(metodoFisico?.edad_anios || ''),
+              direccion: [expediente.calle, expediente.colonia].filter(Boolean).join(', '),
+            }}
           />
         </div>
       )}
