@@ -424,9 +424,9 @@ export function EditarExpedientePage() {
         <EntornoForm
           key={entorno?.id ?? 'entorno-nuevo'}
           initialValues={entorno}
-          latitud={expediente.latitud ?? null}
-          longitud={expediente.longitud ?? null}
-          vialidadDelExpediente={expediente.calle ?? ''}
+          latitud={d.latitud ?? null}
+          longitud={d.longitud ?? null}
+          vialidadDelExpediente={d.calle ?? ''}
           onGuardar={handleGuardarEntorno}
           guardando={guardando}
           submitLabel={okTab === 'entorno' ? '✓ Guardado' : (entorno ? 'Actualizar entorno' : 'Guardar entorno')}
