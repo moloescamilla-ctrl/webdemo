@@ -11,8 +11,8 @@ import { PanelComentarios } from '@/features/revision/PanelComentarios'
 import { InvitarRevisorModal } from '@/features/revision/InvitarRevisorModal'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { formatCurrency, formatNumber } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown, UserPlus, MessageSquare } from 'lucide-react'
+import { formatCurrency, formatNumber, calcularVariacionMetodos } from '@/lib/utils'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown, UserPlus, MessageSquare, Scale, AlertTriangle, CheckCircle2 } from 'lucide-react'
 
 async function fetchBase64(url) {
   const res = await fetch(url)
@@ -90,6 +90,7 @@ export function ExpedienteDetallePage() {
     expediente, entorno, terreno, descripcionConstruccion,
     metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
     esAutor, esRevisor,
+    guardarMetodoElegido,
     loading, error,
   } = useExpediente(id)
   const { fotos } = useFotosExpediente(id)
@@ -100,6 +101,16 @@ export function ExpedienteDetallePage() {
   } = useRevision(id)
 
   const [modalInvitar, setModalInvitar] = useState(false)
+  const [guardandoMetodo, setGuardandoMetodo] = useState(false)
+  const [errorMetodo, setErrorMetodo] = useState(null)
+
+  const handleElegirMetodo = async (clave) => {
+    setGuardandoMetodo(true)
+    setErrorMetodo(null)
+    try { await guardarMetodoElegido(clave) }
+    catch (err) { setErrorMetodo(err.message) }
+    finally { setGuardandoMetodo(false) }
+  }
 
   if (loading) {
     return (
@@ -400,16 +411,130 @@ export function ExpedienteDetallePage() {
                 </div>
               </div>
             )}
-            {esRevisor && (
-              <FormComentario
-                seccionActual="conclusion"
-                onGuardar={agregarComentario}
-                deshabilitado={revisionDeshabilitada}
-              />
-            )}
           </CardContent>
         </Card>
       )}
+
+      {/* ── Valor Concluido ── */}
+      {(() => {
+        const METODOS = [
+          { clave: 'fisico',      label: 'Método Físico / Costos',        valor: Number(metodoFisico?.valor_fisico_total)             || 0 },
+          { clave: 'comparativo', label: 'Método Comparativo de Mercado', valor: Number(metodoComparativo?.valor_comparativo_total)   || 0 },
+          { clave: 'rentas',      label: 'Capitalización de Rentas',      valor: Number(metodoRentas?.valor_capitalizacion)           || 0 },
+          { clave: 'residual',    label: 'Método Residual Estático',      valor: Number(metodoResidual?.valor_residual)               || 0 },
+        ].filter(m => m.valor > 0)
+
+        if (METODOS.length === 0) return null
+
+        const variacion = calcularVariacionMetodos(METODOS.map(m => m.valor))
+        const variacionAlerta = variacion !== null && variacion > 30
+        const metodoElegido = expediente.metodo_elegido
+        const elegido = METODOS.find(m => m.clave === metodoElegido)
+
+        return (
+          <Card className={variacionAlerta && !metodoElegido ? 'border-red-300' : ''}>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Scale className="h-4 w-4 text-gray-600" />
+                <CardTitle>Valor Concluido</CardTitle>
+                {guardandoMetodo && <Loader2 className="h-3.5 w-3.5 animate-spin text-gray-400 ml-1" />}
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+
+              {/* Tabla de métodos con radio para el perito */}
+              <div className="rounded-md border border-gray-200 overflow-hidden text-sm divide-y divide-gray-100">
+                {METODOS.map(m => (
+                  <div
+                    key={m.clave}
+                    className={`flex items-center gap-3 px-4 py-3 transition-colors ${
+                      metodoElegido === m.clave ? 'bg-blue-50' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    {esAutor && (
+                      <input
+                        type="radio"
+                        name="metodoElegido"
+                        value={m.clave}
+                        checked={metodoElegido === m.clave}
+                        onChange={() => handleElegirMetodo(m.clave)}
+                        disabled={guardandoMetodo}
+                        className="h-4 w-4 accent-blue-600 shrink-0"
+                      />
+                    )}
+                    <span className="flex-1 text-gray-700">{m.label}</span>
+                    <span className={`font-semibold font-mono ${metodoElegido === m.clave ? 'text-blue-800' : 'text-gray-800'}`}>
+                      {formatCurrency(m.valor)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Indicador de variación */}
+              {variacion !== null && (
+                <div className={`flex items-start gap-2 rounded-md px-3 py-2.5 text-sm ${
+                  variacionAlerta
+                    ? 'bg-red-50 border border-red-200 text-red-700'
+                    : 'bg-green-50 border border-green-200 text-green-700'
+                }`}>
+                  {variacionAlerta
+                    ? <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                    : <CheckCircle2 className="h-4 w-4 shrink-0 mt-0.5" />
+                  }
+                  <div>
+                    <span className="font-medium">
+                      Variación entre métodos: {formatNumber(variacion, 1)}%
+                    </span>
+                    {variacionAlerta && (
+                      <p className="text-xs mt-0.5">
+                        Supera el límite admisible del 30% (SHF / INDAABIN). Revise los datos de los métodos aplicados antes de concluir el valor.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Instrucción cuando no hay método elegido */}
+              {esAutor && !metodoElegido && (
+                <p className="text-xs text-amber-600 italic">
+                  Selecciona el método que adoptarás como valor concluido. Este es el valor que aparecerá en el dictamen.
+                </p>
+              )}
+
+              {/* Valor concluido elegido */}
+              {elegido && (
+                <div className="bg-[#1B2D4E] text-white rounded-md p-4">
+                  <p className="text-xs text-blue-300 uppercase tracking-wide mb-1">
+                    Valor concluido · {elegido.label}
+                  </p>
+                  <p className="text-2xl font-bold">{formatCurrency(elegido.valor)}</p>
+                  {esAutor && (
+                    <button
+                      onClick={() => handleElegirMetodo(null)}
+                      disabled={guardandoMetodo}
+                      className="text-xs text-blue-300 hover:text-white mt-2 underline disabled:opacity-50"
+                    >
+                      Cambiar método →
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {errorMetodo && (
+                <p className="text-xs text-red-600">{errorMetodo}</p>
+              )}
+
+              {esRevisor && (
+                <FormComentario
+                  seccionActual="conclusion"
+                  onGuardar={agregarComentario}
+                  deshabilitado={revisionDeshabilitada}
+                />
+              )}
+            </CardContent>
+          </Card>
+        )
+      })()}
 
       {/* ── Panel de revisión ── */}
       {mostrarRevision && (

@@ -82,12 +82,19 @@ export function RevisarExpedientePage() {
 
   const { compartido, expediente, metodoFisico, metodoComparativo, metodoRentas, metodoResidual } = datos
 
-  const valores = [
-    { label: 'Enfoque comparativo de mercado', valor: metodoComparativo?.valor_comparativo_total },
-    { label: 'Enfoque de costos (físico)',      valor: metodoFisico?.valor_fisico_total },
-    { label: 'Enfoque de capitalización',       valor: metodoRentas?.valor_capitalizacion },
-    { label: 'Enfoque residual',                valor: metodoResidual?.valor_residual },
-  ].filter(v => v.valor != null)
+  const METODOS = [
+    { clave: 'comparativo', label: 'Enfoque comparativo de mercado', valor: metodoComparativo?.valor_comparativo_total },
+    { clave: 'fisico',      label: 'Enfoque de costos (físico)',      valor: metodoFisico?.valor_fisico_total },
+    { clave: 'rentas',      label: 'Enfoque de capitalización',       valor: metodoRentas?.valor_capitalizacion },
+    { clave: 'residual',    label: 'Enfoque residual',                valor: metodoResidual?.valor_residual },
+  ].filter(v => v.valor != null && Number(v.valor) > 0)
+
+  const metodoElegido = expediente?.metodo_elegido
+  const elegido = metodoElegido ? METODOS.find(m => m.clave === metodoElegido) : null
+  const valsNums = METODOS.map(m => Number(m.valor)).filter(v => v > 0)
+  const variacion = valsNums.length >= 2
+    ? (Math.max(...valsNums) - Math.min(...valsNums)) / Math.min(...valsNums) * 100
+    : null
 
   const diasRestantesExp = diasRestantes(compartido?.expira_en)
 
@@ -143,20 +150,47 @@ export function RevisarExpedientePage() {
         </Card>
 
         {/* Valores concluidos */}
-        {valores.length > 0 && (
+        {METODOS.length > 0 && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Valores concluidos</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <dl className="divide-y divide-gray-100">
-                {valores.map(v => (
-                  <div key={v.label} className="flex justify-between items-center py-2">
-                    <dt className="text-sm text-gray-600">{v.label}</dt>
-                    <dd className="text-sm font-semibold text-gray-900 tabular-nums">{formatCurrency(v.valor)}</dd>
+                {METODOS.map(v => (
+                  <div key={v.clave} className={`flex justify-between items-center py-2 ${metodoElegido === v.clave ? 'font-semibold' : ''}`}>
+                    <dt className={`text-sm ${metodoElegido === v.clave ? 'text-[#1B2D4E]' : 'text-gray-600'}`}>
+                      {v.label}
+                      {metodoElegido === v.clave && <span className="ml-2 text-xs bg-[#1B2D4E] text-white px-1.5 py-0.5 rounded">adoptado</span>}
+                    </dt>
+                    <dd className={`text-sm tabular-nums ${metodoElegido === v.clave ? 'text-[#1B2D4E]' : 'text-gray-900'}`}>
+                      {formatCurrency(v.valor)}
+                    </dd>
                   </div>
                 ))}
               </dl>
+
+              {variacion !== null && (
+                <div className={`flex items-start gap-2 rounded-md px-3 py-2 text-xs ${
+                  variacion > 30
+                    ? 'bg-red-50 border border-red-200 text-red-700'
+                    : 'bg-green-50 border border-green-200 text-green-700'
+                }`}>
+                  <AlertTriangle className={`h-3.5 w-3.5 shrink-0 mt-0.5 ${variacion <= 30 ? 'opacity-0' : ''}`} />
+                  <span>
+                    Variación entre métodos: <strong>{variacion.toFixed(1)}%</strong>
+                    {variacion > 30 && ' — supera el límite del 30% (SHF / INDAABIN)'}
+                  </span>
+                </div>
+              )}
+
+              {elegido && (
+                <div className="bg-[#1B2D4E] text-white rounded-md p-4">
+                  <p className="text-xs text-blue-300 uppercase tracking-wide mb-1">Valor concluido</p>
+                  <p className="text-xl font-bold">{formatCurrency(elegido.valor)}</p>
+                  <p className="text-xs text-blue-300 mt-1">{elegido.label}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
