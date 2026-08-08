@@ -12,12 +12,12 @@ export function DashboardPage() {
         <p className="text-sm text-gray-500 mt-0.5">{user?.email}</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <Link to="/expedientes/nuevo?modo=completo">
+        <Link to="/expedientes/nuevo">
           <Card className="hover:border-blue-300 hover:shadow-md transition-all cursor-pointer">
             <CardContent className="pt-5 pb-5">
               <PlusCircle className="h-7 w-7 text-blue-600 mb-3" />
               <p className="font-semibold text-gray-900 text-sm">Nuevo Avalúo</p>
-              <p className="text-xs text-gray-400 mt-0.5">Expediente completo — 6 pasos</p>
+              <p className="text-xs text-gray-400 mt-0.5">Expediente completo con todas las secciones</p>
             </CardContent>
           </Card>
         </Link>
