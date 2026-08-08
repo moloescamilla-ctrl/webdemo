@@ -18,7 +18,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { UbicacionMapaInput } from '@/components/ui/ubicacion-mapa-input'
-import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin, Calculator } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
@@ -262,9 +262,19 @@ export function EditarExpedientePage() {
         </div>
       </div>
 
+      {expediente.tipo_expediente === 'calculo_rapido' && (
+        <div className="mb-4 flex items-center gap-2 px-3 py-2 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-700">
+          <Calculator className="h-4 w-4 shrink-0" />
+          <span>Cálculo rápido — solo método físico disponible</span>
+        </div>
+      )}
+
       <div className="overflow-x-auto mb-6">
         <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit min-w-full sm:min-w-0">
-          {TABS.map(t => (
+          {(expediente.tipo_expediente === 'calculo_rapido'
+            ? TABS.filter(t => t.id === 'fisico')
+            : TABS
+          ).map(t => (
             <button
               key={t.id}
               onClick={() => { setTab(t.id); setErrorMsg(null) }}

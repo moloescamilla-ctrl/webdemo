@@ -28,12 +28,13 @@ export function NuevoExpedientePage() {
     try {
       const perfil = getPeritoPerfil()
       const exp = await crearExpediente({
-        tipo_inmueble:  tipoInmueble,
-        uso:            'Habitacional',
-        nombre_perito:  perfil.nombre_perito  || null,
-        clave_perito:   perfil.clave_perito   || null,
-        cedula_perito:  perfil.cedula_perito  || null,
-        estado:         'borrador',
+        tipo_inmueble:    tipoInmueble,
+        uso:              'Habitacional',
+        nombre_perito:    perfil.nombre_perito  || null,
+        clave_perito:     perfil.clave_perito   || null,
+        cedula_perito:    perfil.cedula_perito  || null,
+        estado:           'borrador',
+        tipo_expediente:  esRapido ? 'calculo_rapido' : 'avaluo',
       })
       navigate(
         `/expedientes/${exp.id}/editar`,
