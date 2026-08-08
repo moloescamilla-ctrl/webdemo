@@ -220,9 +220,9 @@ function ExpRow({ exp, eliminando, onEliminar, rapido = false }) {
 
       <div className="px-3 flex items-center gap-0.5 border-l border-gray-100 shrink-0">
         <Link
-          to={`/expedientes/${exp.id}`}
+          to={rapido ? `/expedientes/${exp.id}/editar` : `/expedientes/${exp.id}`}
           className="p-1.5 text-gray-300 hover:text-gray-500 transition-colors rounded"
-          title="Ver detalle"
+          title={rapido ? 'Editar' : 'Ver detalle'}
         >
           <Pencil className="h-4 w-4" />
         </Link>

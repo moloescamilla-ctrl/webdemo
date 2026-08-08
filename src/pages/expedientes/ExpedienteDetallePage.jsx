@@ -181,10 +181,12 @@ export function ExpedienteDetallePage() {
               Editar
             </Link>
           )}
-          <BotonDescargarPDF
-            datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos }}
-            fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
-          />
+          {expediente.tipo_expediente !== 'calculo_rapido' && (
+            <BotonDescargarPDF
+              datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos }}
+              fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
+            />
+          )}
         </div>
       </div>
 
