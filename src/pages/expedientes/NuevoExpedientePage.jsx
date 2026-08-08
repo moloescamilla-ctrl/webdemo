@@ -1,12 +1,12 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { useExpedientes } from '@/hooks/useExpedientes'
 import { getPeritoPerfil } from '@/hooks/usePeritoPerfil'
-import { Loader2 } from 'lucide-react'
+import { Calculator, Loader2 } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
@@ -15,6 +15,8 @@ const TIPOS_INMUEBLE = [
 
 export function NuevoExpedientePage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const esRapido = searchParams.get('modo') === 'rapido'
   const { crearExpediente } = useExpedientes()
   const [tipoInmueble, setTipoInmueble] = useState('Casa habitación')
   const [guardando, setGuardando] = useState(false)
@@ -33,7 +35,10 @@ export function NuevoExpedientePage() {
         cedula_perito:  perfil.cedula_perito  || null,
         estado:         'borrador',
       })
-      navigate(`/expedientes/${exp.id}/editar`)
+      navigate(
+        `/expedientes/${exp.id}/editar`,
+        esRapido ? { state: { tab: 'fisico' } } : undefined,
+      )
     } catch (e) {
       setError(e.message)
     } finally {
@@ -44,8 +49,22 @@ export function NuevoExpedientePage() {
   return (
     <div className="p-6 flex flex-col items-center justify-center min-h-[60vh]">
       <div className="w-full max-w-xs">
-        <h1 className="text-xl font-bold text-gray-900 mb-1">Nuevo avalúo</h1>
-        <p className="text-sm text-gray-400 mb-6">Elige el tipo de inmueble para comenzar</p>
+        {esRapido ? (
+          <>
+            <div className="flex items-center gap-2 mb-1">
+              <Calculator className="h-5 w-5 text-purple-600" />
+              <h1 className="text-xl font-bold text-gray-900">Calculadora Rápida</h1>
+            </div>
+            <p className="text-sm text-gray-400 mb-6">
+              Entra directo al cálculo físico y comparativo
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-xl font-bold text-gray-900 mb-1">Nuevo avalúo</h1>
+            <p className="text-sm text-gray-400 mb-6">Elige el tipo de inmueble para comenzar</p>
+          </>
+        )}
 
         <Card>
           <CardContent className="pt-5 space-y-5">
@@ -67,13 +86,15 @@ export function NuevoExpedientePage() {
 
             <Button className="w-full" onClick={handleCrear} disabled={guardando}>
               {guardando ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Crear expediente
+              {esRapido ? 'Iniciar cálculo' : 'Crear expediente'}
             </Button>
           </CardContent>
         </Card>
 
         <p className="text-xs text-gray-400 mt-3 text-center">
-          Completa los datos en el expediente una vez creado
+          {esRapido
+            ? 'Podrás completar los datos generales después'
+            : 'Completa los datos en el expediente una vez creado'}
         </p>
       </div>
     </div>
