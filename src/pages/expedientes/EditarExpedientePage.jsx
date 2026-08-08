@@ -96,8 +96,8 @@ export function EditarExpedientePage() {
   const [guardando, setGuardando] = useState(false)
 
   useEffect(() => {
-    if (expediente?.tipo_expediente === 'calculo_rapido' && tab !== 'fisico') {
-      setTab('fisico')
+    if (expediente?.tipo_expediente === 'calculo_rapido' && !['datos', 'fisico'].includes(tab)) {
+      setTab('datos')
     }
   }, [expediente?.tipo_expediente])
   const [okTab, setOkTab] = useState(null)
@@ -271,14 +271,14 @@ export function EditarExpedientePage() {
       {expediente.tipo_expediente === 'calculo_rapido' && (
         <div className="mb-4 flex items-center gap-2 px-3 py-2 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-700">
           <Calculator className="h-4 w-4 shrink-0" />
-          <span>Cálculo rápido — solo método físico disponible</span>
+          <span>Cálculo rápido — datos generales y método físico</span>
         </div>
       )}
 
       <div className="overflow-x-auto mb-6">
         <div className="flex gap-1 bg-gray-100 rounded-lg p-1 w-fit min-w-full sm:min-w-0">
           {(expediente.tipo_expediente === 'calculo_rapido'
-            ? TABS.filter(t => t.id === 'fisico')
+            ? TABS.filter(t => ['datos', 'fisico'].includes(t.id))
             : TABS
           ).map(t => (
             <button
