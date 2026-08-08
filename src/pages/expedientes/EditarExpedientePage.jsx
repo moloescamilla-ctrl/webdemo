@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useExpedientes } from '@/hooks/useExpedientes'
@@ -94,6 +94,12 @@ export function EditarExpedientePage() {
 
   const [tab, setTab] = useState(navState.tab ?? 'datos')
   const [guardando, setGuardando] = useState(false)
+
+  useEffect(() => {
+    if (expediente?.tipo_expediente === 'calculo_rapido' && tab !== 'fisico') {
+      setTab('fisico')
+    }
+  }, [expediente?.tipo_expediente])
   const [okTab, setOkTab] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
   const [datos, setDatos] = useState(null)

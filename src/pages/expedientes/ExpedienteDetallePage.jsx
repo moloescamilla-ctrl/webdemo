@@ -172,7 +172,7 @@ export function ExpedienteDetallePage() {
               Invitar revisor
             </button>
           )}
-          {esAutor && (
+          {esAutor && expediente.tipo_expediente !== 'calculo_rapido' && (
             <Link
               to={`/expedientes/${id}/editar`}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
