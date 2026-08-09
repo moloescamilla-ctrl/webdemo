@@ -17,6 +17,9 @@ const defaultDatos = {
   colindancia_oriente: '', colindancia_poniente: '',
   regimen_propiedad: '', numero_escritura: '', notaria: '', folio_real: '',
   ciudad: '', fecha_escritura: '', nombre_notario: '',
+  rpp_fecha: '', rpp_oficina: '', rpp_registro_orden: '',
+  rpp_fojas_folios: '', rpp_libro: '', rpp_tomo: '',
+  rpp_volumen: '', rpp_seccion: '', rpp_serie: '',
   tiene_agua: false, tiene_drenaje: false, tiene_luz: false,
   observaciones_terreno: '',
 }
@@ -51,6 +54,15 @@ function fromDB(row) {
     ciudad:               row.ciudad || '',
     fecha_escritura:      row.fecha_escritura || '',
     nombre_notario:       row.nombre_notario || '',
+    rpp_fecha:            row.rpp_fecha || '',
+    rpp_oficina:          row.rpp_oficina || '',
+    rpp_registro_orden:   row.rpp_registro_orden || '',
+    rpp_fojas_folios:     row.rpp_fojas_folios || '',
+    rpp_libro:            row.rpp_libro || '',
+    rpp_tomo:             row.rpp_tomo || '',
+    rpp_volumen:          row.rpp_volumen || '',
+    rpp_seccion:          row.rpp_seccion || '',
+    rpp_serie:            row.rpp_serie || '',
     tiene_agua:           row.tiene_agua ?? false,
     tiene_drenaje:        row.tiene_drenaje ?? false,
     tiene_luz:            row.tiene_luz ?? false,
@@ -171,6 +183,7 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
       area_privativa_m2:  esCondominio ? pfn(datos.area_privativa_m2) : null,
       sup_accesoria_m2:   esCondominio ? pfn(datos.sup_accesoria_m2) : null,
       fecha_escritura:    datos.fecha_escritura || null,
+      rpp_fecha:          datos.rpp_fecha || null,
       colindancias_json:  colindancias.filter(r => r.descripcion || r.metros),
     }
     onGuardar(payload)
@@ -366,6 +379,23 @@ export function CaracteristicasTerrenoForm({ initialValues = null, onGuardar, gu
           <Campo label="Ciudad (notaría)"      name="ciudad"           value={datos.ciudad}           onChange={handleChange} />
           <Campo label="Fecha de escritura"    name="fecha_escritura"  value={datos.fecha_escritura}  onChange={handleChange} type="date" />
           <Campo label="Folio real / registro" name="folio_real"       value={datos.folio_real}       onChange={handleChange} />
+
+          {/* Inscripción RPP */}
+          <div className="col-span-1 sm:col-span-2 border-t border-gray-100 pt-4">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+              Inscripción en el Registro Público de la Propiedad (RPP)
+            </p>
+            <p className="text-xs text-gray-400 mb-3">Llene solo los campos que apliquen según el estado</p>
+          </div>
+          <Campo label="Fecha de inscripción RPP" name="rpp_fecha"           value={datos.rpp_fecha}           onChange={handleChange} type="date" />
+          <Campo label="Oficina RPP"               name="rpp_oficina"         value={datos.rpp_oficina}         onChange={handleChange} />
+          <Campo label="Registro u orden"          name="rpp_registro_orden"  value={datos.rpp_registro_orden}  onChange={handleChange} />
+          <Campo label="A fojas o folios"          name="rpp_fojas_folios"    value={datos.rpp_fojas_folios}    onChange={handleChange} />
+          <Campo label="Del libro"                 name="rpp_libro"           value={datos.rpp_libro}           onChange={handleChange} />
+          <Campo label="Del tomo"                  name="rpp_tomo"            value={datos.rpp_tomo}            onChange={handleChange} />
+          <Campo label="Volumen"                   name="rpp_volumen"         value={datos.rpp_volumen}         onChange={handleChange} />
+          <Campo label="Sección"                   name="rpp_seccion"         value={datos.rpp_seccion}         onChange={handleChange} />
+          <Campo label="Serie"                     name="rpp_serie"           value={datos.rpp_serie}           onChange={handleChange} />
         </CardContent>
       </Card>
 
