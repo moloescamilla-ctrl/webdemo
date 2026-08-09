@@ -5,11 +5,12 @@ import { supabase } from '@/lib/supabase'
 import { useCapturaComparables } from './useCapturaComparables'
 import { PanelRevision } from './PanelRevision'
 import { ComparableBuffer } from './ComparableBuffer'
-import { ChevronDown, ChevronUp, Loader2, Info, ArrowRight, Globe, Copy, Check, RefreshCw } from 'lucide-react'
+import { ChevronDown, ChevronUp, Loader2, Info, ArrowRight, Globe, Copy, Check, RefreshCw, Download } from 'lucide-react'
+import { exportarComparablesXLSX } from './exportarComparables'
 
 const ENDPOINT_CHROME = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/capturar-comparable`
 
-export function CapturaComparables({ expedienteId, onTransferir }) {
+export function CapturaComparables({ expedienteId, folio = '', onTransferir }) {
   const [showChrome, setShowChrome] = useState(true)
   const [tokenCopiado, setTokenCopiado] = useState(false)
   const [enRevision, setEnRevision] = useState(null)
@@ -142,16 +143,30 @@ Cuando el usuario pida capturar un comparable:
                 <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
               </button>
             </div>
-            {aprobados.length > 0 && onTransferir && (
-              <Button
-                size="sm"
-                onClick={() => onTransferir(aprobados)}
-                className="gap-1.5 bg-green-600 hover:bg-green-700 text-xs"
-              >
-                <ArrowRight className="h-3.5 w-3.5" />
-                Transferir {aprobados.length} aprobado{aprobados.length !== 1 ? 's' : ''}
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {comparables.length > 0 && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => exportarComparablesXLSX(comparables, folio)}
+                  className="gap-1.5 text-xs"
+                  title="Descargar todos los comparables en Excel"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Excel
+                </Button>
+              )}
+              {aprobados.length > 0 && onTransferir && (
+                <Button
+                  size="sm"
+                  onClick={() => onTransferir(aprobados)}
+                  className="gap-1.5 bg-green-600 hover:bg-green-700 text-xs"
+                >
+                  <ArrowRight className="h-3.5 w-3.5" />
+                  Transferir {aprobados.length} aprobado{aprobados.length !== 1 ? 's' : ''}
+                </Button>
+              )}
+            </div>
           </div>
           <p className="text-xs text-gray-400">
             Revisa cada captura antes de aprobarla. Solo los aprobados se transfieren a la homologación.

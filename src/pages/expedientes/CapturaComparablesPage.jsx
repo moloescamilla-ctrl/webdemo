@@ -1,10 +1,18 @@
+import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { CapturaComparables } from '@/features/captura-comparables/CapturaComparables'
+import { supabase } from '@/lib/supabase'
 import { ArrowLeft } from 'lucide-react'
 
 export function CapturaComparablesPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const [folio, setFolio] = useState('')
+
+  useEffect(() => {
+    supabase.from('expedientes').select('folio').eq('id', id).single()
+      .then(({ data }) => { if (data?.folio) setFolio(data.folio) })
+  }, [id])
 
   const handleTransferir = (aprobados) => {
     navigate(`/expedientes/${id}/editar`, {
@@ -29,7 +37,7 @@ export function CapturaComparablesPage() {
         </div>
       </div>
 
-      <CapturaComparables expedienteId={id} onTransferir={handleTransferir} />
+      <CapturaComparables expedienteId={id} folio={folio} onTransferir={handleTransferir} />
     </div>
   )
 }
