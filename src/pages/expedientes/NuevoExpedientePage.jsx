@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { useExpedientes } from '@/hooks/useExpedientes'
-import { getPeritoPerfil } from '@/hooks/usePeritoPerfil'
+import { usePeritoPerfil } from '@/hooks/usePeritoPerfil'
 import { Calculator, Loader2 } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
@@ -18,6 +18,7 @@ export function NuevoExpedientePage() {
   const [searchParams] = useSearchParams()
   const esRapido = searchParams.get('modo') === 'rapido'
   const { crearExpediente } = useExpedientes()
+  const { perfil } = usePeritoPerfil()
   const [tipoInmueble, setTipoInmueble] = useState('Casa habitación')
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState(null)
@@ -26,13 +27,11 @@ export function NuevoExpedientePage() {
     setGuardando(true)
     setError(null)
     try {
-      const perfil = getPeritoPerfil()
       const exp = await crearExpediente({
         tipo_inmueble:    tipoInmueble,
         uso:              'Habitacional',
-        nombre_perito:    perfil.nombre_perito  || null,
-        clave_perito:     perfil.clave_perito   || null,
-        cedula_perito:    perfil.cedula_perito  || null,
+        nombre_perito:    perfil?.nombre  || null,
+        cedula_perito:    perfil?.cedula  || null,
         estado:           'borrador',
         tipo_expediente:  esRapido ? 'calculo_rapido' : 'avaluo',
       })
