@@ -103,8 +103,10 @@ export function EditarExpedientePage() {
   }, [expediente?.tipo_expediente])
 
   // Pre-llenar campos del perito desde el perfil de Supabase si el expediente no tiene datos propios
+  // Necesita !expediente porque fromExpediente() se define después del early-return de loading;
+  // expediente?.id en deps hace que el efecto se re-ejecute cuando el expediente llega.
   useEffect(() => {
-    if (!perfil) return
+    if (!perfil || !expediente) return
     setDatos(prev => {
       const base = prev ?? fromExpediente()
       return {
@@ -113,7 +115,7 @@ export function EditarExpedientePage() {
         cedula_perito: base.cedula_perito || perfil.cedula || '',
       }
     })
-  }, [perfil?.nombre, perfil?.cedula])
+  }, [perfil?.nombre, perfil?.cedula, expediente?.id])
   const [okTab, setOkTab] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
   const [datos, setDatos] = useState(null)

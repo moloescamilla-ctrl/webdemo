@@ -25,6 +25,8 @@ export default defineConfig({
         ],
       },
       workbox: {
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//, /^\/revisar\//],
         // Cachea todos los assets generados por Vite
         globPatterns: ['**/*.{js,css,html,ico,png,woff2}'],
         // Límite de 4 MB por archivo en precache (el bundle principal pesa ~2.5 MB)

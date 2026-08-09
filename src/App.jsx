@@ -1,3 +1,4 @@
+import { Component } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '@/hooks/useAuth'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -12,6 +13,32 @@ import { CapturaRapidaPage } from '@/pages/expedientes/CapturaRapidaPage'
 import { RevisarExpedientePage } from '@/pages/compartidos/RevisarExpedientePage'
 import { PerfilPage } from '@/pages/PerfilPage'
 
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center">
+          <p className="text-gray-600 text-sm">Ocurrió un error inesperado.</p>
+          <button
+            onClick={() => window.location.replace('/')}
+            className="text-sm text-white bg-[#1B2D4E] px-4 py-2 rounded-lg"
+          >
+            Reiniciar app
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return (
@@ -25,6 +52,7 @@ function ProtectedRoute({ children }) {
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
@@ -57,5 +85,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   )
 }
