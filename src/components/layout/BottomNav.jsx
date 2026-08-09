@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, FolderOpen, PlusCircle, LogOut } from 'lucide-react'
+import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, UserCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 
@@ -7,6 +7,7 @@ const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
   { to: '/expedientes', icon: FolderOpen, label: 'Expedientes' },
   { to: '/expedientes/nuevo', icon: PlusCircle, label: 'Nuevo' },
+  { to: '/perfil', icon: UserCircle, label: 'Perfil' },
 ]
 
 export function BottomNav() {

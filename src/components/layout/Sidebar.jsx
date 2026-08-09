@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, FolderOpen, PlusCircle, LogOut } from 'lucide-react'
+import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, UserCircle } from 'lucide-react'
 import logoCovinsa from '@/assets/logo-covinsa.png'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
   { to: '/expedientes', icon: FolderOpen, label: 'Expedientes' },
   { to: '/expedientes/nuevo', icon: PlusCircle, label: 'Nuevo Avalúo' },
+  { to: '/perfil', icon: UserCircle, label: 'Mi perfil' },
 ]
 
 export function Sidebar({ onSignOut }) {
