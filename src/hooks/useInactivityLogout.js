@@ -10,7 +10,11 @@ export function useInactivityLogout({ onWarn, onLogout }) {
 
   const doLogout = useCallback(async () => {
     onLogout?.()
-    await supabase.auth.signOut()
+    try {
+      await supabase.auth.signOut()
+    } catch {
+      // Si falla el signOut remoto, la sesión local ya fue limpiada
+    }
     window.location.replace('/login')
   }, [onLogout])
 

@@ -31,6 +31,11 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
         runtimeCaching: [
           {
+            // Auth endpoints → NetworkOnly: nunca cachear tokens de sesión
+            urlPattern: ({ url }) => url.hostname.includes('supabase.co') && url.pathname.includes('/auth/'),
+            handler: 'NetworkOnly',
+          },
+          {
             // Supabase REST API → NetworkFirst: datos frescos cuando hay red,
             // respuesta cacheada cuando no hay conexión
             urlPattern: ({ url }) => url.hostname.includes('supabase.co'),
