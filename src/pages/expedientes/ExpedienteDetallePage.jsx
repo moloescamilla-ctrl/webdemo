@@ -13,7 +13,7 @@ import { InvitarRevisorModal } from '@/features/revision/InvitarRevisorModal'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency, formatNumber, calcularVariacionMetodos } from '@/lib/utils'
-import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown, UserPlus, MessageSquare, Scale, AlertTriangle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Building2, TrendingUp, Loader2, AlertCircle, Pencil, FileDown, UserPlus, MessageSquare, Scale, AlertTriangle, CheckCircle2, Archive } from 'lucide-react'
 
 async function fetchBase64(url) {
   const res = await fetch(url)
@@ -74,10 +74,10 @@ function BotonDescargarPDF({ datos, fileName }) {
 }
 
 const ESTADO_VARIANT = {
-  borrador: 'secondary', en_proceso: 'warning', completado: 'success', firmado: 'default',
+  borrador: 'secondary', en_proceso: 'warning', completado: 'success', firmado: 'default', archivado: 'secondary',
 }
 const ESTADO_LABEL = {
-  borrador: 'Borrador', en_proceso: 'En proceso', completado: 'Completado', firmado: 'Firmado',
+  borrador: 'Borrador', en_proceso: 'En proceso', completado: 'Completado', firmado: 'Firmado', archivado: 'Archivado',
 }
 
 function Row({ label, value }) {
@@ -95,7 +95,7 @@ export function ExpedienteDetallePage() {
     expediente, entorno, terreno, descripcionConstruccion,
     metodoFisico, inspeccion, metodoComparativo, metodoRentas, metodoResidual,
     esAutor, esRevisor,
-    guardarMetodoElegido,
+    guardarMetodoElegido, archivarExpediente,
     loading, error,
   } = useExpediente(id)
   const { fotos } = useFotosExpediente(id)
@@ -109,6 +109,15 @@ export function ExpedienteDetallePage() {
   const [modalInvitar, setModalInvitar] = useState(false)
   const [guardandoMetodo, setGuardandoMetodo] = useState(false)
   const [errorMetodo, setErrorMetodo] = useState(null)
+  const [archivando, setArchivando] = useState(false)
+
+  const handleArchivar = async () => {
+    if (!window.confirm('¿Marcar este avalúo como terminado? Se moverá a la sección de archivados en tu lista.')) return
+    setArchivando(true)
+    try { await archivarExpediente() }
+    catch (err) { alert('Error al archivar: ' + err.message) }
+    finally { setArchivando(false) }
+  }
 
   const handleElegirMetodo = async (clave) => {
     setGuardandoMetodo(true)
@@ -192,6 +201,18 @@ export function ExpedienteDetallePage() {
               datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos, perfil }}
               fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
             />
+          )}
+          {esAutor && expediente.estado !== 'archivado' && expediente.tipo_expediente !== 'calculo_rapido' && (
+            <button
+              onClick={handleArchivar}
+              disabled={archivando}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+            >
+              {archivando
+                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                : <Archive className="h-3.5 w-3.5" />}
+              Terminado
+            </button>
           )}
         </div>
       </div>

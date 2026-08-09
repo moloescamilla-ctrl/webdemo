@@ -69,6 +69,15 @@ export function useExpedientes() {
     return data
   }
 
+  async function archivarExpediente(id) {
+    const { error } = await supabase
+      .from('expedientes')
+      .update({ estado: 'archivado' })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    setExpedientes(prev => prev.map(e => e.id === id ? { ...e, estado: 'archivado' } : e))
+  }
+
   async function eliminarExpediente(id) {
     await Promise.all([
       supabase.from('metodos_comparativos').delete().eq('expediente_id', id),
@@ -257,7 +266,7 @@ export function useExpedientes() {
 
   return {
     expedientes, expedientesParaRevisar, loading, error,
-    crearExpediente, actualizarExpediente, eliminarExpediente,
+    crearExpediente, actualizarExpediente, archivarExpediente, eliminarExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
     guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
   }
