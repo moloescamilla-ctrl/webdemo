@@ -4,6 +4,7 @@ import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useRevision } from '@/hooks/useRevision'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
+import { usePeritoPerfil } from '@/hooks/usePeritoPerfil'
 import { AvaluoPDF } from '@/features/pdf/AvaluoPDF'
 import { BadgeRevision } from '@/features/revision/BadgeRevision'
 import { FormComentario } from '@/features/revision/FormComentario'
@@ -38,7 +39,11 @@ function BotonDescargarPDF({ datos, fileName }) {
       if (datos.expediente?.croquis_url) {
         croquisSrc = await fetchBase64(datos.expediente.croquis_url).catch(() => null)
       }
-      const blob = await pdf(<AvaluoPDF datos={{ ...datos, croquisSrc }} />).toBlob()
+      let firmaPerito = null
+      if (datos.perfil?.firma_url) {
+        firmaPerito = await fetchBase64(datos.perfil.firma_url).catch(() => null)
+      }
+      const blob = await pdf(<AvaluoPDF datos={{ ...datos, croquisSrc, firmaPerito }} />).toBlob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
@@ -94,6 +99,7 @@ export function ExpedienteDetallePage() {
     loading, error,
   } = useExpediente(id)
   const { fotos } = useFotosExpediente(id)
+  const { perfil } = usePeritoPerfil()
   const {
     revisiones, comentarios, pendientes, atendidos,
     estadoRevision, hayRevisionActiva,
@@ -183,7 +189,7 @@ export function ExpedienteDetallePage() {
           )}
           {expediente.tipo_expediente !== 'calculo_rapido' && (
             <BotonDescargarPDF
-              datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos }}
+              datos={{ expediente, entorno, terreno, descripcionConstruccion, inspeccion, metodoFisico, metodoComparativo, metodoRentas, metodoResidual, fotos, perfil }}
               fileName={`Avaluo_${expediente.folio || expediente.id.slice(0, 8)}_${expediente.municipio || 'MX'}.pdf`}
             />
           )}

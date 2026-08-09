@@ -31,6 +31,8 @@ export function AvaluoPDF({ datos }) {
     metodoResidual,
     fotos,
     croquisSrc,
+    perfil,
+    firmaPerito,
   } = datos
 
   const folio = expediente?.folio || expediente?.id?.slice(0, 8).toUpperCase() || 'AVALUO'
@@ -53,6 +55,8 @@ export function AvaluoPDF({ datos }) {
           metodoRentas={metodoRentas}
           metodoResidual={metodoResidual}
           entorno={entorno}
+          perfil={perfil}
+          firmaPerito={firmaPerito}
         />
         <PiePagina expediente={expediente} />
       </Page>
@@ -93,7 +97,7 @@ export function AvaluoPDF({ datos }) {
           metodoResidual={metodoResidual}
           expediente={expediente}
         />
-        <Firma expediente={expediente} />
+        <Firma expediente={expediente} perfil={perfil} firmaPerito={firmaPerito} />
         <PiePagina expediente={expediente} />
       </Page>
     </Document>

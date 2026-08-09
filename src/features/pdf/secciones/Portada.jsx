@@ -35,8 +35,10 @@ export default function Portada({
   expediente, fotoFachada,
   descripcionConstruccion, metodoFisico,
   metodoComparativo, metodoRentas, metodoResidual,
-  entorno,
+  entorno, perfil, firmaPerito,
 }) {
+  const nombrePerito = perfil?.nombre || expediente?.nombre_perito || ''
+  const cedulaPerito = perfil?.cedula  || expediente?.cedula_perito  || ''
   const METODO_VALS = {
     fisico:      Number(metodoFisico?.valor_fisico_total)            || 0,
     comparativo: Number(metodoComparativo?.valor_comparativo_total)  || 0,
@@ -124,9 +126,9 @@ export default function Portada({
         <Fila num={1}  label="Folio de secuencia del avaluo"                          valor={sa(expediente.folio || expediente.id?.slice(0,8).toUpperCase())} />
         <Fila num={2}  label="Fecha del Avaluo (DD/MM/AAAA)"                          valor={sa(formatDate(expediente.fecha_inspeccion))} />
         <Fila num={3}  label="Nombre del Propietario"                                 valor={sa(expediente.nombre_propietario)} />
-        <Fila num={4}  label="Nombre del Perito Valuador"                             valor={sa(expediente.nombre_perito)} />
+        <Fila num={4}  label="Nombre del Perito Valuador"                             valor={sa(nombrePerito)} />
         <Fila num={5}  label="Clave del Perito Valuador que realizo el Avaluo"        valor={sa(expediente.clave_perito)} />
-        <Fila num={6}  label="Cedula profesional del Valuador"                        valor={sa(expediente.cedula_perito)} />
+        <Fila num={6}  label="Cedula profesional del Valuador"                        valor={sa(cedulaPerito)} />
         <Fila num={7}  label="Constructor para el caso de vivienda nueva"             valor="—" />
         <Fila num={8}  label="Proposito"                                              valor={sa(expediente.proposito_avaluo)} />
         <Fila num={9}  label="Tipo de Inmueble a valuar"                              valor={sa(expediente.tipo_inmueble)} />
@@ -198,15 +200,17 @@ export default function Portada({
 
       {/* ── Firma ── */}
       <View style={{ marginTop: 8, alignItems: 'center' }}>
-        <Text style={{ fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: COLORES.primario }}>FIRMA</Text>
-        <View style={{ marginTop: 4, borderTopWidth: 0.5, borderTopColor: COLORES.texto, paddingTop: 3, width: 200, alignItems: 'center' }}>
+        {firmaPerito && (
+          <Image src={firmaPerito} style={{ width: 120, height: 40, objectFit: 'contain', marginBottom: 2 }} />
+        )}
+        <View style={{ borderTopWidth: 0.5, borderTopColor: COLORES.texto, paddingTop: 3, width: 200, alignItems: 'center' }}>
           <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: COLORES.texto, textAlign: 'center' }}>
-            {sa(expediente.nombre_perito) || '_____________________________'}
+            {sa(nombrePerito) || '_____________________________'}
           </Text>
           <Text style={{ fontSize: 6.5, color: COLORES.gris, textAlign: 'center' }}>FIRMA DE VALUADOR PROFESIONAL</Text>
-          {expediente.cedula_perito && (
+          {cedulaPerito && (
             <Text style={{ fontSize: 6.5, color: COLORES.gris, textAlign: 'center', marginTop: 1 }}>
-              {`CEDULA PROFESIONAL: ${sa(expediente.cedula_perito)}`}
+              {`CÉDULA PROFESIONAL: ${sa(cedulaPerito)}`}
             </Text>
           )}
         </View>
