@@ -8,3 +8,12 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+// Desvanecer el splash después de que React monte
+const splash = document.getElementById('splash')
+if (splash) {
+  setTimeout(() => {
+    splash.classList.add('fade-out')
+    setTimeout(() => splash.remove(), 460)
+  }, 700)
+}
