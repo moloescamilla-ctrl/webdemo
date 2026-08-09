@@ -58,11 +58,11 @@ function BotonDescargarPDF({ datos, fileName }) {
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="flex flex-col items-end gap-1 flex-1 sm:flex-none">
       <button
         onClick={handleClick}
         disabled={generando}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+        className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
       >
         {generando
           ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Generando...</>
@@ -177,11 +177,11 @@ export function ExpedienteDetallePage() {
           </div>
           <p className="text-sm text-gray-500 mt-0.5">{dir || 'Sin dirección'}</p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
           {esAutor && (
             <button
               onClick={() => setModalInvitar(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
             >
               <UserPlus className="h-3.5 w-3.5" />
               Invitar revisor
@@ -190,7 +190,7 @@ export function ExpedienteDetallePage() {
           {esAutor && expediente.tipo_expediente !== 'calculo_rapido' && (
             <Link
               to={`/expedientes/${id}/editar`}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm text-gray-600 border border-gray-200 rounded-md hover:border-blue-400 hover:text-blue-600 transition-colors"
             >
               <Pencil className="h-3.5 w-3.5" />
               Editar
@@ -206,7 +206,7 @@ export function ExpedienteDetallePage() {
             <button
               onClick={handleArchivar}
               disabled={archivando}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors"
             >
               {archivando
                 ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
