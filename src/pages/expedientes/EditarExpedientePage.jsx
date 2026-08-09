@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useExpedientes } from '@/hooks/useExpedientes'
-import { getPeritoPerfil, savePeritoPerfil } from '@/hooks/usePeritoPerfil'
+import { usePeritoPerfil } from '@/hooks/usePeritoPerfil'
 import { MetodoFisicoForm } from '@/features/metodo-fisico/MetodoFisicoForm'
 import { MetodoComparativoForm } from '@/features/metodo-comparativo/MetodoComparativoForm'
 import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
@@ -91,6 +91,7 @@ export function EditarExpedientePage() {
     guardarDescripcionConstruccion,
     guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
   } = useExpedientes()
+  const { perfil, guardarPerfil } = usePeritoPerfil()
 
   const [tab, setTab] = useState(navState.tab ?? 'datos')
   const [guardando, setGuardando] = useState(false)
@@ -100,6 +101,19 @@ export function EditarExpedientePage() {
       setTab('datos')
     }
   }, [expediente?.tipo_expediente])
+
+  // Pre-llenar campos del perito desde el perfil de Supabase si el expediente no tiene datos propios
+  useEffect(() => {
+    if (!perfil) return
+    setDatos(prev => {
+      const base = prev ?? fromExpediente()
+      return {
+        ...base,
+        nombre_perito: base.nombre_perito || perfil.nombre || '',
+        cedula_perito: base.cedula_perito || perfil.cedula || '',
+      }
+    })
+  }, [perfil?.nombre, perfil?.cedula])
   const [okTab, setOkTab] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
   const [datos, setDatos] = useState(null)
@@ -124,7 +138,6 @@ export function EditarExpedientePage() {
   }
 
   const fromExpediente = () => {
-    const perfil = getPeritoPerfil()
     return {
       calle: expediente.calle || '',
       numero_oficial: expediente.numero_oficial || '',
@@ -143,9 +156,9 @@ export function EditarExpedientePage() {
       nombre_propietario: expediente.nombre_propietario || '',
       solicitante: expediente.solicitante || '',
       fecha_inspeccion: expediente.fecha_inspeccion || '',
-      nombre_perito: expediente.nombre_perito || perfil.nombre_perito || '',
-      clave_perito: expediente.clave_perito || perfil.clave_perito || '',
-      cedula_perito: expediente.cedula_perito || perfil.cedula_perito || '',
+      nombre_perito: expediente.nombre_perito || '',
+      clave_perito: expediente.clave_perito || '',
+      cedula_perito: expediente.cedula_perito || '',
       latitud: expediente.latitud ?? null,
       longitud: expediente.longitud ?? null,
     }
@@ -418,10 +431,10 @@ export function EditarExpedientePage() {
               <div className="flex justify-end">
                 <button
                   type="button"
-                  onClick={() => savePeritoPerfil({ nombre_perito: d.nombre_perito, clave_perito: d.clave_perito, cedula_perito: d.cedula_perito })}
+                  onClick={() => guardarPerfil({ nombre: d.nombre_perito, cedula: d.cedula_perito })}
                   className="text-xs text-blue-600 hover:text-blue-800 border border-blue-200 rounded px-3 py-1.5 hover:bg-blue-50 transition-colors"
                 >
-                  Guardar en perfil — a partir de aquí se cargarán automáticamente
+                  Guardar en perfil — se usará en futuros expedientes
                 </button>
               </div>
             </CardContent>
