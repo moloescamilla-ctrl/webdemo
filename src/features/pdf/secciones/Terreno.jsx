@@ -41,18 +41,23 @@ export default function Terreno({ terreno }) {
       </Text>
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: '#D1D5DB' }]}>
         <View style={styles.filaHeader}>
-          <Text style={[styles.celdaHeader, { width: 70 }]}>Orientacion</Text>
+          <Text style={[styles.celdaHeader, { width: 60 }]}>Orientacion</Text>
+          <Text style={[styles.celdaHeader, { width: 40 }]}>Metros</Text>
           <Text style={[styles.celdaHeader, { flex: 1 }]}>Colindancia</Text>
         </View>
-        {[
-          ['Norte',    terreno.colindancia_norte],
-          ['Sur',      terreno.colindancia_sur],
-          ['Oriente',  terreno.colindancia_oriente],
-          ['Poniente', terreno.colindancia_poniente],
-        ].map(([orient, col], i) => (
-          <View key={orient} style={i % 2 === 0 ? styles.filaPar : styles.filaImpar}>
-            <Text style={[styles.celda, { width: 70, fontFamily: 'Helvetica-Bold' }]}>{orient}</Text>
-            <Text style={[styles.celda, { flex: 1 }]}>{sa(col) || '—'}</Text>
+        {(terreno.colindancias_json?.length
+          ? terreno.colindancias_json
+          : [
+              { rumbo: 'Norte',    metros: '', descripcion: terreno.colindancia_norte    || '' },
+              { rumbo: 'Sur',      metros: '', descripcion: terreno.colindancia_sur      || '' },
+              { rumbo: 'Oriente',  metros: '', descripcion: terreno.colindancia_oriente  || '' },
+              { rumbo: 'Poniente', metros: '', descripcion: terreno.colindancia_poniente || '' },
+            ]
+        ).map((col, i) => (
+          <View key={i} style={i % 2 === 0 ? styles.filaPar : styles.filaImpar}>
+            <Text style={[styles.celda, { width: 60, fontFamily: 'Helvetica-Bold' }]}>{col.rumbo}</Text>
+            <Text style={[styles.celda, { width: 40, textAlign: 'right' }]}>{col.metros ? `${col.metros} m` : '—'}</Text>
+            <Text style={[styles.celda, { flex: 1 }]}>{sa(col.descripcion) || '—'}</Text>
           </View>
         ))}
       </View>
@@ -65,10 +70,38 @@ export default function Terreno({ terreno }) {
             <View style={styles.col1}>
               <Campo label="No. escritura" value={terreno.numero_escritura} />
               <Campo label="Notaria" value={terreno.notaria} />
+              <Campo label="Notario" value={terreno.nombre_notario} />
             </View>
             <View style={styles.col2}>
-              <Campo label="Folio real (RPP)" value={terreno.folio_real} />
+              <Campo label="Ciudad (notaria)" value={terreno.ciudad} />
+              <Campo label="Folio real" value={terreno.folio_real} />
               <Campo label="Fecha escritura" value={formatDate(terreno.fecha_escritura)} />
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Inscripcion en RPP */}
+      {(terreno.rpp_fecha || terreno.rpp_oficina || terreno.rpp_registro_orden ||
+        terreno.rpp_fojas_folios || terreno.rpp_libro || terreno.rpp_tomo ||
+        terreno.rpp_volumen || terreno.rpp_seccion || terreno.rpp_serie) && (
+        <View style={{ marginTop: 4 }}>
+          <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 3 }}>
+            Inscripcion en el Registro Publico de la Propiedad (RPP)
+          </Text>
+          <View style={styles.grid2}>
+            <View style={styles.col1}>
+              <Campo label="Fecha de inscripcion" value={formatDate(terreno.rpp_fecha)} />
+              <Campo label="Oficina RPP"          value={terreno.rpp_oficina} />
+              <Campo label="Registro u orden"     value={terreno.rpp_registro_orden} />
+              <Campo label="A fojas o folios"     value={terreno.rpp_fojas_folios} />
+              <Campo label="Del libro"            value={terreno.rpp_libro} />
+            </View>
+            <View style={styles.col2}>
+              <Campo label="Del tomo"  value={terreno.rpp_tomo} />
+              <Campo label="Volumen"   value={terreno.rpp_volumen} />
+              <Campo label="Seccion"   value={terreno.rpp_seccion} />
+              <Campo label="Serie"     value={terreno.rpp_serie} />
             </View>
           </View>
         </View>
