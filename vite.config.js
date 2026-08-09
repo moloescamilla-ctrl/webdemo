@@ -16,11 +16,11 @@ export default defineConfig({
         short_name: 'COVINSA',
         description: 'Sistema de valuación inmobiliaria COVINSA',
         theme_color: '#1B2D4E',
-        background_color: '#ffffff',
+        background_color: '#1B2D4E',
         display: 'standalone',
         start_url: '/',
         icons: [
-          { src: 'logo-192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'logo-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'logo-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
