@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useExpedientes } from '@/hooks/useExpedientes'
@@ -48,29 +48,31 @@ function coincide(exp, q) {
 }
 
 export function ExpedientesListPage() {
+  const location = useLocation()
   const { expedientes, expedientesParaRevisar, loading, error, eliminarExpediente, archivarExpediente } = useExpedientes()
   const [eliminando, setEliminando] = useState(null)
   const [archivando, setArchivando] = useState(null)
-  const [mostrarArchivados, setMostrarArchivados] = useState(false)
+  // Si venimos desde el dashboard o desde el botón "Terminado" que navega de vuelta, abre archivados automáticamente
+  const [mostrarArchivados, setMostrarArchivados] = useState(location.state?.mostrarArchivados ?? false)
   const [busqueda, setBusqueda] = useState('')
+  // Confirmación inline para eliminar (evita window.confirm que puede bloquearse en Android PWA)
+  const [confirmarEliminar, setConfirmarEliminar] = useState(null)
 
   const hayBusqueda = busqueda.trim().length > 0
 
-  const handleEliminar = async (e, id) => {
-    e.preventDefault(); e.stopPropagation()
-    if (!window.confirm('¿Eliminar este expediente? Esta acción no se puede deshacer.')) return
+  const handleEliminar = async (id) => {
     setEliminando(id)
+    setConfirmarEliminar(null)
     try { await eliminarExpediente(id) }
-    catch (err) { alert('Error al eliminar: ' + err.message) }
+    catch (err) { console.error('Error al eliminar:', err.message) }
     finally { setEliminando(null) }
   }
 
   const handleArchivar = async (e, id) => {
     e.preventDefault(); e.stopPropagation()
-    if (!window.confirm('¿Marcar como terminado? Se moverá a la sección de archivados.')) return
     setArchivando(id)
     try { await archivarExpediente(id) }
-    catch (err) { alert('Error al archivar: ' + err.message) }
+    catch (err) { console.error('Error al archivar:', err.message) }
     finally { setArchivando(null) }
   }
 
@@ -240,7 +242,7 @@ export function ExpedientesListPage() {
                   <ExpRow
                     key={exp.id} exp={exp}
                     eliminando={eliminando} archivando={archivando}
-                    onEliminar={handleEliminar} onArchivar={handleArchivar}
+                    onEliminar={setConfirmarEliminar} onArchivar={handleArchivar}
                   />
                 ))}
               </div>
@@ -261,7 +263,7 @@ export function ExpedientesListPage() {
                     <ExpRow
                       key={exp.id} exp={exp}
                       eliminando={eliminando} archivando={archivando}
-                      onEliminar={handleEliminar} onArchivar={handleArchivar}
+                      onEliminar={setConfirmarEliminar} onArchivar={handleArchivar}
                     />
                   ))}
                 </div>
@@ -295,7 +297,7 @@ export function ExpedientesListPage() {
                 <ExpRow
                   key={exp.id} exp={exp}
                   eliminando={eliminando} archivando={archivando}
-                  onEliminar={handleEliminar} onArchivar={null}
+                  onEliminar={setConfirmarEliminar} onArchivar={null}
                   archivado
                 />
               ))}
@@ -320,10 +322,41 @@ export function ExpedientesListPage() {
               <ExpRow
                 key={exp.id} exp={exp}
                 eliminando={eliminando} archivando={archivando}
-                onEliminar={handleEliminar} onArchivar={null}
+                onEliminar={setConfirmarEliminar} onArchivar={null}
                 rapido
               />
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmación de eliminación (reemplaza window.confirm) */}
+      {confirmarEliminar && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl p-5 w-full max-w-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-red-100 rounded-full p-2 shrink-0">
+                <Trash2 className="h-5 w-5 text-red-600" />
+              </div>
+              <p className="font-semibold text-gray-900 text-sm">¿Eliminar expediente?</p>
+            </div>
+            <p className="text-xs text-gray-500 mb-4 ml-11">Esta acción no se puede deshacer.</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmarEliminar(null)}
+                className="flex-1 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => handleEliminar(confirmarEliminar)}
+                disabled={eliminando === confirmarEliminar}
+                className="flex-1 py-2.5 text-sm font-medium text-white bg-red-600 rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+              >
+                {eliminando === confirmarEliminar ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Eliminar
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -384,7 +417,7 @@ function ExpRow({ exp, eliminando, archivando, onEliminar, onArchivar, rapido = 
           </button>
         )}
         <button
-          onClick={(e) => onEliminar(e, exp.id)}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onEliminar(exp.id) }}
           disabled={eliminando === exp.id}
           className="p-1.5 text-gray-300 hover:text-red-400 transition-colors rounded disabled:opacity-50"
           title="Eliminar"

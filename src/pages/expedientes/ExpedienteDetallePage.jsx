@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { pdf } from '@react-pdf/renderer'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useRevision } from '@/hooks/useRevision'
@@ -106,17 +106,24 @@ export function ExpedienteDetallePage() {
     invitarRevisor, agregarComentario, atenderComentario, cerrarRevision,
   } = useRevision(id)
 
+  const navigate = useNavigate()
   const [modalInvitar, setModalInvitar] = useState(false)
   const [guardandoMetodo, setGuardandoMetodo] = useState(false)
   const [errorMetodo, setErrorMetodo] = useState(null)
   const [archivando, setArchivando] = useState(false)
+  const [confirmarArchivar, setConfirmarArchivar] = useState(false)
 
-  const handleArchivar = async () => {
-    if (!window.confirm('¿Marcar este avalúo como terminado? Se moverá a la sección de archivados en tu lista.')) return
+  const handleConfirmarArchivar = async () => {
     setArchivando(true)
-    try { await archivarExpediente() }
-    catch (err) { alert('Error al archivar: ' + err.message) }
-    finally { setArchivando(false) }
+    try {
+      await archivarExpediente()
+      navigate('/expedientes', { replace: false })
+    } catch (err) {
+      setConfirmarArchivar(false)
+      setErrorMetodo('Error al archivar: ' + err.message)
+    } finally {
+      setArchivando(false)
+    }
   }
 
   const handleElegirMetodo = async (clave) => {
@@ -204,13 +211,10 @@ export function ExpedienteDetallePage() {
           )}
           {esAutor && expediente.estado !== 'archivado' && expediente.tipo_expediente !== 'calculo_rapido' && (
             <button
-              onClick={handleArchivar}
-              disabled={archivando}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+              onClick={() => setConfirmarArchivar(true)}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors"
             >
-              {archivando
-                ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                : <Archive className="h-3.5 w-3.5" />}
+              <Archive className="h-3.5 w-3.5" />
               Terminado
             </button>
           )}
@@ -610,6 +614,40 @@ export function ExpedienteDetallePage() {
           onInvitar={invitarRevisor}
           onCerrar={() => setModalInvitar(false)}
         />
+      )}
+
+      {/* Confirmación inline "Terminado" — evita window.confirm que en PWA Android puede bloquearse */}
+      {confirmarArchivar && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl p-5 w-full max-w-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-emerald-100 rounded-full p-2 shrink-0">
+                <Archive className="h-5 w-5 text-emerald-600" />
+              </div>
+              <p className="font-semibold text-gray-900 text-sm">¿Marcar como terminado?</p>
+            </div>
+            <p className="text-xs text-gray-500 mb-4 ml-11">
+              El avalúo se moverá a la sección de <strong>Archivados</strong> y desaparecerá de tus expedientes vigentes.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmarArchivar(false)}
+                disabled={archivando}
+                className="flex-1 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmarArchivar}
+                disabled={archivando}
+                className="flex-1 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+              >
+                {archivando ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
