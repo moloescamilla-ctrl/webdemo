@@ -82,6 +82,12 @@ export function LoginPage() {
               <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
                 {error === 'Invalid login credentials'
                   ? 'Correo o contraseña incorrectos'
+                  : error === 'Email logins are disabled'
+                  ? 'El acceso por correo está deshabilitado. Contacta al administrador.'
+                  : error === 'Email not confirmed'
+                  ? 'Correo no confirmado. Revisa tu bandeja de entrada.'
+                  : error === 'Too many requests'
+                  ? 'Demasiados intentos. Espera unos minutos e intenta de nuevo.'
                   : error}
               </p>
             )}
