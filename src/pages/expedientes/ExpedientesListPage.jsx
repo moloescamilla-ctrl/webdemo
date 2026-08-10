@@ -332,7 +332,7 @@ export function ExpedientesListPage() {
 
       {/* Modal de confirmación de eliminación (reemplaza window.confirm) */}
       {confirmarEliminar && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-24 sm:pb-4 bg-black/40">
           <div className="bg-white rounded-2xl shadow-2xl p-5 w-full max-w-sm">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-red-100 rounded-full p-2 shrink-0">
