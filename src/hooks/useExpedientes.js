@@ -74,10 +74,12 @@ export function useExpedientes() {
       .from('expedientes')
       .update({ estado: 'archivado' })
       .eq('id', id)
-      .select()
+      .eq('perito_id', user.id)
+      .select('id, estado')
       .single()
     if (error) throw new Error(error.message)
-    setExpedientes(prev => prev.map(e => e.id === id ? (data ?? { ...e, estado: 'archivado' }) : e))
+    if (!data) throw new Error('Sin permiso para archivar este expediente.')
+    setExpedientes(prev => prev.map(e => e.id === id ? { ...e, estado: 'archivado' } : e))
   }
 
   async function eliminarExpediente(id) {
@@ -167,6 +169,7 @@ export function useExpedientes() {
       .from('expedientes')
       .update({ estado: 'en_proceso' })
       .eq('id', expedienteId)
+      .eq('perito_id', user.id)
 
     await fetchExpedientes()
   }
@@ -189,6 +192,7 @@ export function useExpedientes() {
       .from('expedientes')
       .update({ estado: 'en_proceso' })
       .eq('id', expedienteId)
+      .eq('perito_id', user.id)
 
     await fetchExpedientes()
   }
@@ -226,6 +230,7 @@ export function useExpedientes() {
       .from('expedientes')
       .update({ estado: 'en_proceso' })
       .eq('id', expedienteId)
+      .eq('perito_id', user.id)
 
     await fetchExpedientes()
   }
@@ -262,6 +267,7 @@ export function useExpedientes() {
       .from('expedientes')
       .update({ estado: 'en_proceso' })
       .eq('id', expedienteId)
+      .eq('perito_id', user.id)
 
     await fetchExpedientes()
   }

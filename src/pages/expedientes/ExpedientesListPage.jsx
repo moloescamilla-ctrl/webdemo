@@ -52,10 +52,9 @@ export function ExpedientesListPage() {
   const { expedientes, expedientesParaRevisar, loading, error, eliminarExpediente, archivarExpediente } = useExpedientes()
   const [eliminando, setEliminando] = useState(null)
   const [archivando, setArchivando] = useState(null)
-  // Si venimos desde el dashboard o desde el botón "Terminado" que navega de vuelta, abre archivados automáticamente
+  const [errorArchivando, setErrorArchivando] = useState(null)
   const [mostrarArchivados, setMostrarArchivados] = useState(location.state?.mostrarArchivados ?? false)
   const [busqueda, setBusqueda] = useState('')
-  // Confirmación inline para eliminar (evita window.confirm que puede bloquearse en Android PWA)
   const [confirmarEliminar, setConfirmarEliminar] = useState(null)
 
   const hayBusqueda = busqueda.trim().length > 0
@@ -71,11 +70,14 @@ export function ExpedientesListPage() {
   const handleArchivar = async (e, id) => {
     e.preventDefault(); e.stopPropagation()
     setArchivando(id)
+    setErrorArchivando(null)
     try {
       await archivarExpediente(id)
       setMostrarArchivados(true)
     }
-    catch (err) { console.error('Error al archivar:', err.message) }
+    catch (err) {
+      setErrorArchivando(err.message)
+    }
     finally { setArchivando(null) }
   }
 
@@ -136,6 +138,13 @@ export function ExpedientesListPage() {
           </button>
         )}
       </div>
+
+      {errorArchivando && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
+          <span className="text-red-600 text-sm flex-1">{errorArchivando}</span>
+          <button onClick={() => setErrorArchivando(null)} className="text-red-400 hover:text-red-600 shrink-0 text-xs">✕</button>
+        </div>
+      )}
 
       {loading && (
         <div className="flex items-center justify-center py-12 text-gray-400 gap-2">

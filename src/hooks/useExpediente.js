@@ -79,11 +79,17 @@ export function useExpediente(id) {
   }
 
   async function archivarExpediente() {
-    const { error } = await supabase
+    const { data: authData } = await supabase.auth.getUser()
+    const uid = authData?.user?.id
+    const { data, error } = await supabase
       .from('expedientes')
       .update({ estado: 'archivado' })
       .eq('id', id)
+      .eq('perito_id', uid)
+      .select('id, estado')
+      .single()
     if (error) throw new Error(error.message)
+    if (!data) throw new Error('No se pudo archivar el expediente. Ejecuta la migración 25 en Supabase.')
     setExpediente(prev => ({ ...prev, estado: 'archivado' }))
   }
 
