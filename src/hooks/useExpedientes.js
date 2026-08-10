@@ -70,12 +70,14 @@ export function useExpedientes() {
   }
 
   async function archivarExpediente(id) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('expedientes')
       .update({ estado: 'archivado' })
       .eq('id', id)
+      .select()
+      .single()
     if (error) throw new Error(error.message)
-    setExpedientes(prev => prev.map(e => e.id === id ? { ...e, estado: 'archivado' } : e))
+    setExpedientes(prev => prev.map(e => e.id === id ? (data ?? { ...e, estado: 'archivado' }) : e))
   }
 
   async function eliminarExpediente(id) {

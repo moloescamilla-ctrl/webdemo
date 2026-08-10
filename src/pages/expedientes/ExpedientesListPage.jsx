@@ -21,7 +21,7 @@ const ESTADO_LABEL = {
   en_proceso: 'En proceso',
   completado: 'Completado',
   firmado: 'Firmado',
-  archivado: 'Archivado',
+  archivado: 'Terminado',
 }
 
 function mesLabel(isoString) {
@@ -71,7 +71,10 @@ export function ExpedientesListPage() {
   const handleArchivar = async (e, id) => {
     e.preventDefault(); e.stopPropagation()
     setArchivando(id)
-    try { await archivarExpediente(id) }
+    try {
+      await archivarExpediente(id)
+      setMostrarArchivados(true)
+    }
     catch (err) { console.error('Error al archivar:', err.message) }
     finally { setArchivando(null) }
   }

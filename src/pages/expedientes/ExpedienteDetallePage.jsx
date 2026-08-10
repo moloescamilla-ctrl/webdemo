@@ -77,7 +77,7 @@ const ESTADO_VARIANT = {
   borrador: 'secondary', en_proceso: 'warning', completado: 'success', firmado: 'default', archivado: 'secondary',
 }
 const ESTADO_LABEL = {
-  borrador: 'Borrador', en_proceso: 'En proceso', completado: 'Completado', firmado: 'Firmado', archivado: 'Archivado',
+  borrador: 'Borrador', en_proceso: 'En proceso', completado: 'Completado', firmado: 'Firmado', archivado: 'Terminado',
 }
 
 function Row({ label, value }) {
@@ -117,7 +117,7 @@ export function ExpedienteDetallePage() {
     setArchivando(true)
     try {
       await archivarExpediente()
-      navigate('/expedientes', { replace: false })
+      navigate('/expedientes', { replace: false, state: { mostrarArchivados: true } })
     } catch (err) {
       setConfirmarArchivar(false)
       setErrorMetodo('Error al archivar: ' + err.message)
