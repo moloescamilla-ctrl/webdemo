@@ -497,6 +497,8 @@ export function EditarExpedientePage() {
           guardando={guardando}
           submitLabel={okTab === 'fisico' ? '✓ Guardado' : (metodoFisico ? 'Actualizar Método Físico' : 'Guardar Método Físico')}
           initialValues={fisicoInitial}
+          latitud={d.latitud}
+          longitud={d.longitud}
         />
       )}
 

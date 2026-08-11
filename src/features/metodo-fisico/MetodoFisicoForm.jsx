@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
 import { FactorComercializacion } from './FactorComercializacion'
+import { ConsultarSuelo } from './ConsultarSuelo'
 import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, calcularFactorRoss, calcularRossHeidecke, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
 import { useCostosM2 } from '@/hooks/useCostosM2'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -81,7 +82,7 @@ function Campo({ label, name, value, onChange, suffix, hint, hintWarning }) {
   )
 }
 
-export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente', initialValues = null }) {
+export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente', initialValues = null, latitud = null, longitud = null }) {
   const [tieneConstruccion, setTieneConstruccion] = useState(initialValues?.tieneConstruccion ?? true)
   const [inputs, setInputs] = useState(initialValues?.inputs ?? defaultInputs)
   const [factorData, setFactorData] = useState(initialValues?.factorData ?? null)
@@ -293,6 +294,12 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
             </div>
           </CardContent>
         </Card>
+
+        <ConsultarSuelo
+          latitud={latitud}
+          longitud={longitud}
+          onAplicarValor={(val) => setInputs(prev => ({ ...prev, valorUnitarioTerreno: String(Math.round(val)) }))}
+        />
 
         {tieneConstruccion && (
           <ChecklistInspeccion
