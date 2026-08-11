@@ -11,7 +11,7 @@ const CLAVE_LABEL = {
 
 export default function Conclusion({ metodoFisico, metodoComparativo, metodoRentas, metodoResidual, expediente }) {
   const metodos = [
-    metodoFisico      && { clave: 'fisico',      label: 'Metodo Fisico / Costos',           valor: metodoFisico.valor_fisico_total },
+    metodoFisico      && { clave: 'fisico',      label: metodoFisico.valor_mercado_estimado ? 'Metodo Fisico / Costos (con fc)' : 'Metodo Fisico / Costos', valor: metodoFisico.valor_mercado_estimado || metodoFisico.valor_fisico_total },
     metodoComparativo && { clave: 'comparativo', label: 'Metodo Comparativo de Mercado',     valor: metodoComparativo.valor_comparativo_total },
     metodoRentas      && { clave: 'rentas',      label: 'Metodo de Rentas (Capitalizacion)', valor: metodoRentas.valor_capitalizacion },
     metodoResidual    && { clave: 'residual',    label: 'Metodo Residual Estatico',          valor: metodoResidual.valor_residual },

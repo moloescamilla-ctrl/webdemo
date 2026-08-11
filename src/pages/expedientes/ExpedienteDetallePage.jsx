@@ -291,6 +291,12 @@ export function ExpedienteDetallePage() {
                 <p className="text-sm text-blue-100">Valor del terreno</p>
                 <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_fisico_total)}</p>
               </div>
+              {metodoFisico.valor_mercado_estimado && (
+                <div className="bg-emerald-600 text-white rounded-md p-4">
+                  <p className="text-sm text-emerald-100">Valor de mercado estimado · fc {formatNumber(metodoFisico.factor_comercializacion, 4)}</p>
+                  <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_mercado_estimado)}</p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
@@ -339,6 +345,12 @@ export function ExpedienteDetallePage() {
                 <p className="text-sm text-blue-100">Valor físico total</p>
                 <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_fisico_total)}</p>
               </div>
+              {metodoFisico.valor_mercado_estimado && (
+                <div className="bg-emerald-600 text-white rounded-md p-4">
+                  <p className="text-sm text-emerald-100">Valor de mercado estimado · fc {formatNumber(metodoFisico.factor_comercializacion, 4)}</p>
+                  <p className="text-2xl font-bold mt-1">{formatCurrency(metodoFisico.valor_mercado_estimado)}</p>
+                </div>
+              )}
             </div>
           )}
           {esRevisor && (
@@ -450,8 +462,12 @@ export function ExpedienteDetallePage() {
 
       {/* ── Valor Concluido ── */}
       {(() => {
+        const valorFisico = Number(metodoFisico?.valor_mercado_estimado || metodoFisico?.valor_fisico_total) || 0
+        const labelFisico = metodoFisico?.valor_mercado_estimado
+          ? 'Método Físico / Costos (con fc)'
+          : 'Método Físico / Costos'
         const METODOS = [
-          { clave: 'fisico',      label: 'Método Físico / Costos',        valor: Number(metodoFisico?.valor_fisico_total)             || 0 },
+          { clave: 'fisico',      label: labelFisico,                     valor: valorFisico                                         },
           { clave: 'comparativo', label: 'Método Comparativo de Mercado', valor: Number(metodoComparativo?.valor_comparativo_total)   || 0 },
           { clave: 'rentas',      label: 'Capitalización de Rentas',      valor: Number(metodoRentas?.valor_capitalizacion)           || 0 },
           { clave: 'residual',    label: 'Método Residual Estático',      valor: Number(metodoResidual?.valor_residual)               || 0 },

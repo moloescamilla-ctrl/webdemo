@@ -12,7 +12,7 @@ const CLAVES_ENFOQUE = {
 export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, metodoRentas, metodoResidual, expediente }) {
   const enfoques = [
     { clave: 'comparativo', label: 'ENFOQUE COMPARATIVO DE MERCADO',      valor: metodoComparativo?.valor_comparativo_total },
-    { clave: 'fisico',      label: 'ENFOQUE DE COSTOS',                   valor: metodoFisico?.valor_fisico_total },
+    { clave: 'fisico',      label: metodoFisico?.valor_mercado_estimado ? 'ENFOQUE DE COSTOS (con fc)' : 'ENFOQUE DE COSTOS', valor: metodoFisico?.valor_mercado_estimado || metodoFisico?.valor_fisico_total },
     { clave: 'rentas',      label: 'ENFOQUE DE CAPITALIZACION DE RENTAS', valor: metodoRentas?.valor_capitalizacion },
     { clave: 'residual',    label: 'ENFOQUE RESIDUAL ESTATICO',           valor: metodoResidual?.valor_residual },
   ]
