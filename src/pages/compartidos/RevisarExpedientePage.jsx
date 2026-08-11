@@ -83,10 +83,10 @@ export function RevisarExpedientePage() {
   const { compartido, expediente, metodoFisico, metodoComparativo, metodoRentas, metodoResidual } = datos
 
   const METODOS = [
-    { clave: 'comparativo', label: 'Enfoque comparativo de mercado', valor: metodoComparativo?.valor_comparativo_total },
-    { clave: 'fisico',      label: 'Enfoque de costos (físico)',      valor: metodoFisico?.valor_fisico_total },
-    { clave: 'rentas',      label: 'Enfoque de capitalización',       valor: metodoRentas?.valor_capitalizacion },
-    { clave: 'residual',    label: 'Enfoque residual',                valor: metodoResidual?.valor_residual },
+    { clave: 'comparativo', label: 'Enfoque comparativo de mercado',                                                                valor: metodoComparativo?.valor_comparativo_total },
+    { clave: 'fisico',      label: metodoFisico?.valor_mercado_estimado ? 'Enfoque de costos (con fc)' : 'Enfoque de costos (físico)', valor: metodoFisico?.valor_mercado_estimado || metodoFisico?.valor_fisico_total },
+    { clave: 'rentas',      label: 'Enfoque de capitalización',                                                                     valor: metodoRentas?.valor_capitalizacion },
+    { clave: 'residual',    label: 'Enfoque residual',                                                                              valor: metodoResidual?.valor_residual },
   ].filter(v => v.valor != null && Number(v.valor) > 0)
 
   const metodoElegido = expediente?.metodo_elegido
