@@ -40,10 +40,10 @@ export default function Portada({
   const nombrePerito = perfil?.nombre || expediente?.nombre_perito || ''
   const cedulaPerito = perfil?.cedula  || expediente?.cedula_perito  || ''
   const METODO_VALS = {
-    fisico:      Number(metodoFisico?.valor_fisico_total)            || 0,
-    comparativo: Number(metodoComparativo?.valor_comparativo_total)  || 0,
-    rentas:      Number(metodoRentas?.valor_capitalizacion)          || 0,
-    residual:    Number(metodoResidual?.valor_residual)              || 0,
+    fisico:      Number(metodoFisico?.valor_mercado_estimado || metodoFisico?.valor_fisico_total) || 0,
+    comparativo: Number(metodoComparativo?.valor_comparativo_total)                              || 0,
+    rentas:      Number(metodoRentas?.valor_capitalizacion)                                      || 0,
+    residual:    Number(metodoResidual?.valor_residual)                                          || 0,
   }
   const metodoElegido = expediente?.metodo_elegido
   const valoresMetodos = Object.values(METODO_VALS).filter(v => v > 0)
