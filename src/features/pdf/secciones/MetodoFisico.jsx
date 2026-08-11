@@ -89,6 +89,31 @@ export default function MetodoFisico({ metodo, inspeccion }) {
         </Text>
         <Text style={styles.resultadoValor}>{formatCurrency(metodo.valor_fisico_total)}</Text>
       </View>
+
+      {metodo.factor_comercializacion && (
+        <>
+          <View style={[styles.cajaGris, { marginTop: 6 }]}>
+            <Text style={{ fontSize: 7, color: '#374151', fontFamily: 'Helvetica-Bold' }}>
+              {`Factor de Comercializacion (fc): ${sa(metodo.factor_comercializacion_segmento)}`}
+            </Text>
+            <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#065f46', marginTop: 2 }}>
+              {`fc = ${formatNumber(metodo.factor_comercializacion, 4)}`}
+            </Text>
+            {metodo.factor_comercializacion_justificacion && (
+              <Text style={[styles.nota, { color: '#374151', marginTop: 3 }]}>
+                {metodo.factor_comercializacion_justificacion}
+              </Text>
+            )}
+          </View>
+          <View style={styles.cajaVerde}>
+            <Text style={styles.resultadoLabel}>Valor de mercado estimado</Text>
+            <Text style={styles.resultadoValor}>{formatCurrency(metodo.valor_mercado_estimado)}</Text>
+            <Text style={[styles.nota, { color: '#bbf7d0', marginTop: 2 }]}>
+              {`Valor fisico x fc = ${formatCurrency(metodo.valor_fisico_total)} x ${formatNumber(metodo.factor_comercializacion, 4)}`}
+            </Text>
+          </View>
+        </>
+      )}
     </View>
   )
 }

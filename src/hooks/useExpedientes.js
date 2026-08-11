@@ -119,7 +119,7 @@ export function useExpedientes() {
     if (error) throw new Error(error.message)
   }
 
-  async function guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs) {
+  async function guardarMetodoFisico(expedienteId, inspeccion, resultado, inputs, factorData) {
     const conConstruccion = inspeccion.tieneConstruccion !== false
 
     if (conConstruccion) {
@@ -136,6 +136,8 @@ export function useExpedientes() {
         }, { onConflict: 'expediente_id' })
       if (eInsp) throw new Error(eInsp.message)
     }
+
+    const fcActivo = factorData?.activo && factorData?.factor
 
     const { error: eMf } = await supabase
       .from('metodos_fisicos')
@@ -162,8 +164,24 @@ export function useExpedientes() {
         valor_actual_construccion: resultado.valorActualConstruccion,
         valor_terreno: resultado.valorTerreno,
         valor_fisico_total: resultado.valorFisicoTotal,
+        factor_comercializacion:               fcActivo ? parseFloat(factorData.factor)        : null,
+        factor_comercializacion_segmento:      fcActivo ? (factorData.segmento || null)        : null,
+        factor_comercializacion_justificacion: fcActivo ? (factorData.justificacion || null)   : null,
+        valor_mercado_estimado:                fcActivo ? (factorData.valorMercado || null)    : null,
       }, { onConflict: 'expediente_id' })
     if (eMf) throw new Error(eMf.message)
+
+    if (fcActivo && factorData.valorMercado) {
+      await supabase.from('suelo_factor_aplicado').insert({
+        expediente_id: expedienteId,
+        perito_id:     user.id,
+        segmento:      factorData.segmento || null,
+        factor:        parseFloat(factorData.factor),
+        valor_fisico:  resultado.valorFisicoTotal,
+        valor_mercado: factorData.valorMercado,
+        justificacion: factorData.justificacion || null,
+      })
+    }
 
     await supabase
       .from('expedientes')
