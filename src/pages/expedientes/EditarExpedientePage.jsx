@@ -215,9 +215,9 @@ export function EditarExpedientePage() {
     finally { setGuardando(false) }
   }
 
-  const handleGuardarFisico = async (resultado, inspeccionData, inputs) => {
+  const handleGuardarFisico = async (resultado, inspeccionData, inputs, factorData) => {
     setGuardando(true); setErrorMsg(null)
-    try { await guardarMetodoFisico(id, inspeccionData, resultado, inputs); flashOk('fisico') }
+    try { await guardarMetodoFisico(id, inspeccionData, resultado, inputs, factorData); flashOk('fisico') }
     catch (e) { setErrorMsg(e.message) }
     finally { setGuardando(false) }
   }
@@ -256,6 +256,12 @@ export function EditarExpedientePage() {
       valorResidual:              String(metodoFisico.valor_residual_pct || '15'),
     },
     estadosRaw: inspeccion,
+    factorData: metodoFisico.factor_comercializacion ? {
+      activo:        true,
+      factor:        String(metodoFisico.factor_comercializacion),
+      segmento:      metodoFisico.factor_comercializacion_segmento || '',
+      justificacion: metodoFisico.factor_comercializacion_justificacion || '',
+    } : null,
   } : null
 
   const rentasInitial = metodoRentas ?? null

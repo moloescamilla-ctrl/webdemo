@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
+import { FactorComercializacion } from './FactorComercializacion'
 import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, calcularFactorRoss, calcularRossHeidecke, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
 import { useCostosM2 } from '@/hooks/useCostosM2'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
@@ -83,6 +84,7 @@ function Campo({ label, name, value, onChange, suffix, hint, hintWarning }) {
 export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente', initialValues = null }) {
   const [tieneConstruccion, setTieneConstruccion] = useState(initialValues?.tieneConstruccion ?? true)
   const [inputs, setInputs] = useState(initialValues?.inputs ?? defaultInputs)
+  const [factorData, setFactorData] = useState(initialValues?.factorData ?? null)
   const [estadosChecklist, setEstadosChecklist] = useState(() => {
     if (initialValues?.estadosRaw) {
       return Object.fromEntries(PARTIDAS_INSPECCION.map(p => [p.id, initialValues.estadosRaw[p.id] ?? 0]))
@@ -161,10 +163,8 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   const handleGuardar = () => {
     if (!resultado || !onGuardar) return
     const accVA = resultadoAccesoria?.valorActualAccesoria ?? 0
-    const resultadoFinal = {
-      ...resultado,
-      valorFisicoTotal: resultado.valorFisicoTotal + accVA,
-    }
+    const valorFisicoFinal = resultado.valorFisicoTotal + accVA
+    const resultadoFinal = { ...resultado, valorFisicoTotal: valorFisicoFinal }
     const inputsConCosto = {
       ...inputs,
       costo_m2_fuente:    costoSeleccionado?.fuente    ?? null,
@@ -173,8 +173,11 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       costo_m2_tabulador: costoSeleccionado ? Number(costoSeleccionado.precio_m2) : null,
       costo_m2_ajustado:  costoManual && !!costoSeleccionado,
     }
+    const fc = factorData?.activo && factorData?.factor
+      ? { ...factorData, valorMercado: valorFisicoFinal * (parseFloat(factorData.factor) || 1) }
+      : null
     if (!tieneConstruccion) {
-      onGuardar(resultadoFinal, { tieneConstruccion: false }, inputsConCosto)
+      onGuardar(resultadoFinal, { tieneConstruccion: false }, inputsConCosto, fc)
       return
     }
     const inspeccion = {
@@ -187,7 +190,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       coeficienteCManual: estadoManual !== null ? estadoFinal?.c : null,
       coeficienteCAdoptado: estadoFinal?.c ?? coeficienteC,
     }
-    onGuardar(resultadoFinal, inspeccion, inputsConCosto)
+    onGuardar(resultadoFinal, inspeccion, inputsConCosto, fc)
   }
 
   return (
@@ -394,6 +397,12 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                   <p className="text-xs text-blue-200 mt-1">Terreno + Construcción{resultadoAccesoria ? ' + Accesoria' : ''} depreciada</p>
                 </div>
 
+                <FactorComercializacion
+                  valorFisico={resultado.valorFisicoTotal + (resultadoAccesoria?.valorActualAccesoria ?? 0)}
+                  value={factorData}
+                  onChange={setFactorData}
+                />
+
                 {onGuardar && (
                   <Button className="w-full" onClick={handleGuardar} disabled={guardando}>
                     {guardando
@@ -421,6 +430,12 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                   <p className="text-2xl font-bold mt-1">{formatCurrency(resultado.valorFisicoTotal)}</p>
                   <p className="text-xs text-blue-200 mt-1">Terreno sin construcción (solo suelo)</p>
                 </div>
+
+                <FactorComercializacion
+                  valorFisico={resultado.valorFisicoTotal}
+                  value={factorData}
+                  onChange={setFactorData}
+                />
 
                 {onGuardar && (
                   <Button className="w-full" onClick={handleGuardar} disabled={guardando}>
