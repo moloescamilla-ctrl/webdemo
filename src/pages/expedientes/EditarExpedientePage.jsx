@@ -519,7 +519,8 @@ export function EditarExpedientePage() {
           guardando={guardando}
           submitLabel={okTab === 'residual' ? '✓ Guardado' : (metodoResidual ? 'Actualizar Método Residual' : 'Guardar Método Residual')}
           initialValues={residualInitial}
-          superficieTerrenoDefecto={terreno?.superficie_total_m2 ?? null}
+          superficieTerrenoDefecto={terreno?.superficie_m2 ?? null}
+          superficieProyectoDefecto={metodoFisico?.superficie_construccion || terreno?.sup_total_const_m2 || null}
           costoM2Defecto={metodoFisico?.costo_reposicion_m2 ?? null}
           vmSugerido={metodoComparativo?.valor_comparativo_total ?? null}
         />
