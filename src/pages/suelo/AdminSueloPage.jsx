@@ -73,25 +73,22 @@ function TabCortes({ instrumentoId }) {
       {resultado && (
         <div className="rounded-md bg-green-50 border border-green-200 p-3 space-y-2">
           <p className="text-sm font-medium text-green-800">
-            Corte <span className="font-mono">{corte}</span> procesado
+            Corte <span className="font-mono">{resultado.corte ?? corte}</span> procesado
+            {' '}— {resultado.microzonas_procesadas ?? 0} microzona{resultado.microzonas_procesadas !== 1 ? 's' : ''}
           </p>
-          {Array.isArray(resultado) ? (
+          {Array.isArray(resultado.detalle) && resultado.detalle.length > 0 && (
             <div className="space-y-1">
-              {resultado.map((r, i) => (
+              {resultado.detalle.map((r, i) => (
                 <div key={i} className="text-xs text-green-700 flex justify-between">
-                  <span>{r.microzona ?? r.microzona_id}</span>
-                  <span className="font-medium">
-                    {r.valor_recomendado != null
-                      ? `$${Math.round(r.valor_recomendado).toLocaleString('es-MX')}/m²`
+                  <span className="font-mono truncate">{r.microzona_id}</span>
+                  <span className="font-medium shrink-0 ml-2">
+                    {r.mediana != null
+                      ? `$${Math.round(r.mediana).toLocaleString('es-MX')}/m² · n=${r.n}`
                       : 'sin datos'}
                   </span>
                 </div>
               ))}
             </div>
-          ) : (
-            <pre className="text-xs text-green-700 whitespace-pre-wrap">
-              {JSON.stringify(resultado, null, 2)}
-            </pre>
           )}
         </div>
       )}
