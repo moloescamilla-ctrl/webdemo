@@ -243,26 +243,26 @@ export function EditarExpedientePage() {
     finally { setGuardando(false) }
   }
 
-  const fisicoInitial = metodoFisico ? {
-    tieneConstruccion: metodoFisico.superficie_construccion !== 0,
+  const fisicoInitial = {
+    tieneConstruccion: metodoFisico ? metodoFisico.superficie_construccion !== 0 : true,
     inputs: {
-      superficieConstruccion:     String(metodoFisico.superficie_construccion || ''),
-      superficieTerreno:          String(metodoFisico.superficie_terreno || ''),
-      costoReposicionM2:          String(metodoFisico.costo_reposicion_m2 || ''),
+      superficieConstruccion:     String(metodoFisico?.superficie_construccion || terreno?.sup_total_const_m2 || ''),
+      superficieTerreno:          String(metodoFisico?.superficie_terreno      || terreno?.superficie_m2       || ''),
+      costoReposicionM2:          String(metodoFisico?.costo_reposicion_m2     || ''),
       costoReposicionAccesoriaM2: '',
-      valorUnitarioTerreno:       String(metodoFisico.valor_unitario_terreno || ''),
-      edadAnios:                  String(metodoFisico.edad_anios || ''),
-      vidaUtilAnios:              String(metodoFisico.vida_util_anios || '60'),
-      valorResidual:              String(metodoFisico.valor_residual_pct || '15'),
+      valorUnitarioTerreno:       String(metodoFisico?.valor_unitario_terreno  || ''),
+      edadAnios:                  String(metodoFisico?.edad_anios              || ''),
+      vidaUtilAnios:              String(metodoFisico?.vida_util_anios         || '60'),
+      valorResidual:              String(metodoFisico?.valor_residual_pct      || '15'),
     },
     estadosRaw: inspeccion,
-    factorData: metodoFisico.factor_comercializacion ? {
+    factorData: metodoFisico?.factor_comercializacion ? {
       activo:        true,
       factor:        String(metodoFisico.factor_comercializacion),
       segmento:      metodoFisico.factor_comercializacion_segmento || '',
       justificacion: metodoFisico.factor_comercializacion_justificacion || '',
     } : null,
-  } : null
+  }
 
   const rentasInitial = metodoRentas ?? null
 
