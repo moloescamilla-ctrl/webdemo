@@ -48,6 +48,7 @@ export function MetodoResidualForm({
   submitLabel,
   initialValues = null,
   superficieTerrenoDefecto = null,
+  superficieProyectoDefecto = null,
   costoM2Defecto = null,
   vmSugerido = null,
 }) {
@@ -63,7 +64,7 @@ export function MetodoResidualForm({
     !iv.vm_total && vmSugerido ? vmSugerido : null
   )
 
-  const [supProyecto, setSupProyecto] = useState(String(iv.superficie_proyecto_m2 ?? ''))
+  const [supProyecto, setSupProyecto] = useState(String(iv.superficie_proyecto_m2 ?? superficieProyectoDefecto ?? ''))
   const [supTerreno, setSupTerreno] = useState(
     String(iv.superficie_terreno_m2 ?? superficieTerrenoDefecto ?? '')
   )
