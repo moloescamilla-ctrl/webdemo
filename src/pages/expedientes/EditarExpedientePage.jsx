@@ -550,7 +550,7 @@ export function EditarExpedientePage() {
             comparablesImportados={navState.comparablesImportados ?? null}
             datosSujeto={{
               supTerreno: String(metodoFisico?.superficie_terreno || terreno?.superficie_m2 || ''),
-              supConstruccion: String(metodoFisico?.superficie_construccion || ''),
+              supConstruccion: String(metodoFisico?.superficie_construccion || terreno?.sup_total_const_m2 || ''),
               edad: String(metodoFisico?.edad_anios || ''),
               direccion: [expediente.calle, expediente.colonia].filter(Boolean).join(', '),
             }}
