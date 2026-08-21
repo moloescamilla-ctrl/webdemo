@@ -35,7 +35,7 @@ function Placeholder({ lat, lng }) {
   )
 }
 
-export function PanelZona({ resultado, consultando, coordenadas }) {
+export function PanelZona({ resultado, consultando, coordenadas, error }) {
   if (consultando) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -44,7 +44,22 @@ export function PanelZona({ resultado, consultando, coordenadas }) {
     )
   }
 
-  if (!resultado) return <Placeholder />
+  if (error && !resultado) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-6 py-10">
+        <XCircle className="h-8 w-8 text-red-300 mb-3" />
+        <p className="text-sm text-red-600 font-medium">Error al consultar</p>
+        <p className="text-xs text-gray-400 mt-1">{error}</p>
+        {coordenadas && (
+          <p className="text-xs text-gray-300 mt-2 font-mono">
+            {coordenadas.lat.toFixed(6)}, {coordenadas.lng.toFixed(6)}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  if (!resultado) return <Placeholder lat={coordenadas?.lat} lng={coordenadas?.lng} />
 
   const { municipio, microzona, zona, valor_suelo, mensaje } = resultado
 

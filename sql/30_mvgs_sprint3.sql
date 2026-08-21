@@ -110,6 +110,7 @@ DECLARE
   v_count     int := 0;
   v_errores   text[] := '{}';
   v_municipio smallint;
+  v_rows      int;
 BEGIN
   IF p_tipo NOT IN ('zona', 'microzona') THEN
     RAISE EXCEPTION 'p_tipo debe ser "zona" o "microzona"';
@@ -162,7 +163,8 @@ BEGIN
         ON CONFLICT DO NOTHING;
       END IF;
 
-      v_count := v_count + 1;
+      GET DIAGNOSTICS v_rows = ROW_COUNT;
+      v_count := v_count + v_rows;
     EXCEPTION WHEN OTHERS THEN
       v_errores := v_errores || format(
         'Error en feature %s: %s',

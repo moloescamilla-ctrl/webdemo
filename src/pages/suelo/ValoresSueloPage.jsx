@@ -8,7 +8,7 @@ import { Layers, Settings, Loader2 } from 'lucide-react'
 
 export function ValoresSueloPage() {
   const { capas, cargando: cargandoCapas } = useSueloCapas({ municipioId: 30118 })
-  const { consultarSuelo, consultando, resultado } = useSuelo()
+  const { consultarSuelo, consultando, resultado, error: errorSuelo } = useSuelo()
   const [coordenadas, setCoordenadas] = useState(null)
   const [capasVisibles, setCapasVisibles] = useState({ zonas: true, microzonas: true })
 
@@ -94,7 +94,7 @@ export function ValoresSueloPage() {
               {consultando ? 'Consultando…' : resultado ? 'Resultado de consulta' : 'Consulta espacial'}
             </p>
           </div>
-          <PanelZona resultado={resultado} consultando={consultando} coordenadas={coordenadas} />
+          <PanelZona resultado={resultado} consultando={consultando} coordenadas={coordenadas} error={errorSuelo} />
         </div>
       </div>
     </div>
