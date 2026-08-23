@@ -28,16 +28,24 @@ export function usePeritoPerfil() {
   const guardarPerfil = useCallback(async ({ nombre, cedula }) => {
     setGuardando(true)
     setError(null)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data, error: err } = await supabase
-      .from('profiles')
-      .upsert({ id: user.id, email: user.email, nombre, cedula }, { onConflict: 'id' })
-      .select()
-      .single()
-    if (err) { setError(err.message); setGuardando(false); return false }
-    setPerfil(prev => ({ ...prev, ...data }))
-    setGuardando(false)
-    return true
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data, error: err } = await supabase
+        .from('profiles')
+        .update({ nombre, cedula })
+        .eq('id', user.id)
+        .select('id, nombre, email, cedula, firma_url')
+        .single()
+      if (err) throw err
+      if (!data) throw new Error('No se pudo guardar el perfil')
+      setPerfil(prev => ({ ...prev, ...data }))
+      setGuardando(false)
+      return true
+    } catch (e) {
+      setError(e.message)
+      setGuardando(false)
+      return false
+    }
   }, [])
 
   const subirFirma = useCallback(async (file) => {

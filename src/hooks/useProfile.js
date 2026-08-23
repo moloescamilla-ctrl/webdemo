@@ -3,11 +3,12 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
 
 export function useProfile() {
-  const { user } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (authLoading) return                         // esperar a que auth resuelva
     if (!user) { setProfile(null); setLoading(false); return }
 
     supabase
@@ -19,7 +20,7 @@ export function useProfile() {
         setProfile(data ?? null)
         setLoading(false)
       })
-  }, [user])
+  }, [user, authLoading])
 
   const isAdmin = profile?.role === 'admin' || profile?.role === 'superadmin'
   const isSuperAdmin = profile?.role === 'superadmin'
