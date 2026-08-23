@@ -14,6 +14,8 @@ import { RevisarExpedientePage } from '@/pages/compartidos/RevisarExpedientePage
 import { PerfilPage } from '@/pages/PerfilPage'
 import { ValoresSueloPage } from '@/pages/suelo/ValoresSueloPage'
 import { AdminSueloPage } from '@/pages/suelo/AdminSueloPage'
+import { AdminUsuariosPage } from '@/pages/admin/AdminUsuariosPage'
+import { AdminRoute } from '@/components/layout/AdminRoute'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -77,6 +79,7 @@ export default function App() {
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="suelo" element={<ValoresSueloPage />} />
           <Route path="suelo/admin" element={<AdminSueloPage />} />
+          <Route path="admin/usuarios" element={<AdminRoute><AdminUsuariosPage /></AdminRoute>} />
         </Route>
         <Route
           path="/revisar/:token"
