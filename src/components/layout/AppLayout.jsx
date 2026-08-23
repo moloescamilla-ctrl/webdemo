@@ -3,11 +3,13 @@ import { Outlet } from 'react-router-dom'
 import { Sidebar } from './Sidebar'
 import { BottomNav } from './BottomNav'
 import { useAuth } from '@/hooks/useAuth'
+import { useProfile } from '@/hooks/useProfile'
 import { useInactivityLogout } from '@/hooks/useInactivityLogout'
-import { ShieldAlert } from 'lucide-react'
+import { ShieldAlert, UserX } from 'lucide-react'
 
 export function AppLayout() {
   const { signOut } = useAuth()
+  const { profile, loading: profileLoading } = useProfile()
   const [mostrarAviso, setMostrarAviso] = useState(false)
 
   const { reset } = useInactivityLogout({
@@ -19,6 +21,24 @@ export function AppLayout() {
     setMostrarAviso(false)
     reset()
   }, [reset])
+
+  if (!profileLoading && profile?.activo === false) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 text-center bg-gray-50">
+        <UserX className="h-12 w-12 text-gray-300" />
+        <p className="text-base font-semibold text-gray-700">Cuenta desactivada</p>
+        <p className="text-sm text-gray-400 max-w-sm">
+          Tu cuenta ha sido desactivada. Contacta al administrador para reactivarla.
+        </p>
+        <button
+          onClick={signOut}
+          className="text-sm text-white bg-[#1B2D4E] px-4 py-2 rounded-lg hover:bg-[#2A4A7F] transition-colors"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
