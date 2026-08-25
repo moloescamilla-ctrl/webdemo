@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useAdminUsuarios } from '@/hooks/useAdmin'
 import { useProfile } from '@/hooks/useProfile'
-import { Loader2, RefreshCw, ShieldCheck, ShieldAlert, UserX, UserCheck, ChevronDown } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+import { Loader2, RefreshCw, ShieldCheck, ShieldAlert, UserX, UserCheck, ChevronDown, UserPlus, X, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const ROLES = ['perito', 'admin', 'superadmin']
@@ -156,9 +157,101 @@ function FilaUsuario({ usuario, onActualizar, isSuperAdmin, esYo }) {
   )
 }
 
+function ModalInvitar({ onCerrar, onInvitado }) {
+  const [email,     setEmail]     = useState('')
+  const [nombre,    setNombre]    = useState('')
+  const [enviando,  setEnviando]  = useState(false)
+  const [error,     setError]     = useState(null)
+  const [exito,     setExito]     = useState(false)
+
+  async function handleEnviar(e) {
+    e.preventDefault()
+    setEnviando(true)
+    setError(null)
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('invite-user', {
+        body: { email: email.trim(), nombre: nombre.trim() },
+      })
+      if (fnErr) throw new Error(fnErr.message)
+      if (data?.error) throw new Error(data.error)
+      setExito(true)
+      onInvitado?.()
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-gray-100">
+          <h2 className="text-sm font-semibold text-[#1B2D4E]">Invitar nuevo perito</h2>
+          <button onClick={onCerrar} className="text-gray-400 hover:text-gray-600">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {exito ? (
+          <div className="px-5 py-6 text-center space-y-2">
+            <Send className="h-8 w-8 text-green-500 mx-auto" />
+            <p className="text-sm font-medium text-gray-800">Invitación enviada</p>
+            <p className="text-xs text-gray-400">
+              Se envió un correo a <span className="font-medium">{email}</span> con el enlace para activar su cuenta.
+            </p>
+            <Button size="sm" className="mt-3 bg-[#1B2D4E] hover:bg-[#2A4A7F]" onClick={onCerrar}>
+              Cerrar
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={handleEnviar} className="px-5 py-4 space-y-4">
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Nombre del perito</label>
+              <input
+                type="text"
+                value={nombre}
+                onChange={e => setNombre(e.target.value)}
+                placeholder="Ej. Juan García López"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1B2D4E]"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-600 block mb-1">Correo electrónico <span className="text-red-500">*</span></label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="perito@ejemplo.com"
+                className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1B2D4E]"
+              />
+            </div>
+            {error && (
+              <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">{error}</p>
+            )}
+            <p className="text-xs text-gray-400">
+              El perito recibirá un correo con un enlace para establecer su contraseña.
+            </p>
+            <div className="flex gap-2 pt-1">
+              <Button type="button" variant="outline" size="sm" className="flex-1" onClick={onCerrar} disabled={enviando}>
+                Cancelar
+              </Button>
+              <Button type="submit" size="sm" className="flex-1 bg-[#1B2D4E] hover:bg-[#2A4A7F]" disabled={enviando || !email.trim()}>
+                {enviando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Enviar invitación'}
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export function AdminUsuariosPage() {
   const { usuarios, loading, error, cargar, actualizarUsuario } = useAdminUsuarios()
   const { profile, isSuperAdmin } = useProfile()
+  const [mostrarInvitar, setMostrarInvitar] = useState(false)
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -169,17 +262,34 @@ export function AdminUsuariosPage() {
             {usuarios.length} usuario{usuarios.length !== 1 ? 's' : ''} registrado{usuarios.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={cargar}
-          disabled={loading}
-          className="flex items-center gap-1.5"
-        >
-          <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
-          Actualizar
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            className="bg-[#1B2D4E] hover:bg-[#2A4A7F] flex items-center gap-1.5"
+            onClick={() => setMostrarInvitar(true)}
+          >
+            <UserPlus className="h-3.5 w-3.5" />
+            Invitar perito
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={cargar}
+            disabled={loading}
+            className="flex items-center gap-1.5"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${loading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
+        </div>
       </div>
+
+      {mostrarInvitar && (
+        <ModalInvitar
+          onCerrar={() => setMostrarInvitar(false)}
+          onInvitado={() => { cargar(); setMostrarInvitar(false) }}
+        />
+      )}
 
       {error && (
         <div className="rounded-md bg-red-50 border border-red-200 p-3 text-xs text-red-700 mb-4">
