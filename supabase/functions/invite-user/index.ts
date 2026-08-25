@@ -1,6 +1,5 @@
 // supabase/functions/invite-user/index.ts
 // Invita a un nuevo perito por email. Solo accesible para admin/superadmin.
-// Usa service_role para llamar a auth.admin.inviteUserByEmail.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -15,28 +14,32 @@ serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
+    const authHeader = req.headers.get('Authorization') ?? ''
+    const token = authHeader.replace('Bearer ', '')
+
+    if (!token) {
       return new Response(JSON.stringify({ error: 'No autenticado' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Verificar rol del solicitante con su JWT
-    const userClient = createClient(
+    // Usar service_role para todo — validar token y luego operar
+    const adminClient = createClient(
       Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    const { data: { user }, error: authError } = await userClient.auth.getUser()
+    // Validar el JWT del usuario llamante
+    const { data: { user }, error: authError } = await adminClient.auth.getUser(token)
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'No autenticado' }), {
+      return new Response(JSON.stringify({ error: 'Token inválido' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    const { data: profile } = await userClient
+    // Verificar que sea admin o superadmin
+    const { data: profile } = await adminClient
       .from('profiles')
       .select('role')
       .eq('id', user.id)
@@ -55,13 +58,7 @@ serve(async (req) => {
       })
     }
 
-    // Invitar con service_role
-    const adminClient = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    )
-
+    // Enviar invitación
     const { data, error } = await adminClient.auth.admin.inviteUserByEmail(email.trim(), {
       data: { nombre_perito: nombre?.trim() ?? '' },
     })
