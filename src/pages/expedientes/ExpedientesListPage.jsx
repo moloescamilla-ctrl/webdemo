@@ -1,23 +1,23 @@
 import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useExpedientes } from '@/hooks/useExpedientes'
 import {
   PlusCircle, FileText, Loader2, ChevronRight, Trash2, Eye, Pencil,
-  Calculator, Archive, ChevronDown, ChevronUp, Search, X,
+  Calculator, Archive, Search, X,
 } from 'lucide-react'
 
 const ESTADO_VARIANT = {
-  borrador: 'secondary',
+  borrador: 'default',
   en_proceso: 'warning',
   completado: 'success',
   firmado: 'default',
-  archivado: 'secondary',
+  archivado: 'success',
 }
 
 const ESTADO_LABEL = {
-  borrador: 'Borrador',
+  borrador: 'Vigente',
   en_proceso: 'En proceso',
   completado: 'Completado',
   firmado: 'Firmado',
@@ -48,12 +48,10 @@ function coincide(exp, q) {
 }
 
 export function ExpedientesListPage() {
-  const location = useLocation()
   const { expedientes, expedientesParaRevisar, loading, error, eliminarExpediente, archivarExpediente } = useExpedientes()
   const [eliminando, setEliminando] = useState(null)
   const [archivando, setArchivando] = useState(null)
   const [errorArchivando, setErrorArchivando] = useState(null)
-  const [mostrarArchivados, setMostrarArchivados] = useState(location.state?.mostrarArchivados ?? false)
   const [busqueda, setBusqueda] = useState('')
   const [confirmarEliminar, setConfirmarEliminar] = useState(null)
 
@@ -71,21 +69,15 @@ export function ExpedientesListPage() {
     e.preventDefault(); e.stopPropagation()
     setArchivando(id)
     setErrorArchivando(null)
-    try {
-      await archivarExpediente(id)
-      setMostrarArchivados(true)
-    }
-    catch (err) {
-      setErrorArchivando(err.message)
-    }
+    try { await archivarExpediente(id) }
+    catch (err) { setErrorArchivando(err.message) }
     finally { setArchivando(null) }
   }
 
   const avaluos = expedientes.filter(e => e.tipo_expediente !== 'calculo_rapido')
   const calculosRapidos = expedientes.filter(e => e.tipo_expediente === 'calculo_rapido')
 
-  const vigentes   = avaluos.filter(e => e.estado !== 'archivado').filter(e => coincide(e, busqueda))
-  const archivados = avaluos.filter(e => e.estado === 'archivado').filter(e => coincide(e, busqueda))
+  const vigentes = avaluos.filter(e => e.estado !== 'archivado').filter(e => coincide(e, busqueda))
   const calculosFiltrados = calculosRapidos.filter(e => coincide(e, busqueda))
 
   // Agrupar vigentes por mes (solo cuando no hay búsqueda activa)
@@ -98,7 +90,7 @@ export function ExpedientesListPage() {
         return acc
       }, {})
 
-  const totalVisible = vigentes.length + archivados.length + calculosFiltrados.length
+  const totalVisible = vigentes.length + calculosFiltrados.length
 
   return (
     <div className="p-6 max-w-4xl">
@@ -107,8 +99,7 @@ export function ExpedientesListPage() {
         <div>
           <h1 className="text-xl font-bold text-gray-900">Expedientes</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            {avaluos.filter(e => e.estado !== 'archivado').length} vigente{avaluos.filter(e => e.estado !== 'archivado').length !== 1 ? 's' : ''}
-            {archivados.length > 0 ? ` · ${archivados.length} archivado${archivados.length !== 1 ? 's' : ''}` : ''}
+            {vigentes.length} vigente{vigentes.length !== 1 ? 's' : ''}
           </p>
         </div>
         <Link to="/expedientes/nuevo">
@@ -285,39 +276,6 @@ export function ExpedientesListPage() {
         </div>
       )}
 
-      {/* ── Archivados ── */}
-      {archivados.length > 0 && (
-        <div className="mt-8">
-          <button
-            onClick={() => setMostrarArchivados(v => !v)}
-            className="flex items-center gap-3 w-full mb-3 group"
-          >
-            <Archive className="h-4 w-4 text-gray-400 group-hover:text-gray-600" />
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap group-hover:text-gray-600">
-              Archivados
-            </h2>
-            <span className="text-xs text-gray-300">{archivados.length}</span>
-            <div className="flex-1 h-px bg-gray-100" />
-            {mostrarArchivados || hayBusqueda
-              ? <ChevronUp className="h-4 w-4 text-gray-300" />
-              : <ChevronDown className="h-4 w-4 text-gray-300" />}
-          </button>
-
-          {(mostrarArchivados || hayBusqueda) && (
-            <div className="space-y-2">
-              {archivados.map(exp => (
-                <ExpRow
-                  key={exp.id} exp={exp}
-                  eliminando={eliminando} archivando={archivando}
-                  onEliminar={setConfirmarEliminar} onArchivar={null}
-                  archivado
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
       {/* ── Cálculos rápidos ── */}
       {calculosFiltrados.length > 0 && (
         <div className="mt-10">
@@ -385,8 +343,8 @@ function ExpRow({ exp, eliminando, archivando, onEliminar, onArchivar, rapido = 
         {rapido
           ? <Calculator className="h-8 w-8 text-purple-200 shrink-0" />
           : archivado
-            ? <Archive className="h-8 w-8 text-gray-200 shrink-0" />
-            : <FileText className="h-8 w-8 text-gray-300 shrink-0" />}
+            ? <Archive className="h-8 w-8 text-green-300 shrink-0" />
+            : <FileText className="h-8 w-8 text-blue-300 shrink-0" />}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-gray-500">

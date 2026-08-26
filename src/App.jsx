@@ -10,6 +10,7 @@ import { ExpedienteDetallePage } from '@/pages/expedientes/ExpedienteDetallePage
 import { EditarExpedientePage } from '@/pages/expedientes/EditarExpedientePage'
 import { CapturaComparablesPage } from '@/pages/expedientes/CapturaComparablesPage'
 import { CapturaRapidaPage } from '@/pages/expedientes/CapturaRapidaPage'
+import { ArchivadosPage } from '@/pages/expedientes/ArchivadosPage'
 import { RevisarExpedientePage } from '@/pages/compartidos/RevisarExpedientePage'
 import { PerfilPage } from '@/pages/PerfilPage'
 import { ValoresSueloPage } from '@/pages/suelo/ValoresSueloPage'
@@ -78,6 +79,7 @@ export default function App() {
           <Route path="expedientes/:id/editar" element={<EditarExpedientePage />} />
           <Route path="expedientes/:id/captura-comparables" element={<CapturaComparablesPage />} />
           <Route path="capturar" element={<CapturaRapidaPage />} />
+          <Route path="archivados" element={<ArchivadosPage />} />
           <Route path="perfil" element={<PerfilPage />} />
           <Route path="suelo" element={<ValoresSueloPage />} />
           <Route path="suelo/admin" element={<AdminSueloPage />} />
