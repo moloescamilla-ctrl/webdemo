@@ -16,6 +16,7 @@ import { ValoresSueloPage } from '@/pages/suelo/ValoresSueloPage'
 import { AdminSueloPage } from '@/pages/suelo/AdminSueloPage'
 import { AdminUsuariosPage } from '@/pages/admin/AdminUsuariosPage'
 import { AdminRoute } from '@/components/layout/AdminRoute'
+import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage'
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -60,6 +61,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route
           path="/"
           element={

@@ -1,5 +1,6 @@
-// supabase/functions/invite-user/index.ts
-// Invita a un nuevo perito por email. Solo accesible para admin/superadmin.
+// supabase/functions/delete-user/index.ts
+// Elimina un usuario de auth.users. Solo accesible para superadmin.
+// Un admin no puede eliminar a otros admins ni superadmins.
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -23,14 +24,12 @@ serve(async (req) => {
       })
     }
 
-    // Usar service_role para todo — validar token y luego operar
     const adminClient = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    // Validar el JWT del usuario llamante
     const { data: { user }, error: authError } = await adminClient.auth.getUser(token)
     if (authError || !user) {
       return new Response(JSON.stringify({ error: 'Token inválido' }), {
@@ -38,38 +37,53 @@ serve(async (req) => {
       })
     }
 
-    // Verificar que sea admin o superadmin
-    const { data: profile } = await adminClient
+    const { data: callerProfile } = await adminClient
       .from('profiles')
       .select('role')
       .eq('id', user.id)
       .single()
 
-    if (!profile || !['admin', 'superadmin'].includes(profile.role)) {
+    if (!callerProfile || !['admin', 'superadmin'].includes(callerProfile.role)) {
       return new Response(JSON.stringify({ error: 'Se requiere rol admin o superadmin' }), {
         status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    const { email, nombre } = await req.json()
-    if (!email?.trim()) {
-      return new Response(JSON.stringify({ error: 'El email es requerido' }), {
+    const { user_id } = await req.json()
+    if (!user_id) {
+      return new Response(JSON.stringify({ error: 'user_id requerido' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    // Enviar invitación
-    const { data, error } = await adminClient.auth.admin.inviteUserByEmail(email.trim(), {
-      data: { nombre_perito: nombre?.trim() ?? '' },
-    })
+    // No puede eliminarse a sí mismo
+    if (user_id === user.id) {
+      return new Response(JSON.stringify({ error: 'No puedes eliminar tu propia cuenta' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
 
+    // Verificar rol del objetivo — admin no puede eliminar superadmin ni otros admins
+    const { data: targetProfile } = await adminClient
+      .from('profiles')
+      .select('role')
+      .eq('id', user_id)
+      .single()
+
+    if (callerProfile.role === 'admin' && targetProfile?.role !== 'perito') {
+      return new Response(JSON.stringify({ error: 'Un admin solo puede eliminar cuentas perito' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { error } = await adminClient.auth.admin.deleteUser(user_id)
     if (error) {
       return new Response(JSON.stringify({ error: error.message }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
 
-    return new Response(JSON.stringify({ ok: true, user_id: data.user.id }), {
+    return new Response(JSON.stringify({ ok: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
 
