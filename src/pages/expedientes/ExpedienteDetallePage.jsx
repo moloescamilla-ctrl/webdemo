@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { pdf } from '@react-pdf/renderer'
+import { useAuth } from '@/hooks/useAuth'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useRevision } from '@/hooks/useRevision'
 import { useFotosExpediente } from '@/hooks/useFotosExpediente'
@@ -106,12 +107,15 @@ export function ExpedienteDetallePage() {
     invitarRevisor, agregarComentario, atenderComentario, cerrarRevision,
   } = useRevision(id)
 
+  const { user } = useAuth()
   const navigate = useNavigate()
   const [modalInvitar, setModalInvitar] = useState(false)
   const [guardandoMetodo, setGuardandoMetodo] = useState(false)
   const [errorMetodo, setErrorMetodo] = useState(null)
   const [archivando, setArchivando] = useState(false)
   const [confirmarArchivar, setConfirmarArchivar] = useState(false)
+  const [cerrando, setCerrando] = useState(false)
+  const [confirmarCerrar, setConfirmarCerrar] = useState(false)
 
   const handleConfirmarArchivar = async () => {
     setArchivando(true)
@@ -124,6 +128,15 @@ export function ExpedienteDetallePage() {
     } finally {
       setArchivando(false)
     }
+  }
+
+  const handleCerrarRevision = async () => {
+    const miRevision = revisiones.find(r => r.revisor_id === user?.id && r.estado === 'activa')
+    if (!miRevision) return
+    setCerrando(true)
+    try { await cerrarRevision(miRevision.id) }
+    catch (err) { console.error('Error al cerrar revisión:', err.message) }
+    finally { setCerrando(false); setConfirmarCerrar(false) }
   }
 
   const handleElegirMetodo = async (clave) => {
@@ -223,9 +236,26 @@ export function ExpedienteDetallePage() {
 
       {/* Banner para el revisor */}
       {esRevisor && !esAutor && (
-        <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
-          <MessageSquare className="h-4 w-4 shrink-0" />
-          Estás revisando este expediente. Puedes agregar comentarios en cada sección. No puedes modificar los datos.
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-center gap-2 text-sm text-blue-700">
+            <MessageSquare className="h-4 w-4 shrink-0" />
+            Estás revisando este expediente. Puedes agregar comentarios en cada sección. No puedes modificar los datos.
+          </div>
+          {hayRevisionActiva && (
+            <button
+              onClick={() => setConfirmarCerrar(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 transition-colors shrink-0"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Cerrar revisión
+            </button>
+          )}
+          {!hayRevisionActiva && (
+            <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              Revisión cerrada
+            </span>
+          )}
         </div>
       )}
 
@@ -659,6 +689,40 @@ export function ExpedienteDetallePage() {
                 className="flex-1 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
               >
                 {archivando ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                Confirmar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmación cerrar revisión */}
+      {confirmarCerrar && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-24 sm:pb-4 bg-black/40">
+          <div className="bg-white rounded-2xl shadow-2xl p-5 w-full max-w-sm">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="bg-emerald-100 rounded-full p-2 shrink-0">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              </div>
+              <p className="font-semibold text-gray-900 text-sm">¿Cerrar la revisión?</p>
+            </div>
+            <p className="text-xs text-gray-500 mb-4 ml-11">
+              El expediente desaparecerá de tu lista de revisiones. No podrás agregar más comentarios.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setConfirmarCerrar(false)}
+                disabled={cerrando}
+                className="flex-1 py-2.5 text-sm font-medium text-gray-600 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleCerrarRevision}
+                disabled={cerrando}
+                className="flex-1 py-2.5 text-sm font-medium text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-1.5"
+              >
+                {cerrando ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 Confirmar
               </button>
             </div>
