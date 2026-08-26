@@ -31,7 +31,7 @@ export function useExpedientes() {
       .from('revisiones_expediente')
       .select('expediente_id, estado')
       .eq('revisor_id', user.id)
-      .in('estado', ['activa', 'cerrada'])
+      .eq('estado', 'activa')
     if (!invitaciones?.length) { setExpedientesParaRevisar([]); return }
     const ids = invitaciones.map(i => i.expediente_id)
     const { data } = await supabase

@@ -1,7 +1,6 @@
 const CONFIG = {
   en_revision:     { label: 'En revisión',      cls: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
   con_comentarios: { label: 'Con comentarios',  cls: 'bg-orange-100 text-orange-700 border-orange-200' },
-  revision_cerrada:{ label: 'Revisión cerrada', cls: 'bg-green-100  text-green-700  border-green-200'  },
 }
 
 export function BadgeRevision({ estadoRevision, pendientes = 0, className = '' }) {
