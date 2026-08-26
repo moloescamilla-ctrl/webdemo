@@ -69,6 +69,18 @@ serve(async (req) => {
       })
     }
 
+    // Crear perfil explícitamente (no depender solo del trigger)
+    // El trigger puede fallar silenciosamente en algunas versiones de Supabase
+    if (data.user?.id) {
+      await adminClient.from('profiles').upsert({
+        id:                     data.user.id,
+        email:                  email.trim(),
+        nombre:                 nombre?.trim() || null,
+        plan:                   'prueba',
+        limite_expedientes_mes: 3,
+      }, { onConflict: 'id' })
+    }
+
     return new Response(JSON.stringify({ ok: true, user_id: data.user.id }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
