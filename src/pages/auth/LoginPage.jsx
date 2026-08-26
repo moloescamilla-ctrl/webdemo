@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/hooks/useAuth'
-import { Loader2, CheckCircle } from 'lucide-react'
+import { Loader2, CheckCircle, ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -20,12 +20,77 @@ function traducirError(msg) {
   return ERRORES[msg] ?? msg
 }
 
+function RecuperarPassword({ onVolver }) {
+  const [email,   setEmail]   = useState('')
+  const [loading, setLoading] = useState(false)
+  const [enviado, setEnviado] = useState(false)
+  const [error,   setError]   = useState(null)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    if (error) { setError(traducirError(error.message)); setLoading(false) }
+    else setEnviado(true)
+  }
+
+  if (enviado) {
+    return (
+      <div className="text-center space-y-3 py-4">
+        <CheckCircle className="h-10 w-10 text-green-500 mx-auto" />
+        <p className="text-sm font-semibold text-gray-800">Correo enviado</p>
+        <p className="text-xs text-gray-400 max-w-xs mx-auto">
+          Revisa tu bandeja de entrada en <span className="font-medium">{email}</span> y sigue el enlace para restablecer tu contraseña.
+        </p>
+        <button onClick={onVolver} className="text-xs text-[#1B2D4E] hover:underline mt-2 flex items-center gap-1 mx-auto">
+          <ArrowLeft className="h-3 w-3" /> Volver al inicio de sesión
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <button type="button" onClick={onVolver} className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 mb-3">
+          <ArrowLeft className="h-3 w-3" /> Volver
+        </button>
+        <p className="text-sm font-medium text-gray-700 mb-1">Recuperar contraseña</p>
+        <p className="text-xs text-gray-400">Te enviaremos un enlace para restablecer tu contraseña.</p>
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor="rec-email">Correo electrónico</Label>
+        <Input
+          id="rec-email"
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="perito@ejemplo.com"
+          required
+          autoComplete="email"
+        />
+      </div>
+      {error && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</p>
+      )}
+      <Button type="submit" className="w-full bg-[#1B2D4E] hover:bg-[#2A4A7F]" disabled={loading || !email.trim()}>
+        {loading && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+        Enviar enlace
+      </Button>
+    </form>
+  )
+}
+
 function TabLogin() {
   const navigate = useNavigate()
-  const [email,    setEmail]    = useState('')
-  const [password, setPassword] = useState('')
-  const [loading,  setLoading]  = useState(false)
-  const [error,    setError]    = useState(null)
+  const [email,       setEmail]       = useState('')
+  const [password,    setPassword]    = useState('')
+  const [loading,     setLoading]     = useState(false)
+  const [error,       setError]       = useState(null)
+  const [recuperando, setRecuperando] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -34,6 +99,10 @@ function TabLogin() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) { setError(traducirError(error.message)); setLoading(false) }
     else navigate('/dashboard', { replace: true })
+  }
+
+  if (recuperando) {
+    return <RecuperarPassword onVolver={() => setRecuperando(false)} />
   }
 
   return (
@@ -51,7 +120,16 @@ function TabLogin() {
         />
       </div>
       <div className="space-y-1">
-        <Label htmlFor="login-password">Contraseña</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="login-password">Contraseña</Label>
+          <button
+            type="button"
+            onClick={() => setRecuperando(true)}
+            className="text-xs text-gray-400 hover:text-[#1B2D4E] transition-colors"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
         <Input
           id="login-password"
           type="password"

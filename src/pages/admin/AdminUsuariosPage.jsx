@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAdminUsuarios } from '@/hooks/useAdmin'
 import { useProfile } from '@/hooks/useProfile'
 import { supabase } from '@/lib/supabase'
-import { Loader2, RefreshCw, ShieldCheck, ShieldAlert, UserX, UserCheck, ChevronDown, UserPlus, X, Send } from 'lucide-react'
+import { Loader2, RefreshCw, ShieldCheck, ShieldAlert, UserX, UserCheck, ChevronDown, UserPlus, X, Send, Trash2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const ROLES = ['perito', 'admin', 'superadmin']
@@ -36,11 +36,62 @@ function SelectInline({ value, options, onChange, disabled }) {
   )
 }
 
-function FilaUsuario({ usuario, onActualizar, isSuperAdmin, esYo }) {
-  const [guardando, setGuardando] = useState(false)
-  const [error,     setError]     = useState(null)
+function ModalConfirmarEliminar({ usuario, onCerrar, onEliminado }) {
+  const [eliminando, setEliminando] = useState(false)
+  const [error,      setError]      = useState(null)
 
-  const puedeEditar = !esYo && (isSuperAdmin || usuario.role !== 'superadmin')
+  async function handleEliminar() {
+    setEliminando(true)
+    setError(null)
+    try {
+      const { data, error: fnErr } = await supabase.functions.invoke('delete-user', {
+        body: { user_id: usuario.id },
+      })
+      if (fnErr) throw new Error(fnErr.message)
+      if (data?.error) throw new Error(data.error)
+      onEliminado()
+    } catch (e) {
+      setError(e.message)
+      setEliminando(false)
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm">
+        <div className="px-5 pt-5 pb-4 border-b border-gray-100 flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-red-500 shrink-0" />
+          <h2 className="text-sm font-semibold text-gray-800">Eliminar usuario</h2>
+        </div>
+        <div className="px-5 py-4 space-y-3">
+          <p className="text-sm text-gray-600">
+            ¿Eliminar permanentemente la cuenta de <span className="font-semibold">{usuario.nombre || usuario.email}</span>?
+          </p>
+          <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded px-3 py-2">
+            Esta acción es irreversible. Se borrarán el acceso y los datos de autenticación. Los expedientes del usuario permanecerán en la base de datos.
+          </p>
+          {error && <p className="text-xs text-red-600">{error}</p>}
+        </div>
+        <div className="px-5 pb-5 flex gap-2">
+          <Button variant="outline" size="sm" className="flex-1" onClick={onCerrar} disabled={eliminando}>
+            Cancelar
+          </Button>
+          <Button size="sm" className="flex-1 bg-red-600 hover:bg-red-700 text-white" onClick={handleEliminar} disabled={eliminando}>
+            {eliminando ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Eliminar cuenta'}
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function FilaUsuario({ usuario, onActualizar, onEliminar, isSuperAdmin, esYo }) {
+  const [guardando,        setGuardando]        = useState(false)
+  const [error,            setError]            = useState(null)
+  const [confirmarEliminar, setConfirmarEliminar] = useState(false)
+
+  const puedeEditar   = !esYo && (isSuperAdmin || usuario.role !== 'superadmin')
+  const puedeEliminar = !esYo && (isSuperAdmin || usuario.role === 'perito')
 
   async function cambiar(campo, valor) {
     setGuardando(true)
@@ -150,8 +201,26 @@ function FilaUsuario({ usuario, onActualizar, isSuperAdmin, esYo }) {
       </td>
 
       <td className="px-4 py-3 text-center">
-        {guardando && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#1B2D4E] mx-auto" />}
-        {esYo && <span className="text-xs text-gray-300 italic">tú</span>}
+        <div className="flex items-center justify-center gap-1">
+          {guardando && <Loader2 className="h-3.5 w-3.5 animate-spin text-[#1B2D4E]" />}
+          {esYo && <span className="text-xs text-gray-300 italic">tú</span>}
+          {puedeEliminar && !guardando && (
+            <button
+              onClick={() => setConfirmarEliminar(true)}
+              title="Eliminar usuario"
+              className="text-gray-300 hover:text-red-500 transition-colors"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+        {confirmarEliminar && (
+          <ModalConfirmarEliminar
+            usuario={usuario}
+            onCerrar={() => setConfirmarEliminar(false)}
+            onEliminado={() => { setConfirmarEliminar(false); onEliminar?.() }}
+          />
+        )}
       </td>
     </tr>
   )
@@ -322,6 +391,7 @@ export function AdminUsuariosPage() {
                     key={u.id}
                     usuario={u}
                     onActualizar={actualizarUsuario}
+                    onEliminar={cargar}
                     isSuperAdmin={isSuperAdmin}
                     esYo={profile?.id === u.id}
                   />
