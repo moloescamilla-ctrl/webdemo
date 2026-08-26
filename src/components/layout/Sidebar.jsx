@@ -1,12 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, UserCircle, MapPin, ShieldCheck } from 'lucide-react'
+import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, UserCircle, MapPin, ShieldCheck, Archive } from 'lucide-react'
 import logoCovinsa from '@/assets/logo-covinsa.png'
 import { useProfile } from '@/hooks/useProfile'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
   { to: '/expedientes', icon: FolderOpen, label: 'Expedientes' },
+  { to: '/archivados', icon: Archive, label: 'Archivados' },
   { to: '/expedientes/nuevo', icon: PlusCircle, label: 'Nuevo Avalúo' },
   { to: '/suelo', icon: MapPin, label: 'Valores de Suelo' },
   { to: '/perfil', icon: UserCircle, label: 'Mi perfil' },

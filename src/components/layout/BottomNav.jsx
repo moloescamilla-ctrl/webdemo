@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, UserCircle } from 'lucide-react'
+import { LayoutDashboard, FolderOpen, PlusCircle, LogOut, Archive } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 
@@ -7,7 +7,7 @@ const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, label: 'Inicio' },
   { to: '/expedientes', icon: FolderOpen, label: 'Expedientes' },
   { to: '/expedientes/nuevo', icon: PlusCircle, label: 'Nuevo' },
-  { to: '/perfil', icon: UserCircle, label: 'Perfil' },
+  { to: '/archivados', icon: Archive, label: 'Archivados' },
 ]
 
 export function BottomNav() {
@@ -19,6 +19,7 @@ export function BottomNav() {
     if (to === '/expedientes') {
       return pathname.startsWith('/expedientes') && !pathname.startsWith('/expedientes/nuevo')
     }
+    if (to === '/archivados') return pathname === '/archivados'
     return pathname === to || pathname.startsWith(to + '/')
   }
 
