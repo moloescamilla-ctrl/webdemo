@@ -22,8 +22,11 @@ import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin, Calculator } 
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
-  'Nave industrial', 'Terreno urbano', 'Bodega', 'Otro',
+  'Nave industrial', 'Terreno urbano', 'Terreno suburbano', 'Terreno rural', 'Bodega', 'Otro',
 ]
+
+const TIPOS_PREDIO = ['URBANO', 'SUBURBANO', 'RURAL']
+const TIPOS_SUELO  = ['TEMPORAL', 'RIEGO', 'HUMEDAD', 'ÁRIDO', 'PANTANOSO']
 
 const PROPOSITOS_AVALUO = [
   'Compraventa', 'Garantía hipotecaria', 'Arrendamiento', 'Dación en pago', 'Trámite judicial',
@@ -153,6 +156,8 @@ export function EditarExpedientePage() {
       num_cuenta_predial: expediente.num_cuenta_predial || '',
       num_cuenta_agua: expediente.num_cuenta_agua || '',
       tipo_inmueble: expediente.tipo_inmueble || 'Casa habitación',
+      tipo_predio: expediente.tipo_predio || 'URBANO',
+      tipo_suelo: expediente.tipo_suelo || '',
       uso: expediente.uso || 'Habitacional',
       proposito_avaluo: expediente.proposito_avaluo || '',
       nombre_propietario: expediente.nombre_propietario || '',
@@ -334,14 +339,30 @@ export function EditarExpedientePage() {
                 </Select>
               </div>
               <div className="space-y-1">
+                <Label>Tipo de predio</Label>
+                <Select name="tipo_predio" value={d.tipo_predio} onChange={handleDatos}>
+                  {TIPOS_PREDIO.map(t => <option key={t}>{t}</option>)}
+                </Select>
+              </div>
+              <div className="space-y-1">
                 <Label>Uso</Label>
                 <Select name="uso" value={d.uso} onChange={handleDatos}>
                   <option>Habitacional</option>
                   <option>Comercial</option>
                   <option>Industrial</option>
                   <option>Mixto</option>
+                  <option>Agropecuario</option>
                 </Select>
               </div>
+              {(d.tipo_predio === 'RURAL' || d.tipo_predio === 'SUBURBANO') && (
+                <div className="space-y-1">
+                  <Label>Tipo de suelo</Label>
+                  <Select name="tipo_suelo" value={d.tipo_suelo} onChange={handleDatos}>
+                    <option value="">— Seleccionar —</option>
+                    {TIPOS_SUELO.map(t => <option key={t}>{t}</option>)}
+                  </Select>
+                </div>
+              )}
               <div className="space-y-1">
                 <Label>Propósito del avalúo</Label>
                 <Select name="proposito_avaluo" value={d.proposito_avaluo} onChange={handleDatos}>

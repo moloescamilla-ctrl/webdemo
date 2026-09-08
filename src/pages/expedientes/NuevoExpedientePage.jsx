@@ -10,7 +10,7 @@ import { Calculator, Loader2 } from 'lucide-react'
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
-  'Nave industrial', 'Terreno urbano', 'Bodega', 'Otro',
+  'Nave industrial', 'Terreno urbano', 'Terreno suburbano', 'Terreno rural', 'Bodega', 'Otro',
 ]
 
 export function NuevoExpedientePage() {
