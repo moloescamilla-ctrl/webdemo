@@ -4,6 +4,7 @@ import { EdadPonderadaInput } from './EdadPonderadaInput'
 import { FactorComercializacion } from './FactorComercializacion'
 import { ConsultarSuelo } from './ConsultarSuelo'
 import { calcularMetodoFisico, calcularTerrenoSolo, calcularHeideckeDesdeChecklist, calcularFactorRoss, calcularRossHeidecke, ESTADOS_HEIDECKE, PARTIDAS_INSPECCION } from './calculosRossHeidecke'
+import { ComparablesTerrenoPanel } from './ComparablesTerrenoPanel'
 import { useCostosM2 } from '@/hooks/useCostosM2'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { NumericInput } from '@/components/ui/numeric-input'
@@ -94,6 +95,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   })
   const [estadoManual, setEstadoManual] = useState(null)
   const [accesoriaData, setAccesoriaData] = useState({ edadAccesoria: 0, superficieAccesoria: 0 })
+  const [comparablesTerreno, setComparablesTerreno] = useState(initialValues?.comparablesTerreno ?? null)
 
   const { costos, porFuente, cargando: cargandoCostos } = useCostosM2()
   const [costoSeleccionado, setCostoSeleccionado] = useState(null)
@@ -173,6 +175,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       costo_m2_tipo:      costoSeleccionado?.tipo      ?? null,
       costo_m2_tabulador: costoSeleccionado ? Number(costoSeleccionado.precio_m2) : null,
       costo_m2_ajustado:  costoManual && !!costoSeleccionado,
+      comparablesTerreno: comparablesTerreno ?? null,
     }
     const fc = factorData?.activo && factorData?.factor
       ? { ...factorData, valorMercado: valorFisicoFinal * (parseFloat(factorData.factor) || 1) }
@@ -299,6 +302,13 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
           latitud={latitud}
           longitud={longitud}
           onAplicarValor={(val) => setInputs(prev => ({ ...prev, valorUnitarioTerreno: String(Math.round(val)) }))}
+        />
+
+        <ComparablesTerrenoPanel
+          supSujeto={inputs.superficieTerreno}
+          initialComparables={comparablesTerreno}
+          onChange={setComparablesTerreno}
+          onUsarValor={(val) => setInputs(prev => ({ ...prev, valorUnitarioTerreno: String(Math.round(val)) }))}
         />
 
         {tieneConstruccion && (
