@@ -32,6 +32,8 @@ export default function DatosGenerales({ expediente }) {
           <Campo label="Vigencia (6 meses)" value={vigenciaAvaluo(expediente.fecha_inspeccion)} />
           <Campo label="Proposito" value={expediente.proposito_avaluo} />
           <Campo label="Tipo de inmueble" value={expediente.tipo_inmueble} />
+          <Campo label="Tipo de predio" value={expediente.tipo_predio} />
+          {expediente.tipo_suelo ? <Campo label="Tipo de suelo" value={expediente.tipo_suelo} /> : null}
           <Campo label="Uso" value={expediente.uso} />
         </View>
         <View style={styles.col2}>
