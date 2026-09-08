@@ -168,6 +168,7 @@ export function useExpedientes() {
         factor_comercializacion_segmento:      fcActivo ? (factorData.segmento || null)        : null,
         factor_comercializacion_justificacion: fcActivo ? (factorData.justificacion || null)   : null,
         valor_mercado_estimado:                fcActivo ? (factorData.valorMercado || null)    : null,
+        comparables_terreno:                   inputs.comparablesTerreno ?? null,
       }, { onConflict: 'expediente_id' })
     if (eMf) throw new Error(eMf.message)
 

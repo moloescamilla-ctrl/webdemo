@@ -261,6 +261,7 @@ export function EditarExpedientePage() {
       valorResidual:              String(metodoFisico?.valor_residual_pct      || '15'),
     },
     estadosRaw: inspeccion,
+    comparablesTerreno: metodoFisico?.comparables_terreno ?? null,
     factorData: metodoFisico?.factor_comercializacion ? {
       activo:        true,
       factor:        String(metodoFisico.factor_comercializacion),
