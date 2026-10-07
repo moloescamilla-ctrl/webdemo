@@ -192,6 +192,7 @@ export function EditarExpedientePage() {
         estado_clave_inegi: d.estado_clave_inegi || null,
         num_cuenta_predial: d.num_cuenta_predial || null,
         num_cuenta_agua: d.num_cuenta_agua || null,
+        tipo_suelo: d.tipo_suelo || null,
       })
       flashOk('datos')
     }
