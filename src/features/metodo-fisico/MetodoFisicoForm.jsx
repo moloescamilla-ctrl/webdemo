@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { ChecklistInspeccion } from './ChecklistInspeccion'
 import { EdadPonderadaInput } from './EdadPonderadaInput'
 import { FactorComercializacion } from './FactorComercializacion'
@@ -11,7 +11,7 @@ import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { formatCurrency, formatNumber } from '@/lib/utils'
-import { Calculator, Info, Loader2 } from 'lucide-react'
+import { Calculator, Info, Loader2, Plus, X } from 'lucide-react'
 import { FormulaPanel } from '@/components/ui/formula-panel'
 
 const FORMULAS_FISICO = [
@@ -96,10 +96,55 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   const [estadoManual, setEstadoManual] = useState(null)
   const [accesoriaData, setAccesoriaData] = useState({ edadAccesoria: 0, superficieAccesoria: 0 })
   const [comparablesTerreno, setComparablesTerreno] = useState(initialValues?.comparablesTerreno ?? null)
+  const [partidasConstruccion, setPartidasConstruccion] = useState(initialValues?.partidasConstruccion ?? [])
 
   const { costos, porFuente, cargando: cargandoCostos } = useCostosM2()
   const [costoSeleccionado, setCostoSeleccionado] = useState(null)
   const [costoManual, setCostoManual] = useState(false)
+
+  const vrnPartidas = useMemo(() => {
+    if (!partidasConstruccion.length) return null
+    const v = partidasConstruccion.reduce((s, p) => {
+      return s + (parseFloat(p.superficie) || 0) * (parseFloat(p.costoM2) || 0)
+    }, 0)
+    return v > 0 ? v : null
+  }, [partidasConstruccion])
+
+  const supTotalPartidas = useMemo(() => {
+    if (!partidasConstruccion.length) return 0
+    return partidasConstruccion.reduce((s, p) => s + (parseFloat(p.superficie) || 0), 0)
+  }, [partidasConstruccion])
+
+  useEffect(() => {
+    if (partidasConstruccion.length > 0 && supTotalPartidas > 0) {
+      setInputs(prev => ({ ...prev, superficieConstruccion: String(supTotalPartidas) }))
+    }
+  }, [supTotalPartidas, partidasConstruccion.length])
+
+  const agregarPartida = () => {
+    setPartidasConstruccion(prev => [...prev, { id: crypto.randomUUID(), tabuladorId: '', clave: '', tipo: '', descripcion: '', costoM2: '', superficie: '' }])
+  }
+
+  const eliminarPartida = (id) => {
+    setPartidasConstruccion(prev => prev.filter(p => p.id !== id))
+  }
+
+  const handlePartidaTabulador = (id, costoId) => {
+    if (!costoId) {
+      setPartidasConstruccion(prev => prev.map(p => p.id === id ? { ...p, tabuladorId: '', clave: '', tipo: '', descripcion: '', costoM2: '' } : p))
+      return
+    }
+    const c = costos.find(x => x.id === costoId)
+    if (!c) return
+    setPartidasConstruccion(prev => prev.map(p => p.id === id
+      ? { ...p, tabuladorId: costoId, clave: c.clave, tipo: c.tipo, descripcion: c.descripcion, costoM2: String(c.precio_m2) }
+      : p
+    ))
+  }
+
+  const handlePartidaCampo = (id, campo, valor) => {
+    setPartidasConstruccion(prev => prev.map(p => p.id === id ? { ...p, [campo]: valor } : p))
+  }
 
   const handleInput = (e) => setInputs(prev => ({ ...prev, [e.target.name]: e.target.value }))
 
@@ -142,14 +187,20 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
     const edad = n(inputs.edadAnios)
     const vu = n(inputs.vidaUtilAnios)
     const vr = n(inputs.valorResidual) / 100
-    if (!sc || !cr || !vu) return null
+    const tieneVRN = vrnPartidas ? (supTotalPartidas > 0 && vrnPartidas > 0) : (sc > 0 && cr > 0)
+    if (!tieneVRN || !vu) return null
     return calcularMetodoFisico({
-      superficieConstruccion: sc, superficieTerreno: st,
-      costoReposicionM2: cr, valorUnitarioTerreno: vt,
-      edadAnios: edad, vidaUtilAnios: vu,
-      valorResidual: vr, coeficienteC: estadoFinal?.c ?? coeficienteC,
+      superficieConstruccion: vrnPartidas ? supTotalPartidas : sc,
+      superficieTerreno: st,
+      costoReposicionM2: cr,
+      valorUnitarioTerreno: vt,
+      edadAnios: edad,
+      vidaUtilAnios: vu,
+      valorResidual: vr,
+      coeficienteC: estadoFinal?.c ?? coeficienteC,
+      vrnMultiTipo: vrnPartidas ?? undefined,
     })
-  }, [inputs, estadoFinal, coeficienteC, tieneConstruccion])
+  }, [inputs, estadoFinal, coeficienteC, tieneConstruccion, vrnPartidas, supTotalPartidas])
 
   const resultadoAccesoria = useMemo(() => {
     if (!accesoriaData.superficieAccesoria) return null
@@ -170,12 +221,13 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
     const resultadoFinal = { ...resultado, valorFisicoTotal: valorFisicoFinal }
     const inputsConCosto = {
       ...inputs,
-      costo_m2_fuente:    costoSeleccionado?.fuente    ?? null,
-      costo_m2_clave:     costoSeleccionado?.clave     ?? null,
-      costo_m2_tipo:      costoSeleccionado?.tipo      ?? null,
-      costo_m2_tabulador: costoSeleccionado ? Number(costoSeleccionado.precio_m2) : null,
-      costo_m2_ajustado:  costoManual && !!costoSeleccionado,
+      costo_m2_fuente:    !vrnPartidas ? (costoSeleccionado?.fuente ?? null) : null,
+      costo_m2_clave:     !vrnPartidas ? (costoSeleccionado?.clave ?? null) : null,
+      costo_m2_tipo:      !vrnPartidas ? (costoSeleccionado?.tipo ?? null) : null,
+      costo_m2_tabulador: !vrnPartidas && costoSeleccionado ? Number(costoSeleccionado.precio_m2) : null,
+      costo_m2_ajustado:  !vrnPartidas && costoManual && !!costoSeleccionado,
       comparablesTerreno: comparablesTerreno ?? null,
+      partidasConstruccion: partidasConstruccion.length ? partidasConstruccion : null,
     }
     const fc = factorData?.activo && factorData?.factor
       ? { ...factorData, valorMercado: valorFisicoFinal * (parseFloat(factorData.factor) || 1) }
@@ -221,48 +273,157 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                   <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
                   <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
 
-                  {/* Selector de tabulador de costos */}
-                  <div className="col-span-2 space-y-1">
-                    <Label>Tipo de construcción — tabulador de costos</Label>
-                    {cargandoCostos ? (
-                      <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Cargando tabulador…</div>
-                    ) : costos.length === 0 ? (
-                      <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Sin tabulador — ingresa el costo manualmente</div>
-                    ) : (
-                      <select
-                        value={costoSeleccionado?.id ?? ''}
-                        onChange={e => handleSeleccionTipo(e.target.value)}
-                        className="w-full h-9 rounded-md border border-gray-200 px-3 text-sm focus:outline-none focus:border-blue-400"
+                  {/* Tipos de construcción para Valor de Reposición */}
+                  <div className="col-span-2 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Tipos de construcción — Valor de Reposición</Label>
+                      <button
+                        type="button"
+                        onClick={agregarPartida}
+                        className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
                       >
-                        <option value="">— Seleccionar tipo de construcción —</option>
-                        {Object.entries(porFuente).map(([fuente, items]) => (
-                          <optgroup key={fuente} label={fuente}>
-                            {items.map(c => (
-                              <option key={c.id} value={c.id}>
-                                {c.tipo} — {c.clave} · ${Number(c.precio_m2).toLocaleString('es-MX')}/m²
-                              </option>
+                        <Plus className="h-3 w-3" /> Agregar tipo
+                      </button>
+                    </div>
+
+                    {partidasConstruccion.length > 0 ? (
+                      <div className="border border-gray-200 rounded-md overflow-hidden">
+                        <table className="w-full text-xs">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-2 py-1.5 text-left font-medium text-gray-500">Tipo / tabulador</th>
+                              <th className="px-2 py-1.5 text-right font-medium text-gray-500">Sup m²</th>
+                              <th className="px-2 py-1.5 text-right font-medium text-gray-500">$/m²</th>
+                              <th className="px-2 py-1.5 text-right font-medium text-gray-500">VRN parcial</th>
+                              <th className="w-5"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {partidasConstruccion.map(partida => {
+                              const vrnFila = (parseFloat(partida.superficie) || 0) * (parseFloat(partida.costoM2) || 0)
+                              return (
+                                <tr key={partida.id} className="border-t border-gray-100">
+                                  <td className="px-2 py-1">
+                                    {cargandoCostos ? (
+                                      <span className="text-gray-400">Cargando…</span>
+                                    ) : (
+                                      <select
+                                        value={partida.tabuladorId}
+                                        onChange={e => handlePartidaTabulador(partida.id, e.target.value)}
+                                        className="w-full h-7 rounded border border-gray-200 px-1 text-xs focus:outline-none focus:border-blue-400"
+                                      >
+                                        <option value="">— Tipo —</option>
+                                        {Object.entries(porFuente).map(([fuente, items]) => (
+                                          <optgroup key={fuente} label={fuente}>
+                                            {items.map(c => (
+                                              <option key={c.id} value={c.id}>
+                                                {c.clave} — {c.tipo}
+                                              </option>
+                                            ))}
+                                          </optgroup>
+                                        ))}
+                                      </select>
+                                    )}
+                                    {partida.descripcion && (
+                                      <p className="text-gray-400 truncate max-w-[180px] mt-0.5">{partida.descripcion}</p>
+                                    )}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="0.01"
+                                      value={partida.superficie}
+                                      onChange={e => handlePartidaCampo(partida.id, 'superficie', e.target.value)}
+                                      className="w-20 h-7 rounded border border-gray-200 px-1 text-right text-xs focus:outline-none focus:border-blue-400"
+                                      placeholder="0"
+                                    />
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      step="100"
+                                      value={partida.costoM2}
+                                      onChange={e => handlePartidaCampo(partida.id, 'costoM2', e.target.value)}
+                                      className="w-24 h-7 rounded border border-gray-200 px-1 text-right text-xs focus:outline-none focus:border-blue-400"
+                                      placeholder="0"
+                                    />
+                                  </td>
+                                  <td className="px-2 py-1 text-right font-mono">
+                                    {vrnFila > 0 ? formatCurrency(vrnFila) : '—'}
+                                  </td>
+                                  <td className="px-1 py-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => eliminarPartida(partida.id)}
+                                      className="text-gray-300 hover:text-red-500 p-0.5"
+                                    >
+                                      <X className="h-3.5 w-3.5" />
+                                    </button>
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                          <tfoot className="border-t border-gray-200 bg-gray-50">
+                            <tr>
+                              <td className="px-2 py-1.5 text-xs font-semibold text-gray-600">Total</td>
+                              <td className="px-2 py-1.5 text-right text-xs font-semibold font-mono">{supTotalPartidas > 0 ? `${supTotalPartidas.toFixed(2)} m²` : '—'}</td>
+                              <td className="px-2 py-1.5 text-right text-xs text-gray-400">—</td>
+                              <td className="px-2 py-1.5 text-right text-xs font-semibold text-blue-700 font-mono">{vrnPartidas ? formatCurrency(vrnPartidas) : '—'}</td>
+                              <td></td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                        <p className="text-xs text-gray-400 px-3 py-1.5 border-t border-gray-100">
+                          Superficie total y VRN calculados de la tabla. $/m² individuales editables.
+                        </p>
+                      </div>
+                    ) : (
+                      /* Modo simple: selector único (comportamiento original) */
+                      <div className="space-y-3">
+                        {cargandoCostos ? (
+                          <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Cargando tabulador…</div>
+                        ) : costos.length === 0 ? (
+                          <div className="h-9 flex items-center px-3 text-xs text-gray-400 border border-gray-200 rounded-md">Sin tabulador — ingresa el costo manualmente</div>
+                        ) : (
+                          <select
+                            value={costoSeleccionado?.id ?? ''}
+                            onChange={e => handleSeleccionTipo(e.target.value)}
+                            className="w-full h-9 rounded-md border border-gray-200 px-3 text-sm focus:outline-none focus:border-blue-400"
+                          >
+                            <option value="">— Seleccionar tipo de construcción —</option>
+                            {Object.entries(porFuente).map(([fuente, items]) => (
+                              <optgroup key={fuente} label={fuente}>
+                                {items.map(c => (
+                                  <option key={c.id} value={c.id}>
+                                    {c.tipo} — {c.clave} · ${Number(c.precio_m2).toLocaleString('es-MX')}/m²
+                                  </option>
+                                ))}
+                              </optgroup>
                             ))}
-                          </optgroup>
-                        ))}
-                      </select>
-                    )}
-                    {costoSeleccionado && (
-                      <p className="text-xs text-gray-500">{costoSeleccionado.descripcion}</p>
+                          </select>
+                        )}
+                        {costoSeleccionado && (
+                          <p className="text-xs text-gray-500">{costoSeleccionado.descripcion}</p>
+                        )}
+                        <Campo
+                          label="Costo reposición nuevo"
+                          name="costoReposicionM2"
+                          value={inputs.costoReposicionM2}
+                          onChange={handleCostoInput}
+                          suffix="$/m²"
+                          hint="Costo de construir 1 m² nuevo hoy"
+                          hintWarning={costoManual && costoSeleccionado
+                            ? `⚠ Ajustado manualmente. Tabulador ${costoSeleccionado.fuente}: $${Number(costoSeleccionado.precio_m2).toLocaleString('es-MX')}/m²`
+                            : null
+                          }
+                        />
+                      </div>
                     )}
                   </div>
 
-                  <Campo
-                    label="Costo reposición nuevo"
-                    name="costoReposicionM2"
-                    value={inputs.costoReposicionM2}
-                    onChange={handleCostoInput}
-                    suffix="$/m²"
-                    hint="Costo de construir 1 m² nuevo hoy"
-                    hintWarning={costoManual && costoSeleccionado
-                      ? `⚠ Ajustado manualmente. Tabulador ${costoSeleccionado.fuente}: $${Number(costoSeleccionado.precio_m2).toLocaleString('es-MX')}/m²`
-                      : null
-                    }
-                  />
                   <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
                   <div className="col-span-2">
                     <EdadPonderadaInput
@@ -345,6 +506,22 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
               </div>
             ) : tieneConstruccion ? (
               <>
+                {vrnPartidas && partidasConstruccion.length > 1 && (
+                  <div className="border border-blue-100 bg-blue-50 rounded-md p-3 space-y-1">
+                    <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide">Desglose VRN por tipo</p>
+                    {partidasConstruccion.map(p => {
+                      const vrn = (parseFloat(p.superficie) || 0) * (parseFloat(p.costoM2) || 0)
+                      if (!vrn) return null
+                      return (
+                        <div key={p.id} className="flex justify-between text-xs text-blue-800">
+                          <span>{p.clave || '—'} · {parseFloat(p.superficie)} m²</span>
+                          <span className="font-mono">{formatCurrency(vrn)}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+
                 <div className="bg-gray-50 rounded-md p-3 space-y-2">
                   <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Variables</p>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm">
