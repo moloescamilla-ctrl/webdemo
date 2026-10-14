@@ -68,8 +68,8 @@ export function calcularRossHeidecke(vr, r, a, c) {
   }
 }
 
-export function calcularMetodoFisico({ superficieConstruccion, superficieTerreno, costoReposicionM2, valorUnitarioTerreno, edadAnios, vidaUtilAnios, valorResidual = 0.15, coeficienteC }) {
-  const vr = superficieConstruccion * costoReposicionM2
+export function calcularMetodoFisico({ superficieConstruccion, superficieTerreno, costoReposicionM2, valorUnitarioTerreno, edadAnios, vidaUtilAnios, valorResidual = 0.15, coeficienteC, vrnMultiTipo }) {
+  const vr = vrnMultiTipo ?? (superficieConstruccion * costoReposicionM2)
   const valorTerreno = superficieTerreno * valorUnitarioTerreno
   const factorA = calcularFactorRoss(edadAnios, vidaUtilAnios)
   const { va, depreciacion, porcentajeDepreciacion, factorDepreciacion } = calcularRossHeidecke(vr, valorResidual, factorA, coeficienteC)
