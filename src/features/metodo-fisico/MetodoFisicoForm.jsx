@@ -317,7 +317,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                                           <optgroup key={fuente} label={fuente}>
                                             {items.map(c => (
                                               <option key={c.id} value={c.id}>
-                                                {c.clave} — {c.tipo}
+                                                {c.clave} — {c.tipo} · ${Number(c.precio_m2).toLocaleString('es-MX')}/m²
                                               </option>
                                             ))}
                                           </optgroup>
