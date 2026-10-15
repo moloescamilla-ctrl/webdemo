@@ -481,6 +481,25 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                 </>
               )}
             </div>
+
+            {onGuardar && (
+              <div className="pt-2 border-t border-gray-100 mt-4">
+                <Button
+                  className="w-full"
+                  onClick={handleGuardar}
+                  disabled={guardando || !resultado}
+                  title={!resultado ? 'Completa superficie terreno y valor unitario para guardar' : ''}
+                >
+                  {guardando
+                    ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando...</>
+                    : submitLabel
+                  }
+                </Button>
+                {!resultado && (
+                  <p className="text-xs text-gray-400 text-center mt-1.5">Completa superficie y valor unitario del terreno para guardar</p>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
 
