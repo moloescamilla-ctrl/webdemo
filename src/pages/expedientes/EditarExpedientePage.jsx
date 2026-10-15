@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, Link, useLocation } from 'react-router-dom'
 import { useExpediente } from '@/hooks/useExpediente'
 import { useExpedientes } from '@/hooks/useExpedientes'
@@ -98,6 +98,7 @@ export function EditarExpedientePage() {
 
   const [tab, setTab] = useState(navState.tab ?? 'datos')
   const [guardando, setGuardando] = useState(false)
+  const pendingConstruccionRef = useRef(null)
 
   useEffect(() => {
     if (expediente?.tipo_expediente === 'calculo_rapido' && !['datos', 'fisico'].includes(tab)) {
@@ -221,6 +222,16 @@ export function EditarExpedientePage() {
     finally { setGuardando(false) }
   }
 
+  const handleCambiarTab = async (nextTab) => {
+    if (tab === 'construccion' && nextTab !== 'construccion' && pendingConstruccionRef.current) {
+      try { await guardarDescripcionConstruccion(id, pendingConstruccionRef.current) }
+      catch { /* silencioso — el usuario puede guardar manualmente */ }
+      pendingConstruccionRef.current = null
+    }
+    setTab(nextTab)
+    setErrorMsg(null)
+  }
+
   const handleGuardarFisico = async (resultado, inspeccionData, inputs, factorData) => {
     setGuardando(true); setErrorMsg(null)
     try { await guardarMetodoFisico(id, inspeccionData, resultado, inputs, factorData); flashOk('fisico') }
@@ -312,7 +323,7 @@ export function EditarExpedientePage() {
           ).map(t => (
             <button
               key={t.id}
-              onClick={() => { setTab(t.id); setErrorMsg(null) }}
+              onClick={() => handleCambiarTab(t.id)}
               className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-1.5 whitespace-nowrap ${
                 tab === t.id ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
               }`}
@@ -509,6 +520,7 @@ export function EditarExpedientePage() {
           key={descripcionConstruccion?.id ?? 'construccion-nueva'}
           initialValues={descripcionConstruccion}
           onGuardar={handleGuardarConstruccion}
+          onChange={(payload) => { pendingConstruccionRef.current = payload }}
           guardando={guardando}
           submitLabel={okTab === 'construccion' ? '✓ Guardado' : (descripcionConstruccion ? 'Actualizar construcción' : 'Guardar construcción')}
         />

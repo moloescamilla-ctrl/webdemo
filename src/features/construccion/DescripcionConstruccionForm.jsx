@@ -68,30 +68,36 @@ function NumCampo({ label, name, value, onChange, suffix }) {
 }
 
 export function DescripcionConstruccionForm({
-  initialValues = null, onGuardar, guardando,
+  initialValues = null, onGuardar, onChange, guardando,
   submitLabel = 'Guardar descripción',
 }) {
   const [datos, setDatos] = useState(() => fromDB(initialValues))
 
+  const buildPayload = (d) => {
+    const pi = (v) => v ? parseInt(v) : null
+    const pf = (v) => v ? parseFloat(v) : null
+    return {
+      ...d,
+      num_recamaras:                 pi(d.num_recamaras),
+      banos_completos:               pi(d.banos_completos),
+      medios_banos:                  pi(d.medios_banos),
+      estacionamientos_descubiertos: pi(d.estacionamientos_descubiertos),
+      estacionamientos_cubiertos:    pi(d.estacionamientos_cubiertos),
+      num_niveles:                   pi(d.num_niveles),
+      superficie_vendible_m2:        pf(d.superficie_vendible_m2),
+    }
+  }
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    setDatos(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+    const next = { ...datos, [name]: type === 'checkbox' ? checked : value }
+    setDatos(next)
+    onChange?.(buildPayload(next))
   }
 
   const handleGuardar = () => {
     if (!onGuardar) return
-    const pi = (v) => v ? parseInt(v) : null
-    const pf = (v) => v ? parseFloat(v) : null
-    onGuardar({
-      ...datos,
-      num_recamaras:                 pi(datos.num_recamaras),
-      banos_completos:               pi(datos.banos_completos),
-      medios_banos:                  pi(datos.medios_banos),
-      estacionamientos_descubiertos: pi(datos.estacionamientos_descubiertos),
-      estacionamientos_cubiertos:    pi(datos.estacionamientos_cubiertos),
-      num_niveles:                   pi(datos.num_niveles),
-      superficie_vendible_m2:        pf(datos.superficie_vendible_m2),
-    })
+    onGuardar(buildPayload(datos))
   }
 
   return (
@@ -140,7 +146,7 @@ export function DescripcionConstruccionForm({
 
       <Card>
         <CardHeader><CardTitle>Observaciones</CardTitle></CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
           <textarea
             name="observaciones"
             value={datos.observaciones}
@@ -149,15 +155,11 @@ export function DescripcionConstruccionForm({
             placeholder="Descripción libre de acabados, estado de conservación, características especiales..."
             className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:border-blue-400 resize-none"
           />
+          <Button className="w-full" onClick={handleGuardar} disabled={guardando}>
+            {guardando ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando...</> : submitLabel}
+          </Button>
         </CardContent>
       </Card>
-
-      <div className="flex justify-end">
-        <Button onClick={handleGuardar} disabled={guardando}>
-          {guardando ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          {submitLabel}
-        </Button>
-      </div>
     </div>
   )
 }
