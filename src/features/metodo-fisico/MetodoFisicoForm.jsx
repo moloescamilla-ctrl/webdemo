@@ -270,7 +270,22 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
             <div className="grid grid-cols-2 gap-4">
               {tieneConstruccion ? (
                 <>
-                  <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
+                  {partidasConstruccion.length > 0 ? (
+                    <div className="space-y-1">
+                      <Label>Superficie construcción</Label>
+                      <div className="relative">
+                        <input
+                          readOnly
+                          value={supTotalPartidas > 0 ? supTotalPartidas.toFixed(2) : '0'}
+                          className="w-full h-9 rounded-md border border-gray-200 bg-gray-50 px-3 pr-12 text-sm text-gray-500 cursor-not-allowed"
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">m²</span>
+                      </div>
+                      <p className="text-xs text-gray-400">Calculado de la tabla de tipos</p>
+                    </div>
+                  ) : (
+                    <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
+                  )}
                   <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
 
                   {/* Tipos de construcción para Valor de Reposición */}
