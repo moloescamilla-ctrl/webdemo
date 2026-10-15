@@ -122,7 +122,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   }, [supTotalPartidas, partidasConstruccion.length])
 
   const agregarPartida = () => {
-    setPartidasConstruccion(prev => [...prev, { id: crypto.randomUUID(), tabuladorId: '', clave: '', tipo: '', descripcion: '', costoM2: '', superficie: '' }])
+    setPartidasConstruccion(prev => [...prev, { id: crypto.randomUUID(), nombre: '', tabuladorId: '', clave: '', tipo: '', descripcion: '', costoM2: '', superficie: '' }])
   }
 
   const eliminarPartida = (id) => {
@@ -306,6 +306,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                         <table className="w-full text-xs">
                           <thead className="bg-gray-50">
                             <tr>
+                              <th className="px-2 py-1.5 text-left font-medium text-gray-500">Nombre / uso</th>
                               <th className="px-2 py-1.5 text-left font-medium text-gray-500">Tipo / tabulador</th>
                               <th className="px-2 py-1.5 text-right font-medium text-gray-500">Sup m²</th>
                               <th className="px-2 py-1.5 text-right font-medium text-gray-500">$/m²</th>
@@ -318,6 +319,15 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                               const vrnFila = (parseFloat(partida.superficie) || 0) * (parseFloat(partida.costoM2) || 0)
                               return (
                                 <tr key={partida.id} className="border-t border-gray-100">
+                                  <td className="px-2 py-1">
+                                    <input
+                                      type="text"
+                                      value={partida.nombre}
+                                      onChange={e => handlePartidaCampo(partida.id, 'nombre', e.target.value)}
+                                      className="w-28 h-7 rounded border border-gray-200 px-1 text-xs focus:outline-none focus:border-blue-400"
+                                      placeholder="Ej. Oficina"
+                                    />
+                                  </td>
                                   <td className="px-2 py-1">
                                     {cargandoCostos ? (
                                       <span className="text-gray-400">Cargando…</span>
@@ -529,7 +539,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                       if (!vrn) return null
                       return (
                         <div key={p.id} className="flex justify-between text-xs text-blue-800">
-                          <span>{p.clave || '—'} · {parseFloat(p.superficie)} m²</span>
+                          <span>{p.nombre || p.clave || '—'} · {parseFloat(p.superficie)} m²</span>
                           <span className="font-mono">{formatCurrency(vrn)}</span>
                         </div>
                       )
