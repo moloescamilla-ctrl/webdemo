@@ -271,7 +271,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
               {tieneConstruccion ? (
                 <>
                   {partidasConstruccion.length > 0 ? (
-                    <div className="space-y-1">
+                    <div className="col-span-2 space-y-1">
                       <Label>Superficie construcción</Label>
                       <div className="relative">
                         <input
@@ -286,7 +286,6 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                   ) : (
                     <Campo label="Superficie construcción" name="superficieConstruccion" value={inputs.superficieConstruccion} onChange={handleInput} suffix="m²" />
                   )}
-                  <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
 
                   {/* Tipos de construcción para Valor de Reposición */}
                   <div className="col-span-2 space-y-2">
@@ -449,7 +448,6 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                     )}
                   </div>
 
-                  <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
                   <div className="col-span-2">
                     <EdadPonderadaInput
                       value={inputs.edadAnios}
@@ -457,7 +455,13 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                       onAccesoriaChange={setAccesoriaData}
                     />
                   </div>
-                  {accesoriaData.superficieAccesoria > 0 && (
+                  <Campo label="Vida útil" name="vidaUtilAnios" value={inputs.vidaUtilAnios} onChange={handleInput} suffix="años" hint="Típico: 60 años" />
+                  <div className="col-span-2">
+                    <Campo label="Valor residual" name="valorResidual" value={inputs.valorResidual} onChange={handleInput} suffix="%" hint="Típico: 15%" />
+                  </div>
+                  <Campo label="Superficie terreno" name="superficieTerreno" value={inputs.superficieTerreno} onChange={handleInput} suffix="m²" />
+                  <Campo label="Valor unitario terreno" name="valorUnitarioTerreno" value={inputs.valorUnitarioTerreno} onChange={handleInput} suffix="$/m²" />
+                  {accesoriaData.superficieAccesoria > 0 && !partidasConstruccion.length && (
                     <div className="col-span-2">
                       <Campo
                         label={`Costo reposición techo accesorio (lámina) — ${accesoriaData.superficieAccesoria.toFixed(2)} m²`}
@@ -469,10 +473,6 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                       />
                     </div>
                   )}
-                  <Campo label="Vida útil" name="vidaUtilAnios" value={inputs.vidaUtilAnios} onChange={handleInput} suffix="años" hint="Típico: 60 años" />
-                  <div className="col-span-2">
-                    <Campo label="Valor residual" name="valorResidual" value={inputs.valorResidual} onChange={handleInput} suffix="%" hint="Típico: 15%" />
-                  </div>
                 </>
               ) : (
                 <>
