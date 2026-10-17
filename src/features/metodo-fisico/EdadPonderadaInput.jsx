@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { NumericInput } from '@/components/ui/numeric-input'
 import { Label } from '@/components/ui/label'
 import { PlusCircle, Trash2, Calculator } from 'lucide-react'
 
-// vidaUtil null = inherited from the main form field
 const TIPOS = [
-  { label: 'Construcción original',   accesoria: false, vidaUtil: null },
-  { label: 'Ampliación',              accesoria: false, vidaUtil: null },
-  { label: 'Remodelación parcial',    accesoria: false, vidaUtil: null },
-  { label: 'Remodelación total',      accesoria: false, vidaUtil: null },
-  { label: 'Techo accesorio (lámina)', accesoria: true, vidaUtil: 50  },
+  { label: 'Construcción original',    accesoria: false, vidaUtilDefault: '60' },
+  { label: 'Ampliación',               accesoria: false, vidaUtilDefault: '60' },
+  { label: 'Remodelación parcial',      accesoria: false, vidaUtilDefault: '60' },
+  { label: 'Remodelación total',        accesoria: false, vidaUtilDefault: '60' },
+  { label: 'Techo accesorio (lámina)',  accesoria: true,  vidaUtilDefault: '50' },
+  { label: 'Otro (personalizado)',      accesoria: false, vidaUtilDefault: '60' },
 ]
 
 const AÑO_ACTUAL = new Date().getFullYear()
@@ -21,11 +21,15 @@ function tipoConfig(label) {
   return TIPOS.find(t => t.label === label) ?? TIPOS[0]
 }
 
+function nuevaPartida() {
+  return { id: uid(), tipo: 'Construcción original', tipoPersonalizado: '', anio: '', superficie: '', vidaUtil: '60' }
+}
+
 export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initialModo, initialPartidas, onStateChange }) {
   const [modo, setModo] = useState(initialModo ?? 'directo')
   const [partidas, setPartidas] = useState(() => {
-    if (initialPartidas?.length) return initialPartidas.map(p => ({ ...p, id: uid() }))
-    return [{ id: uid(), tipo: 'Construcción original', anio: '', superficie: '' }]
+    if (initialPartidas?.length) return initialPartidas.map(p => ({ ...nuevaPartida(), ...p, id: uid() }))
+    return [nuevaPartida()]
   })
 
   const calc = partidas.map(p => ({
@@ -33,22 +37,21 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
     cfg: tipoConfig(p.tipo),
     edad: p.anio ? Math.max(0, AÑO_ACTUAL - parseInt(p.anio)) : null,
     sup: parseFloat(p.superficie) || 0,
+    vu: parseFloat(p.vidaUtil) || 0,
   }))
 
-  const principal  = calc.filter(p => !p.cfg.accesoria)
-  const accesoria  = calc.filter(p =>  p.cfg.accesoria)
+  const principal = calc.filter(p => !p.cfg.accesoria)
+  const accesoria = calc.filter(p =>  p.cfg.accesoria)
 
-  // Weighted age for principal construction
-  const totalSupP  = principal.reduce((s, p) => s + p.sup, 0)
-  const conEdadP   = principal.filter(p => p.edad !== null)
+  const totalSupP = principal.reduce((s, p) => s + p.sup, 0)
+  const conEdadP  = principal.filter(p => p.edad !== null)
   const edadP = conEdadP.length === 0 ? 0
     : totalSupP > 0
       ? principal.reduce((s, p) => s + p.sup * (p.edad ?? 0), 0) / totalSupP
       : conEdadP.reduce((s, p) => s + p.edad, 0) / conEdadP.length
 
-  // Weighted age for accessory surfaces
-  const totalSupA  = accesoria.reduce((s, p) => s + p.sup, 0)
-  const conEdadA   = accesoria.filter(p => p.edad !== null)
+  const totalSupA = accesoria.reduce((s, p) => s + p.sup, 0)
+  const conEdadA  = accesoria.filter(p => p.edad !== null)
   const edadA = conEdadA.length === 0 ? 0
     : totalSupA > 0
       ? accesoria.reduce((s, p) => s + p.sup * (p.edad ?? 0), 0) / totalSupA
@@ -66,9 +69,17 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
     onStateChange?.({ modo, partidas: partidas.map(({ id: _id, ...rest }) => rest) })
   }, [partidas, modo])
 
-  const add = () => setPartidas(p => [...p, { id: uid(), tipo: 'Construcción original', anio: '', superficie: '' }])
+  const add    = () => setPartidas(p => [...p, nuevaPartida()])
   const remove = (id) => setPartidas(p => p.filter(x => x.id !== id))
   const update = (id, field, val) => setPartidas(p => p.map(x => x.id === id ? { ...x, [field]: val } : x))
+
+  const handleTipo = (id, val) => {
+    const cfg = tipoConfig(val)
+    setPartidas(p => p.map(x => x.id === id
+      ? { ...x, tipo: val, tipoPersonalizado: val === 'Otro (personalizado)' ? x.tipoPersonalizado : '', vidaUtil: x.vidaUtil || cfg.vidaUtilDefault }
+      : x
+    ))
+  }
 
   if (modo === 'directo') {
     return (
@@ -117,11 +128,11 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Tipo de construcción</th>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-28">Año</th>
               <th className="px-3 py-2 text-right text-xs font-medium text-gray-500 w-20">Edad</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-32">
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 w-28">
                 Sup m²
-                <span className="ml-1 font-normal text-gray-400">(opcional)</span>
+                <span className="ml-1 font-normal text-gray-400">(opc.)</span>
               </th>
-              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 w-24">Vida útil</th>
+              <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 w-28">Vida útil</th>
               <th className="px-2 py-2 w-8" />
             </tr>
           </thead>
@@ -131,11 +142,20 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
                 <td className="px-3 py-2">
                   <select
                     value={p.tipo}
-                    onChange={e => update(p.id, 'tipo', e.target.value)}
+                    onChange={e => handleTipo(p.id, e.target.value)}
                     className="w-full text-sm bg-transparent border-0 focus:outline-none text-gray-800"
                   >
                     {TIPOS.map(t => <option key={t.label}>{t.label}</option>)}
                   </select>
+                  {p.tipo === 'Otro (personalizado)' && (
+                    <input
+                      type="text"
+                      value={p.tipoPersonalizado}
+                      onChange={e => update(p.id, 'tipoPersonalizado', e.target.value)}
+                      placeholder="Especifica el tipo..."
+                      className="mt-1 w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-blue-400"
+                    />
+                  )}
                 </td>
                 <td className="px-3 py-2">
                   <input
@@ -157,11 +177,16 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
                     className="w-24 text-sm bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 rounded-none text-gray-800 placeholder-gray-300 h-auto py-0"
                   />
                 </td>
-                <td className="px-3 py-2 text-center text-xs font-mono">
-                  {p.cfg.accesoria
-                    ? <span className="text-amber-700 font-semibold">50 años</span>
-                    : <span className="text-gray-400">del form</span>
-                  }
+                <td className="px-3 py-2">
+                  <div className="relative">
+                    <NumericInput
+                      value={p.vidaUtil}
+                      onChange={e => update(p.id, 'vidaUtil', e.target.value)}
+                      placeholder="60"
+                      className="w-20 text-sm bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 rounded-none text-center text-gray-800 placeholder-gray-300 h-auto py-0"
+                    />
+                    <span className="absolute right-0 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">a</span>
+                  </div>
                 </td>
                 <td className="px-2 py-2">
                   {partidas.length > 1 && (
@@ -227,7 +252,7 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
       {conEdadP.length > 0 && (
         <p className="text-xs text-gray-400">
           {totalSupP > 0
-            ? 'Edad principal = Σ(sup × edad) / Σ(sup). Techos de lámina usan 50 años de vida útil.'
+            ? 'Edad principal = Σ(sup × edad) / Σ(sup). La vida útil por partida se usa como referencia.'
             : 'Sin superficie por partida se usa promedio simple. Ingresa m² para ponderar por área.'
           }
         </p>
