@@ -170,6 +170,7 @@ export function useExpedientes() {
         valor_mercado_estimado:                fcActivo ? (factorData.valorMercado || null)    : null,
         comparables_terreno:                   inputs.comparablesTerreno ?? null,
         partidas_construccion:                 inputs.partidasConstruccion ?? null,
+        partidas_edad_ponderada:               inputs.edadPonderadaState ?? null,
       }, { onConflict: 'expediente_id' })
     if (eMf) throw new Error(eMf.message)
 

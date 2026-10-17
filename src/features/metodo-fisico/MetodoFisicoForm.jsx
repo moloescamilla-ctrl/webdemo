@@ -97,6 +97,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   const [accesoriaData, setAccesoriaData] = useState({ edadAccesoria: 0, superficieAccesoria: 0 })
   const [comparablesTerreno, setComparablesTerreno] = useState(initialValues?.comparablesTerreno ?? null)
   const [partidasConstruccion, setPartidasConstruccion] = useState(initialValues?.partidasConstruccion ?? [])
+  const [edadPonderadaState, setEdadPonderadaState] = useState(initialValues?.edadPonderadaState ?? null)
 
   const { costos, porFuente, cargando: cargandoCostos } = useCostosM2()
   const [costoSeleccionado, setCostoSeleccionado] = useState(null)
@@ -228,6 +229,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
       costo_m2_ajustado:  !vrnPartidas && costoManual && !!costoSeleccionado,
       comparablesTerreno: comparablesTerreno ?? null,
       partidasConstruccion: partidasConstruccion.length ? partidasConstruccion : null,
+      edadPonderadaState: edadPonderadaState ?? null,
     }
     const fc = factorData?.activo && factorData?.factor
       ? { ...factorData, valorMercado: valorFisicoFinal * (parseFloat(factorData.factor) || 1) }
@@ -453,6 +455,9 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                       value={inputs.edadAnios}
                       onChange={handleInput}
                       onAccesoriaChange={setAccesoriaData}
+                      initialModo={edadPonderadaState?.modo}
+                      initialPartidas={edadPonderadaState?.partidas}
+                      onStateChange={setEdadPonderadaState}
                     />
                   </div>
                   <Campo label="Vida útil" name="vidaUtilAnios" value={inputs.vidaUtilAnios} onChange={handleInput} suffix="años" hint="Típico: 60 años" />

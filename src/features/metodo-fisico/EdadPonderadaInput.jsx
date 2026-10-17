@@ -21,11 +21,12 @@ function tipoConfig(label) {
   return TIPOS.find(t => t.label === label) ?? TIPOS[0]
 }
 
-export function EdadPonderadaInput({ value, onChange, onAccesoriaChange }) {
-  const [modo, setModo] = useState('directo')
-  const [partidas, setPartidas] = useState([
-    { id: uid(), tipo: 'Construcción original', anio: '', superficie: '' },
-  ])
+export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initialModo, initialPartidas, onStateChange }) {
+  const [modo, setModo] = useState(initialModo ?? 'directo')
+  const [partidas, setPartidas] = useState(() => {
+    if (initialPartidas?.length) return initialPartidas.map(p => ({ ...p, id: uid() }))
+    return [{ id: uid(), tipo: 'Construcción original', anio: '', superficie: '' }]
+  })
 
   const calc = partidas.map(p => ({
     ...p,
@@ -59,6 +60,10 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange }) {
       onChange({ target: { name: 'edadAnios', value: edadP.toFixed(2) } })
     if (onAccesoriaChange)
       onAccesoriaChange({ edadAccesoria: edadA, superficieAccesoria: totalSupA })
+  }, [partidas, modo])
+
+  useEffect(() => {
+    onStateChange?.({ modo, partidas: partidas.map(({ id: _id, ...rest }) => rest) })
   }, [partidas, modo])
 
   const add = () => setPartidas(p => [...p, { id: uid(), tipo: 'Construcción original', anio: '', superficie: '' }])

@@ -275,6 +275,7 @@ export function EditarExpedientePage() {
     estadosRaw: inspeccion,
     comparablesTerreno: metodoFisico?.comparables_terreno ?? null,
     partidasConstruccion: metodoFisico?.partidas_construccion ?? [],
+    edadPonderadaState: metodoFisico?.partidas_edad_ponderada ?? null,
     factorData: metodoFisico?.factor_comercializacion ? {
       activo:        true,
       factor:        String(metodoFisico.factor_comercializacion),
