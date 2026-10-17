@@ -93,7 +93,11 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
     }
     return initialEstados
   })
-  const [estadoManual, setEstadoManual] = useState(null)
+  const [estadoManual, setEstadoManual] = useState(() => {
+    const nombre = initialValues?.estadosRaw?.estado_manual
+    if (!nombre) return null
+    return ESTADOS_HEIDECKE.find(e => e.nombre === nombre)?.id ?? null
+  })
   const [accesoriaData, setAccesoriaData] = useState({ edadAccesoria: 0, superficieAccesoria: 0 })
   const [comparablesTerreno, setComparablesTerreno] = useState(initialValues?.comparablesTerreno ?? null)
   const [partidasConstruccion, setPartidasConstruccion] = useState(initialValues?.partidasConstruccion ?? [])
