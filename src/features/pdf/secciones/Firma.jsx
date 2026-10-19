@@ -15,7 +15,7 @@ export default function Firma({ expediente, perfil, firmaPerito }) {
         <View style={styles.col1}>
           <View style={styles.campoFila}>
             <Text style={styles.campoLabel}>Nombre completo</Text>
-            <Text style={[styles.campoValor, { fontFamily: 'Helvetica-Bold' }]}>
+            <Text style={[styles.campoValor, { fontFamily: 'Roboto', fontWeight: 'bold' }]}>
               {sa(nombrePerito) || '—'}
             </Text>
           </View>

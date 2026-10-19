@@ -25,7 +25,7 @@ export default function MetodoComparativo({ metodo }) {
         <View style={styles.col2}>
           <View style={styles.campoFila}>
             <Text style={styles.campoLabel}>Valor unitario ponderado</Text>
-            <Text style={[styles.campoValor, { fontFamily: 'Helvetica-Bold' }]}>
+            <Text style={[styles.campoValor, { fontFamily: 'Roboto', fontWeight: 'bold' }]}>
               {`${formatNumber(metodo.valor_unitario_ponderado, 2)} $/m2`}
             </Text>
           </View>
@@ -57,7 +57,7 @@ export default function MetodoComparativo({ metodo }) {
               <Text style={[styles.celda, { width: 42, textAlign: 'right' }]}>
                 {formatNumber(comp.factorTotal, 4)}
               </Text>
-              <Text style={[styles.celda, { width: 60, textAlign: 'right', fontFamily: 'Helvetica-Bold', color: COLORES.secundario }]}>
+              <Text style={[styles.celda, { width: 60, textAlign: 'right', fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.secundario }]}>
                 {formatNumber(comp.precioM2Homologado, 2)}
               </Text>
             </View>

@@ -77,7 +77,7 @@ export default function Entorno({ entorno }) {
       </View>
 
       {/* Servicios */}
-      <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginTop: 6, marginBottom: 3 }}>
+      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
         Servicios urbanos disponibles
       </Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -98,7 +98,7 @@ export default function Entorno({ entorno }) {
       {/* Distancias */}
       {DISTANCIAS.some(([key]) => entorno[key] != null) && (
         <View style={{ marginTop: 6 }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 3 }}>
+          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>
             Distancias al equipamiento urbano
           </Text>
           <View style={[styles.tabla, { borderWidth: 0.5, borderColor: '#D1D5DB' }]}>

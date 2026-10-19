@@ -55,7 +55,7 @@ export default function Inspeccion({ inspeccion }) {
         <View style={styles.col1}>
           <View style={styles.campoFila}>
             <Text style={styles.campoLabel}>Estado Heidecke</Text>
-            <Text style={[styles.campoValor, { fontFamily: 'Helvetica-Bold' }]}>
+            <Text style={[styles.campoValor, { fontFamily: 'Roboto', fontWeight: 'bold' }]}>
               {sa(inspeccion.estado_heidecke) || '—'}
             </Text>
           </View>
@@ -69,7 +69,7 @@ export default function Inspeccion({ inspeccion }) {
             <>
               <View style={styles.campoFila}>
                 <Text style={styles.campoLabel}>Estado ajustado por perito</Text>
-                <Text style={[styles.campoValor, { fontFamily: 'Helvetica-Bold' }]}>
+                <Text style={[styles.campoValor, { fontFamily: 'Roboto', fontWeight: 'bold' }]}>
                   {sa(inspeccion.estado_manual)}
                 </Text>
               </View>

@@ -69,13 +69,13 @@ export default function MetodoFisico({ metodo, inspeccion }) {
           <View style={styles.grid2}>
             <View style={[styles.cajaGris, styles.col1, { marginRight: 8 }]}>
               <Text style={{ fontSize: 7, color: COLORES.gris }}>Valor actual construccion</Text>
-              <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', marginTop: 2 }}>
+              <Text style={{ fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 2 }}>
                 {formatCurrency(metodo.valor_actual_construccion)}
               </Text>
             </View>
             <View style={[styles.cajaGris, styles.col2]}>
               <Text style={{ fontSize: 7, color: COLORES.gris }}>Valor del terreno</Text>
-              <Text style={{ fontSize: 10, fontFamily: 'Helvetica-Bold', marginTop: 2 }}>
+              <Text style={{ fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 2 }}>
                 {formatCurrency(metodo.valor_terreno)}
               </Text>
             </View>
@@ -93,10 +93,10 @@ export default function MetodoFisico({ metodo, inspeccion }) {
       {metodo.factor_comercializacion && (
         <>
           <View style={[styles.cajaGris, { marginTop: 6 }]}>
-            <Text style={{ fontSize: 7, color: '#374151', fontFamily: 'Helvetica-Bold' }}>
+            <Text style={{ fontSize: 7, color: '#374151', fontFamily: 'Roboto', fontWeight: 'bold' }}>
               {`Factor de Comercializacion (fc): ${sa(metodo.factor_comercializacion_segmento)}`}
             </Text>
-            <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: '#065f46', marginTop: 2 }}>
+            <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: '#065f46', marginTop: 2 }}>
               {`fc = ${formatNumber(metodo.factor_comercializacion, 4)}`}
             </Text>
             {metodo.factor_comercializacion_justificacion && (

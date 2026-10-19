@@ -19,12 +19,12 @@ function Fila({ num, label, valor, numD, labelD, valorD, resaltar }) {
     }}>
       <Text style={{ width: 13, fontSize: 6, color: COLORES.gris, textAlign: 'center', paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
       <Text style={{ flex: labelD ? 3 : 5, fontSize: 6.5, paddingHorizontal: 3, paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
-      <Text style={{ flex: 2, fontSize: 6.5, fontFamily: 'Helvetica-Bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 1.5, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
+      <Text style={{ flex: 2, fontSize: 6.5, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 1.5, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
       {labelD && (
         <>
           <Text style={{ width: 13, fontSize: 6, color: COLORES.gris, textAlign: 'center', paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{numD}</Text>
           <Text style={{ flex: 3, fontSize: 6.5, paddingHorizontal: 3, paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
-          <Text style={{ flex: 2, fontSize: 6.5, fontFamily: 'Helvetica-Bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 1.5 }}>{valorD ?? '—'}</Text>
+          <Text style={{ flex: 2, fontSize: 6.5, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 1.5 }}>{valorD ?? '—'}</Text>
         </>
       )}
     </View>
@@ -92,7 +92,7 @@ export default function Portada({
 
       {/* Título */}
       <View style={{ paddingVertical: 5, paddingHorizontal: PAD, borderBottomWidth: 1, borderBottomColor: COLORES.borde }}>
-        <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: COLORES.primario, textAlign: 'center', letterSpacing: 1 }}>
+        <Text style={{ fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, textAlign: 'center', letterSpacing: 1 }}>
           SINTESIS INFORMATIVA DE AVALUO
         </Text>
       </View>
@@ -115,11 +115,11 @@ export default function Portada({
         {/* Header de tabla */}
         <View style={{ flexDirection: 'row', backgroundColor: COLORES.secundario }}>
           <Text style={{ width: 13, fontSize: 6, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Helvetica-Bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCION</Text>
-          <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Helvetica-Bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
+          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCION</Text>
+          <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
           <Text style={{ width: 13, fontSize: 6, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Helvetica-Bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCION</Text>
-          <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Helvetica-Bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right' }}>DATO</Text>
+          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCION</Text>
+          <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right' }}>DATO</Text>
         </View>
 
         {/* Filas 1-19 */}
@@ -204,7 +204,7 @@ export default function Portada({
           <Image src={firmaPerito} style={{ width: 120, height: 40, objectFit: 'contain', marginBottom: 2 }} />
         )}
         <View style={{ borderTopWidth: 0.5, borderTopColor: COLORES.texto, paddingTop: 3, width: 200, alignItems: 'center' }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: COLORES.texto, textAlign: 'center' }}>
+          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.texto, textAlign: 'center' }}>
             {sa(nombrePerito) || '_____________________________'}
           </Text>
           <Text style={{ fontSize: 6.5, color: COLORES.gris, textAlign: 'center' }}>FIRMA DE VALUADOR PROFESIONAL</Text>

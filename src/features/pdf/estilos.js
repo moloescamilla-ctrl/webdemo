@@ -1,4 +1,13 @@
-import { StyleSheet } from '@react-pdf/renderer'
+import { StyleSheet, Font } from '@react-pdf/renderer'
+
+Font.register({
+  family: 'Roboto',
+  fonts: [
+    { src: '/fonts/Roboto-Regular.ttf' },
+    { src: '/fonts/Roboto-Bold.ttf',   fontWeight: 'bold' },
+    { src: '/fonts/Roboto-Italic.ttf', fontStyle: 'italic' },
+  ],
+})
 
 export const COLORES = {
   primario:   '#1B2D4E',
@@ -15,7 +24,7 @@ export const COLORES = {
 
 export const styles = StyleSheet.create({
   pagina: {
-    fontFamily: 'Helvetica',
+    fontFamily: 'Roboto',
     fontSize: 9,
     color: COLORES.texto,
     paddingTop: 40,
@@ -25,7 +34,7 @@ export const styles = StyleSheet.create({
 
   // Página sin padding para portada con header y foto a sangre completa
   paginaPortada: {
-    fontFamily: 'Helvetica',
+    fontFamily: 'Roboto',
     fontSize: 9,
     color: COLORES.texto,
     paddingBottom: 54,
@@ -33,7 +42,8 @@ export const styles = StyleSheet.create({
 
   seccionTitulo: {
     fontSize: 10,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
     color: COLORES.blanco,
     backgroundColor: COLORES.secundario,
     paddingVertical: 4,
@@ -44,7 +54,8 @@ export const styles = StyleSheet.create({
 
   seccionTituloVerde: {
     fontSize: 10,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
     color: COLORES.blanco,
     backgroundColor: COLORES.acento,
     paddingVertical: 4,
@@ -84,13 +95,15 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 5,
     fontSize: 8,
     color: COLORES.blanco,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
   },
   celdaFoot: {
     paddingVertical: 3,
     paddingHorizontal: 5,
     fontSize: 8,
-    fontFamily: 'Helvetica-Bold',
+    fontFamily: 'Roboto',
+    fontWeight: 'bold',
     color: COLORES.texto,
   },
 
@@ -119,7 +132,7 @@ export const styles = StyleSheet.create({
     borderColor: COLORES.borde,
   },
   resultadoLabel: { fontSize: 8,  color: COLORES.blanco },
-  resultadoValor: { fontSize: 15, fontFamily: 'Helvetica-Bold', color: COLORES.blanco, marginTop: 2 },
+  resultadoValor: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.blanco, marginTop: 2 },
 
   // Pie de página
   piePagina: {

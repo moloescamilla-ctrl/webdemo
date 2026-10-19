@@ -38,7 +38,7 @@ export default function Declaraciones() {
       </Text>
 
       {/* Tabla de verificaciones SHF */}
-      <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 4 }}>
+      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 4 }}>
         Verificaciones realizadas (lista de chequeo SHF)
       </Text>
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
@@ -51,22 +51,22 @@ export default function Declaraciones() {
       </View>
 
       {/* Definiciones */}
-      <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginTop: 8, marginBottom: 3 }}>
+      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 8, marginBottom: 3 }}>
         Definiciones de valor
       </Text>
       <View style={styles.cajaGris}>
         <Text style={{ fontSize: 7, lineHeight: 1.5 }}>
-          <Text style={{ fontFamily: 'Helvetica-Bold' }}>Valor de mercado: </Text>
+          <Text style={{ fontFamily: 'Roboto', fontWeight: 'bold' }}>Valor de mercado: </Text>
           {'Precio mas probable al que se venderia un inmueble en condiciones normales de mercado, '}
           {'entre un comprador y un vendedor bien informados, actuando con prudencia y sin compulsion.'}
         </Text>
         <Text style={{ fontSize: 7, lineHeight: 1.5, marginTop: 3 }}>
-          <Text style={{ fontFamily: 'Helvetica-Bold' }}>Valor fisico: </Text>
+          <Text style={{ fontFamily: 'Roboto', fontWeight: 'bold' }}>Valor fisico: </Text>
           {'Valor obtenido por el metodo de costos, considerando el valor del terreno mas el costo '}
           {'de construccion depreciado por edad y estado de conservacion.'}
         </Text>
         <Text style={{ fontSize: 7, lineHeight: 1.5, marginTop: 3 }}>
-          <Text style={{ fontFamily: 'Helvetica-Bold' }}>Valor comercial: </Text>
+          <Text style={{ fontFamily: 'Roboto', fontWeight: 'bold' }}>Valor comercial: </Text>
           {'Valor adoptado por el perito como resultado de la ponderacion de los distintos metodos '}
           {'aplicados, representando la mejor estimacion del valor de mercado del inmueble.'}
         </Text>

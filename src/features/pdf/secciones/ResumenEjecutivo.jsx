@@ -47,7 +47,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
             <Text style={[styles.celda, {
               flex: 2,
               textAlign: 'right',
-              fontFamily: valor ? 'Helvetica-Bold' : 'Helvetica',
+              fontFamily: 'Roboto', fontWeight: valor ? 'bold' : 'normal',
               color: valor ? COLORES.texto : COLORES.gris,
             }]}>
               {valor ? formatCurrency(valor) : 'NO APLICA'}
@@ -59,7 +59,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
       {/* Alerta variacion > 30% */}
       {variacionAlerta && (
         <View style={{ marginTop: 6, padding: 6, backgroundColor: '#FEF2F2', borderWidth: 0.5, borderColor: '#FECACA' }}>
-          <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Helvetica-Bold' }}>
+          <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
             {`ATENCION: La variacion entre enfoques (${variacion.toFixed(1)}%) supera el limite admisible del 30% (SHF / INDAABIN).`}
           </Text>
         </View>
@@ -67,7 +67,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
 
       {/* Consideraciones */}
       <View style={[styles.cajaGris, { marginTop: 6 }]}>
-        <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', color: COLORES.primario, marginBottom: 3 }}>
+        <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, marginBottom: 3 }}>
           CONSIDERACIONES PREVIAS A LA CONCLUSION
         </Text>
         <Text style={{ fontSize: 7.5, lineHeight: 1.6 }}>
@@ -101,7 +101,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
         paddingHorizontal: 12,
         backgroundColor: COLORES.grisClaro,
       }}>
-        <Text style={{ fontSize: 8, textAlign: 'center', color: COLORES.primario, fontFamily: 'Helvetica-Bold' }}>
+        <Text style={{ fontSize: 8, textAlign: 'center', color: COLORES.primario, fontFamily: 'Roboto', fontWeight: 'bold' }}>
           {`ESTA CANTIDAD REPRESENTA EL VALOR COMERCIAL DEL INMUEBLE AL DIA: ${sa(formatDate(expediente?.fecha_inspeccion))}`}
         </Text>
       </View>

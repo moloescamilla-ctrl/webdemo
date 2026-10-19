@@ -48,7 +48,7 @@ export default function Construcciones({ descripcion }) {
 
       {descripcion.observaciones && (
         <View style={[styles.cajaGris, { marginTop: 6 }]}>
-          <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginBottom: 2 }}>Observaciones</Text>
+          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Observaciones</Text>
           <Text style={{ fontSize: 8 }}>{sa(descripcion.observaciones)}</Text>
         </View>
       )}

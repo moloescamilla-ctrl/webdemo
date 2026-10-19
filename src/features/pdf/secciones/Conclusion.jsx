@@ -45,7 +45,7 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
         {metodos.map(({ label, valor }, i) => (
           <View key={label} style={i % 2 === 0 ? styles.filaPar : styles.filaImpar}>
             <Text style={[styles.celda, { flex: 3 }]}>{label}</Text>
-            <Text style={[styles.celda, { flex: 2, textAlign: 'right', fontFamily: 'Helvetica-Bold' }]}>
+            <Text style={[styles.celda, { flex: 2, textAlign: 'right', fontFamily: 'Roboto', fontWeight: 'bold' }]}>
               {formatCurrency(valor)}
             </Text>
           </View>
@@ -63,7 +63,7 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
       {/* Alerta variacion > 30% */}
       {variacionAlerta && (
         <View style={{ marginTop: 6, padding: 6, backgroundColor: '#FEF2F2', borderWidth: 0.5, borderColor: '#FECACA' }}>
-          <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Helvetica-Bold' }}>
+          <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
             {`ATENCION: La variacion entre metodos (${variacion.toFixed(1)}%) supera el limite admisible del 30% (SHF / INDAABIN). Revise la consistencia de los metodos aplicados.`}
           </Text>
         </View>

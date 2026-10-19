@@ -1,14 +1,6 @@
-// Strip diacritics — Helvetica in react-pdf doesn't support accented chars
 export function sa(str) {
   if (str == null) return ''
   return String(str)
-    .replace(/[áàä]/g, 'a').replace(/[ÁÀÄ]/g, 'A')
-    .replace(/[éèë]/g, 'e').replace(/[ÉÈË]/g, 'E')
-    .replace(/[íìï]/g, 'i').replace(/[ÍÌÏ]/g, 'I')
-    .replace(/[óòö]/g, 'o').replace(/[ÓÒÖ]/g, 'O')
-    .replace(/[úùüû]/g, 'u').replace(/[ÚÙÜ]/g, 'U')
-    .replace(/ñ/g, 'n').replace(/Ñ/g, 'N')
-    .replace(/ç/g, 'c').replace(/Ç/g, 'C')
 }
 
 export function formatCurrency(val) {

@@ -57,7 +57,7 @@ export default function MetodoResidual({ metodo }) {
         <View style={styles.col2}>
           <View style={styles.campoFila}>
             <Text style={styles.campoLabel}>VM total (producto terminado)</Text>
-            <Text style={[styles.campoValor, { fontFamily: 'Helvetica-Bold' }]}>{formatCurrency(vmTotal)}</Text>
+            <Text style={[styles.campoValor, { fontFamily: 'Roboto', fontWeight: 'bold' }]}>{formatCurrency(vmTotal)}</Text>
           </View>
           {metodo.vm_fuente && (
             <View style={styles.campoFila}>
@@ -77,7 +77,7 @@ export default function MetodoResidual({ metodo }) {
       </View>
 
       {/* Tabla Ci */}
-      <Text style={{ fontSize: 8, fontFamily: 'Helvetica-Bold', marginTop: 6, marginBottom: 3 }}>
+      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
         Desglose del Costo de Inversion (Ci)
       </Text>
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
@@ -144,7 +144,7 @@ export default function MetodoResidual({ metodo }) {
 
       {metodo.notas_valuador && (
         <View style={[styles.cajaGris, { marginTop: 6 }]}>
-          <Text style={{ fontSize: 7, fontFamily: 'Helvetica-Bold', marginBottom: 2 }}>Notas del valuador</Text>
+          <Text style={{ fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Notas del valuador</Text>
           <Text style={{ fontSize: 7 }}>{sa(metodo.notas_valuador)}</Text>
         </View>
       )}
