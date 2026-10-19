@@ -293,10 +293,23 @@ export function useExpedientes() {
     await fetchExpedientes()
   }
 
+  async function guardarParcialesFisico(expedienteId, { comparablesTerreno, partidasConstruccion, edadPonderadaState }) {
+    const { error } = await supabase
+      .from('metodos_fisicos')
+      .upsert({
+        expediente_id: expedienteId,
+        comparables_terreno:     comparablesTerreno   ?? null,
+        partidas_construccion:   partidasConstruccion ?? null,
+        partidas_edad_ponderada: edadPonderadaState   ?? null,
+      }, { onConflict: 'expediente_id' })
+    if (error) throw new Error(error.message)
+  }
+
   return {
     expedientes, expedientesParaRevisar, loading, error,
     crearExpediente, actualizarExpediente, archivarExpediente, eliminarExpediente,
     guardarEntorno, guardarTerreno, guardarDescripcionConstruccion,
     guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
+    guardarParcialesFisico,
   }
 }

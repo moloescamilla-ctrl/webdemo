@@ -83,7 +83,7 @@ function Campo({ label, name, value, onChange, suffix, hint, hintWarning }) {
   )
 }
 
-export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente', initialValues = null, latitud = null, longitud = null }) {
+export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar resultado en expediente', initialValues = null, latitud = null, longitud = null, onParcialesChange }) {
   const [tieneConstruccion, setTieneConstruccion] = useState(initialValues?.tieneConstruccion ?? true)
   const [inputs, setInputs] = useState(initialValues?.inputs ?? defaultInputs)
   const [factorData, setFactorData] = useState(initialValues?.factorData ?? null)
@@ -102,6 +102,10 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
   const [comparablesTerreno, setComparablesTerreno] = useState(initialValues?.comparablesTerreno ?? null)
   const [partidasConstruccion, setPartidasConstruccion] = useState(initialValues?.partidasConstruccion ?? [])
   const [edadPonderadaState, setEdadPonderadaState] = useState(initialValues?.edadPonderadaState ?? null)
+
+  useEffect(() => {
+    onParcialesChange?.({ comparablesTerreno, partidasConstruccion, edadPonderadaState })
+  }, [comparablesTerreno, partidasConstruccion, edadPonderadaState])
 
   const { costos, porFuente, cargando: cargandoCostos } = useCostosM2()
   const [costoSeleccionado, setCostoSeleccionado] = useState(null)

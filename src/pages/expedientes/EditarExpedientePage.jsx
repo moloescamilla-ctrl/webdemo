@@ -93,12 +93,14 @@ export function EditarExpedientePage() {
     guardarEntorno, guardarTerreno,
     guardarDescripcionConstruccion,
     guardarMetodoFisico, guardarMetodoComparativo, guardarMetodoRentas, guardarMetodoResidual,
+    guardarParcialesFisico,
   } = useExpedientes()
   const { perfil, guardarPerfil } = usePeritoPerfil()
 
   const [tab, setTab] = useState(navState.tab ?? 'datos')
   const [guardando, setGuardando] = useState(false)
   const pendingConstruccionRef = useRef(null)
+  const pendingFisicoRef = useRef(null)
 
   useEffect(() => {
     if (expediente?.tipo_expediente === 'calculo_rapido' && !['datos', 'fisico'].includes(tab)) {
@@ -225,8 +227,13 @@ export function EditarExpedientePage() {
   const handleCambiarTab = async (nextTab) => {
     if (tab === 'construccion' && nextTab !== 'construccion' && pendingConstruccionRef.current) {
       try { await guardarDescripcionConstruccion(id, pendingConstruccionRef.current) }
-      catch { /* silencioso — el usuario puede guardar manualmente */ }
+      catch { /* silencioso */ }
       pendingConstruccionRef.current = null
+    }
+    if (tab === 'fisico' && nextTab !== 'fisico' && pendingFisicoRef.current) {
+      try { await guardarParcialesFisico(id, pendingFisicoRef.current) }
+      catch { /* silencioso */ }
+      pendingFisicoRef.current = null
     }
     setTab(nextTab)
     setErrorMsg(null)
@@ -536,6 +543,7 @@ export function EditarExpedientePage() {
           initialValues={fisicoInitial}
           latitud={d.latitud}
           longitud={d.longitud}
+          onParcialesChange={(parciales) => { pendingFisicoRef.current = parciales }}
         />
       )}
 
