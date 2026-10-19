@@ -20,17 +20,17 @@ export default function MetodoFisico({ metodo, inspeccion }) {
   return (
     <View>
       <Text style={styles.seccionTitulo}>
-        {esTerrenoSolo ? '9. METODO FISICO — TERRENO SIN CONSTRUCCION' : '9. METODO FISICO / COSTOS — ROSS HEIDECKE'}
+        {esTerrenoSolo ? '9. MÉTODO FÍSICO — TERRENO SIN CONSTRUCCIÓN' : '9. MÉTODO FÍSICO / COSTOS — ROSS HEIDECKE'}
       </Text>
 
       <View style={styles.grid2}>
         <View style={styles.col1}>
           {!esTerrenoSolo && (
             <>
-              <Campo label="Superficie construccion" value={`${formatNumber(metodo.superficie_construccion, 2)} m2`} />
-              <Campo label="Costo reposicion /m2" value={formatCurrency(metodo.costo_reposicion_m2)} />
-              <Campo label="Edad" value={`${metodo.edad_anios} anos`} />
-              <Campo label="Vida util" value={`${metodo.vida_util_anios} anos`} />
+              <Campo label="Superficie construcción" value={`${formatNumber(metodo.superficie_construccion, 2)} m2`} />
+              <Campo label="Costo reposición /m2" value={formatCurrency(metodo.costo_reposicion_m2)} />
+              <Campo label="Edad" value={`${metodo.edad_anios} años`} />
+              <Campo label="Vida útil" value={`${metodo.vida_util_anios} años`} />
               <Campo label="Valor residual" value={`${metodo.valor_residual_pct}%`} />
             </>
           )}
@@ -40,10 +40,10 @@ export default function MetodoFisico({ metodo, inspeccion }) {
         <View style={styles.col2}>
           {!esTerrenoSolo && (
             <>
-              <Campo label="Valor reposicion nuevo (VRN)" value={formatCurrency(metodo.valor_reposicion_nuevo)} />
+              <Campo label="Valor reposición nuevo (VRN)" value={formatCurrency(metodo.valor_reposicion_nuevo)} />
               <Campo label="Factor Ross (A)" value={formatNumber(metodo.factor_ross, 4)} />
               <Campo label="Coef. Heidecke (C adoptado)" value={formatNumber(metodo.coeficiente_c_adoptado, 4)} />
-              <Campo label="Factor depreciacion" value={formatNumber(metodo.factor_depreciacion, 4)} />
+              <Campo label="Factor depreciación" value={formatNumber(metodo.factor_depreciacion, 4)} />
             </>
           )}
           <Campo label="Valor del terreno" value={formatCurrency(metodo.valor_terreno)} />
@@ -61,14 +61,14 @@ export default function MetodoFisico({ metodo, inspeccion }) {
               }} />
             </View>
             <Text style={[styles.nota, { textAlign: 'right', color: COLORES.rojo }]}>
-              {`${formatNumber(depPct, 2)}% depreciado | Depreciacion: ${formatCurrency(metodo.depreciacion_pesos)}`}
+              {`${formatNumber(depPct, 2)}% depreciado | Depreciación: ${formatCurrency(metodo.depreciacion_pesos)}`}
             </Text>
           </View>
 
           {/* Mini-cuadros */}
           <View style={styles.grid2}>
             <View style={[styles.cajaGris, styles.col1, { marginRight: 8 }]}>
-              <Text style={{ fontSize: 7, color: COLORES.gris }}>Valor actual construccion</Text>
+              <Text style={{ fontSize: 7, color: COLORES.gris }}>Valor actual construcción</Text>
               <Text style={{ fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 2 }}>
                 {formatCurrency(metodo.valor_actual_construccion)}
               </Text>
@@ -85,7 +85,7 @@ export default function MetodoFisico({ metodo, inspeccion }) {
 
       <View style={styles.cajaAzul}>
         <Text style={styles.resultadoLabel}>
-          {esTerrenoSolo ? 'Valor del terreno (Metodo Fisico)' : 'Valor fisico total'}
+          {esTerrenoSolo ? 'Valor del terreno (Método Físico)' : 'Valor físico total'}
         </Text>
         <Text style={styles.resultadoValor}>{formatCurrency(metodo.valor_fisico_total)}</Text>
       </View>
@@ -94,7 +94,7 @@ export default function MetodoFisico({ metodo, inspeccion }) {
         <>
           <View style={[styles.cajaGris, { marginTop: 6 }]}>
             <Text style={{ fontSize: 7, color: '#374151', fontFamily: 'Roboto', fontWeight: 'bold' }}>
-              {`Factor de Comercializacion (fc): ${sa(metodo.factor_comercializacion_segmento)}`}
+              {`Factor de Comercialización (fc): ${sa(metodo.factor_comercializacion_segmento)}`}
             </Text>
             <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: '#065f46', marginTop: 2 }}>
               {`fc = ${formatNumber(metodo.factor_comercializacion, 4)}`}
@@ -109,7 +109,7 @@ export default function MetodoFisico({ metodo, inspeccion }) {
             <Text style={styles.resultadoLabel}>Valor de mercado estimado</Text>
             <Text style={styles.resultadoValor}>{formatCurrency(metodo.valor_mercado_estimado)}</Text>
             <Text style={[styles.nota, { color: '#bbf7d0', marginTop: 2 }]}>
-              {`Valor fisico x fc = ${formatCurrency(metodo.valor_fisico_total)} x ${formatNumber(metodo.factor_comercializacion, 4)}`}
+              {`Valor físico x fc = ${formatCurrency(metodo.valor_fisico_total)} x ${formatNumber(metodo.factor_comercializacion, 4)}`}
             </Text>
           </View>
         </>

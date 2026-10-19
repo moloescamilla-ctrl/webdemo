@@ -5,12 +5,12 @@ import { sa, formatNumber } from '../utils'
 const SERVICIOS = [
   ['agua_potable',           'Agua potable'],
   ['drenaje_alcantarillado', 'Drenaje y alcantarillado'],
-  ['energia_electrica',      'Energia electrica'],
-  ['alumbrado_publico',      'Alumbrado publico'],
+  ['energia_electrica',      'Energía eléctrica'],
+  ['alumbrado_publico',      'Alumbrado público'],
   ['gas_natural',            'Gas natural'],
-  ['telefonia',              'Telefonia'],
+  ['telefonia',              'Telefonía'],
   ['internet',               'Internet'],
-  ['recoleccion_basura',     'Recoleccion de basura'],
+  ['recoleccion_basura',     'Recolección de basura'],
   ['banquetas',              'Banquetas'],
   ['guarniciones',           'Guarniciones'],
 ]
@@ -20,8 +20,8 @@ const DISTANCIAS = [
   ['dist_hospitales_m', 'Hospitales'],
   ['dist_comercios_m',  'Comercios'],
   ['dist_bancos_m',     'Bancos'],
-  ['dist_transporte_m', 'Transporte publico'],
-  ['dist_parque_m',     'Areas verdes'],
+  ['dist_transporte_m', 'Transporte público'],
+  ['dist_parque_m',     'Áreas verdes'],
 ]
 
 export default function Entorno({ entorno }) {
@@ -42,11 +42,11 @@ export default function Entorno({ entorno }) {
             <Text style={styles.campoValor}>{sa(entorno.uso_predominante_zona) || '—'}</Text>
           </View>
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Nivel socioeconomico</Text>
+            <Text style={styles.campoLabel}>Nivel socioeconómico</Text>
             <Text style={styles.campoValor}>{sa(entorno.nivel_socioeconomico) || '—'}</Text>
           </View>
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Densidad construccion</Text>
+            <Text style={styles.campoLabel}>Densidad construcción</Text>
             <Text style={styles.campoValor}>{sa(entorno.densidad_construccion) || '—'}</Text>
           </View>
           <View style={styles.campoFila}>
@@ -70,7 +70,7 @@ export default function Entorno({ entorno }) {
             </Text>
           </View>
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Contaminacion ambiental</Text>
+            <Text style={styles.campoLabel}>Contaminación ambiental</Text>
             <Text style={styles.campoValor}>{sa(entorno.contaminacion_ambiental) || '—'}</Text>
           </View>
         </View>

@@ -9,7 +9,7 @@ export default function MetodoComparativo({ metodo }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>10. METODO COMPARATIVO DE MERCADO</Text>
+      <Text style={styles.seccionTitulo}>10. MÉTODO COMPARATIVO DE MERCADO</Text>
 
       <View style={styles.grid2}>
         <View style={styles.col1}>
@@ -18,7 +18,7 @@ export default function MetodoComparativo({ metodo }) {
             <Text style={styles.campoValor}>{`${formatNumber(metodo.superficie_sujeto, 2)} m2`}</Text>
           </View>
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Comparables validos</Text>
+            <Text style={styles.campoLabel}>Comparables válidos</Text>
             <Text style={styles.campoValor}>{String(comparables.length)}</Text>
           </View>
         </View>

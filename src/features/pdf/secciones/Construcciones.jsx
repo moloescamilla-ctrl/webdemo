@@ -25,18 +25,18 @@ export default function Construcciones({ descripcion }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>7. DESCRIPCION DE CONSTRUCCIONES</Text>
+      <Text style={styles.seccionTitulo}>7. DESCRIPCIÓN DE CONSTRUCCIONES</Text>
       <View style={styles.grid2}>
         <View style={styles.col1}>
           <Campo label="Uso actual" value={descripcion.uso_actual} />
-          <Campo label="Condicion" value={descripcion.condicion} />
-          <Campo label="Numero de niveles" value={descripcion.num_niveles} />
+          <Campo label="Condición" value={descripcion.condicion} />
+          <Campo label="Número de niveles" value={descripcion.num_niveles} />
           <Campo label="Sup. vendible" value={descripcion.superficie_vendible_m2 ? `${formatNumber(descripcion.superficie_vendible_m2, 2)} m2` : null} />
         </View>
         <View style={styles.col2}>
-          <Campo label="Recamaras" value={descripcion.num_recamaras} />
-          <Campo label="Banos completos" value={descripcion.banos_completos} />
-          <Campo label="Medios banos" value={descripcion.medios_banos} />
+          <Campo label="Recámaras" value={descripcion.num_recamaras} />
+          <Campo label="Baños completos" value={descripcion.banos_completos} />
+          <Campo label="Medios baños" value={descripcion.medios_banos} />
           <Campo label="Estac. descubiertos" value={descripcion.estacionamientos_descubiertos} />
           <Campo label="Estac. cubiertos" value={descripcion.estacionamientos_cubiertos} />
         </View>

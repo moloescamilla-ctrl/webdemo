@@ -26,7 +26,7 @@ export default function MetodoRentas({ metodo }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>11. METODO DE RENTAS — CAPITALIZACION</Text>
+      <Text style={styles.seccionTitulo}>11. MÉTODO DE RENTAS — CAPITALIZACIÓN</Text>
 
       <View style={styles.grid2}>
         <View style={styles.col1}>
@@ -34,12 +34,12 @@ export default function MetodoRentas({ metodo }) {
           <Campo label="Modo RNA" value={metodo.modo_rna} />
           <Campo label="Renta mensual bruta" value={formatCurrency(metodo.renta_mensual_bruta)} />
           <Campo label="Vacancia" value={`${formatNumber(metodo.vacancia_pct, 1)}%`} />
-          <Campo label="Gastos operacion" value={`${formatNumber(metodo.gastos_operacion_pct, 1)}%`} />
+          <Campo label="Gastos operación" value={`${formatNumber(metodo.gastos_operacion_pct, 1)}%`} />
           <Campo label="RNA (Renta Neta Anual)" value={formatCurrency(metodo.rna)} />
         </View>
         <View style={styles.col2}>
           {esDirecta ? (
-            <Campo label="Tasa de capitalizacion" value={`${formatNumber(metodo.tc_global, 2)}%`} />
+            <Campo label="Tasa de capitalización" value={`${formatNumber(metodo.tc_global, 2)}%`} />
           ) : (
             <>
               <Campo label="Tasa libre de riesgo" value={`${formatNumber(metodo.tc_tasa_libre_riesgo, 2)}%`} />
@@ -61,9 +61,9 @@ export default function MetodoRentas({ metodo }) {
               <Text style={[styles.celdaHeader, { flex: 1, textAlign: 'right' }]}>Valor</Text>
             </View>
             {[
-              ['Valor total por capitalizacion', metodo.valor_capitalizacion],
+              ['Valor total por capitalización', metodo.valor_capitalizacion],
               ['Valor tierra', metodo.valor_tierra_capitalizacion],
-              ['Valor construccion', metodo.valor_construccion_capitalizacion],
+              ['Valor construcción', metodo.valor_construccion_capitalizacion],
             ].map(([label, val], i) => (
               <View key={label} style={i % 2 === 0 ? styles.filaPar : styles.filaImpar}>
                 <Text style={[styles.celda, { flex: 2 }]}>{label}</Text>
@@ -75,7 +75,7 @@ export default function MetodoRentas({ metodo }) {
       )}
 
       <View style={styles.cajaAzul}>
-        <Text style={styles.resultadoLabel}>Valor por capitalizacion de rentas</Text>
+        <Text style={styles.resultadoLabel}>Valor por capitalización de rentas</Text>
         <Text style={styles.resultadoValor}>{formatCurrency(metodo.valor_capitalizacion)}</Text>
       </View>
 

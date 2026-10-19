@@ -3,18 +3,18 @@ import { styles, COLORES } from '../estilos'
 import { sa, formatCurrency, formatDate, numeroALetras } from '../utils'
 
 const CLAVE_LABEL = {
-  fisico:      'Metodo Fisico / Costos',
-  comparativo: 'Metodo Comparativo de Mercado',
-  rentas:      'Metodo de Rentas (Capitalizacion)',
-  residual:    'Metodo Residual Estatico',
+  fisico:      'Método Físico / Costos',
+  comparativo: 'Método Comparativo de Mercado',
+  rentas:      'Método de Rentas (Capitalización)',
+  residual:    'Método Residual Estático',
 }
 
 export default function Conclusion({ metodoFisico, metodoComparativo, metodoRentas, metodoResidual, expediente }) {
   const metodos = [
-    metodoFisico      && { clave: 'fisico',      label: metodoFisico.valor_mercado_estimado ? 'Metodo Fisico / Costos (con fc)' : 'Metodo Fisico / Costos', valor: metodoFisico.valor_mercado_estimado || metodoFisico.valor_fisico_total },
-    metodoComparativo && { clave: 'comparativo', label: 'Metodo Comparativo de Mercado',     valor: metodoComparativo.valor_comparativo_total },
-    metodoRentas      && { clave: 'rentas',      label: 'Metodo de Rentas (Capitalizacion)', valor: metodoRentas.valor_capitalizacion },
-    metodoResidual    && { clave: 'residual',    label: 'Metodo Residual Estatico',          valor: metodoResidual.valor_residual },
+    metodoFisico      && { clave: 'fisico',      label: metodoFisico.valor_mercado_estimado ? 'Método Físico / Costos (con fc)' : 'Método Físico / Costos', valor: metodoFisico.valor_mercado_estimado || metodoFisico.valor_fisico_total },
+    metodoComparativo && { clave: 'comparativo', label: 'Método Comparativo de Mercado',     valor: metodoComparativo.valor_comparativo_total },
+    metodoRentas      && { clave: 'rentas',      label: 'Método de Rentas (Capitalización)', valor: metodoRentas.valor_capitalizacion },
+    metodoResidual    && { clave: 'residual',    label: 'Método Residual Estático',          valor: metodoResidual.valor_residual },
   ].filter(Boolean)
 
   const metodoElegido = expediente?.metodo_elegido
@@ -23,7 +23,7 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
   const valorComercial = elegido
     ? Math.round(Number(elegido.valor) || 0)
     : valores.length > 0 ? valores[0] : 0
-  const labelAdoptado = elegido ? CLAVE_LABEL[metodoElegido] : 'Primer metodo disponible'
+  const labelAdoptado = elegido ? CLAVE_LABEL[metodoElegido] : 'Primer método disponible'
 
   const variacion = valores.length >= 2
     ? (Math.max(...valores) - Math.min(...valores)) / Math.min(...valores) * 100
@@ -34,12 +34,12 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>13. CONCLUSION Y VALOR COMERCIAL</Text>
+      <Text style={styles.seccionTitulo}>13. CONCLUSIÓN Y VALOR COMERCIAL</Text>
 
       {/* Tabla resumen */}
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
         <View style={styles.filaHeader}>
-          <Text style={[styles.celdaHeader, { flex: 3 }]}>Metodo aplicado</Text>
+          <Text style={[styles.celdaHeader, { flex: 3 }]}>Método aplicado</Text>
           <Text style={[styles.celdaHeader, { flex: 2, textAlign: 'right' }]}>Valor obtenido</Text>
         </View>
         {metodos.map(({ label, valor }, i) => (
@@ -64,7 +64,7 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
       {variacionAlerta && (
         <View style={{ marginTop: 6, padding: 6, backgroundColor: '#FEF2F2', borderWidth: 0.5, borderColor: '#FECACA' }}>
           <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
-            {`ATENCION: La variacion entre metodos (${variacion.toFixed(1)}%) supera el limite admisible del 30% (SHF / INDAABIN). Revise la consistencia de los metodos aplicados.`}
+            {`ATENCIÓN: La variación entre métodos (${variacion.toFixed(1)}%) supera el límite admisible del 30% (SHF / INDAABIN). Revise la consistencia de los métodos aplicados.`}
           </Text>
         </View>
       )}
@@ -80,9 +80,9 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
 
       <View style={[styles.cajaGris, { marginTop: 8 }]}>
         <Text style={{ fontSize: 8 }}>
-          {'El valor comercial expresado representa la estimacion del valor de mercado del inmueble '}
-          {'objeto de valuacion, con base en la metodologia aplicada y los datos de mercado disponibles '}
-          {`a la fecha de inspeccion: ${sa(formatDate(expediente?.fecha_inspeccion))}.`}
+          {'El valor comercial expresado representa la estimación del valor de mercado del inmueble '}
+          {'objeto de valuación, con base en la metodología aplicada y los datos de mercado disponibles '}
+          {`a la fecha de inspección: ${sa(formatDate(expediente?.fecha_inspeccion))}.`}
         </Text>
       </View>
     </View>

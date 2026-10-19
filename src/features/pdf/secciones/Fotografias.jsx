@@ -80,7 +80,7 @@ export default function Fotografias({ fotos }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>15. FOTOGRAFIAS DE LA INSPECCION</Text>
+      <Text style={styles.seccionTitulo}>15. FOTOGRAFÍAS DE LA INSPECCIÓN</Text>
 
       {pares.map((par, rowIdx) => (
         <View key={rowIdx} wrap={false} style={{ flexDirection: 'row', alignItems: 'flex-start' }}>

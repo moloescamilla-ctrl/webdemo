@@ -3,11 +3,11 @@ import { styles, COLORES } from '../estilos'
 import { sa, formatCurrency, formatNumber } from '../utils'
 
 const CI_LABELS = {
-  costoConstuccion:  'Costo de construccion / remodelacion',
-  proyecto:          'Proyecto y diseno',
+  costoConstuccion:  'Costo de construcción / remodelación',
+  proyecto:          'Proyecto y diseño',
   permisos:          'Permisos y licencias',
-  gestion:           'Gestion y administracion',
-  comercializacion:  'Comercializacion y ventas',
+  gestion:           'Gestión y administración',
+  comercializacion:  'Comercialización y ventas',
   financiamiento:    'Financiamiento',
   imprevistos:       'Imprevistos',
 }
@@ -33,7 +33,7 @@ export default function MetodoResidual({ metodo }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>12. METODO RESIDUAL ESTATICO</Text>
+      <Text style={styles.seccionTitulo}>12. MÉTODO RESIDUAL ESTÁTICO</Text>
 
       <View style={styles.grid2}>
         <View style={styles.col1}>
@@ -42,7 +42,7 @@ export default function MetodoResidual({ metodo }) {
             <Text style={styles.campoValor}>{sa(metodo.caso_uso)}</Text>
           </View>
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Descripcion del proyecto</Text>
+            <Text style={styles.campoLabel}>Descripción del proyecto</Text>
             <Text style={styles.campoValor}>{sa(metodo.descripcion_proyecto) || '—'}</Text>
           </View>
           <View style={styles.campoFila}>
@@ -66,7 +66,7 @@ export default function MetodoResidual({ metodo }) {
             </View>
           )}
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Costo construccion /m2</Text>
+            <Text style={styles.campoLabel}>Costo construcción /m2</Text>
             <Text style={styles.campoValor}>{formatCurrency(metodo.costo_construccion_m2)}</Text>
           </View>
           <View style={styles.campoFila}>
@@ -78,7 +78,7 @@ export default function MetodoResidual({ metodo }) {
 
       {/* Tabla Ci */}
       <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
-        Desglose del Costo de Inversion (Ci)
+        Desglose del Costo de Inversión (Ci)
       </Text>
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
         <View style={styles.filaHeader}>
@@ -115,12 +115,12 @@ export default function MetodoResidual({ metodo }) {
       {/* Resumen F = VM - Ci - Up */}
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde, marginTop: 6 }]}>
         <View style={styles.filaHeader}>
-          <Text style={[styles.celdaHeader, { flex: 2 }]}>Formula: F = VM - Ci - Up</Text>
+          <Text style={[styles.celdaHeader, { flex: 2 }]}>Fórmula: F = VM - Ci - Up</Text>
           <Text style={[styles.celdaHeader, { flex: 1, textAlign: 'right' }]}>Importe</Text>
         </View>
         {[
           ['VM — Valor de mercado', vmTotal],
-          ['Ci — Costo de inversion', -ciTotal],
+          ['Ci — Costo de inversión', -ciTotal],
           ['Up — Utilidad del promotor', -utilPesos],
         ].map(([label, val], i) => (
           <View key={label} style={i % 2 === 0 ? styles.filaPar : styles.filaImpar}>

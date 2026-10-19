@@ -5,16 +5,16 @@ import { sa, formatCurrency, formatDate, numeroALetras } from '../utils'
 const CLAVES_ENFOQUE = {
   comparativo: 'ENFOQUE COMPARATIVO DE MERCADO',
   fisico:      'ENFOQUE DE COSTOS',
-  rentas:      'ENFOQUE DE CAPITALIZACION DE RENTAS',
-  residual:    'ENFOQUE RESIDUAL ESTATICO',
+  rentas:      'ENFOQUE DE CAPITALIZACIÓN DE RENTAS',
+  residual:    'ENFOQUE RESIDUAL ESTÁTICO',
 }
 
 export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, metodoRentas, metodoResidual, expediente }) {
   const enfoques = [
     { clave: 'comparativo', label: 'ENFOQUE COMPARATIVO DE MERCADO',      valor: metodoComparativo?.valor_comparativo_total },
     { clave: 'fisico',      label: metodoFisico?.valor_mercado_estimado ? 'ENFOQUE DE COSTOS (con fc)' : 'ENFOQUE DE COSTOS', valor: metodoFisico?.valor_mercado_estimado || metodoFisico?.valor_fisico_total },
-    { clave: 'rentas',      label: 'ENFOQUE DE CAPITALIZACION DE RENTAS', valor: metodoRentas?.valor_capitalizacion },
-    { clave: 'residual',    label: 'ENFOQUE RESIDUAL ESTATICO',           valor: metodoResidual?.valor_residual },
+    { clave: 'rentas',      label: 'ENFOQUE DE CAPITALIZACIÓN DE RENTAS', valor: metodoRentas?.valor_capitalizacion },
+    { clave: 'residual',    label: 'ENFOQUE RESIDUAL ESTÁTICO',           valor: metodoResidual?.valor_residual },
   ]
 
   const metodoElegido = expediente?.metodo_elegido
@@ -60,7 +60,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
       {variacionAlerta && (
         <View style={{ marginTop: 6, padding: 6, backgroundColor: '#FEF2F2', borderWidth: 0.5, borderColor: '#FECACA' }}>
           <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
-            {`ATENCION: La variacion entre enfoques (${variacion.toFixed(1)}%) supera el limite admisible del 30% (SHF / INDAABIN).`}
+            {`ATENCIÓN: La variación entre enfoques (${variacion.toFixed(1)}%) supera el límite admisible del 30% (SHF / INDAABIN).`}
           </Text>
         </View>
       )}
@@ -68,11 +68,11 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
       {/* Consideraciones */}
       <View style={[styles.cajaGris, { marginTop: 6 }]}>
         <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, marginBottom: 3 }}>
-          CONSIDERACIONES PREVIAS A LA CONCLUSION
+          CONSIDERACIONES PREVIAS A LA CONCLUSIÓN
         </Text>
         <Text style={{ fontSize: 7.5, lineHeight: 1.6 }}>
           {`El suscrito, experto independiente y Perito Valuador Profesional, con base en la `}
-          {`investigacion de mercado, la inspeccion fisica del inmueble y la metodologia tecnica `}
+          {`investigación de mercado, la inspección física del inmueble y la metodología técnica `}
           {`aplicada conforme a la normatividad vigente, concluye que el Valor Comercial del `}
           {`inmueble descrito en el presente dictamen valuatorio es el siguiente:`}
         </Text>
@@ -83,7 +83,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
         <Text style={styles.resultadoLabel}>VALOR COMERCIAL DEL INMUEBLE</Text>
         {elegido && (
           <Text style={{ fontSize: 7, color: '#86efac', marginBottom: 3 }}>
-            {`Metodo adoptado: ${CLAVES_ENFOQUE[elegido.clave] || elegido.label}`}
+            {`Método adoptado: ${CLAVES_ENFOQUE[elegido.clave] || elegido.label}`}
           </Text>
         )}
         <Text style={styles.resultadoValor}>{formatCurrency(valorComercial)}</Text>
@@ -102,7 +102,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
         backgroundColor: COLORES.grisClaro,
       }}>
         <Text style={{ fontSize: 8, textAlign: 'center', color: COLORES.primario, fontFamily: 'Roboto', fontWeight: 'bold' }}>
-          {`ESTA CANTIDAD REPRESENTA EL VALOR COMERCIAL DEL INMUEBLE AL DIA: ${sa(formatDate(expediente?.fecha_inspeccion))}`}
+          {`ESTA CANTIDAD REPRESENTA EL VALOR COMERCIAL DEL INMUEBLE AL DÍA: ${sa(formatDate(expediente?.fecha_inspeccion))}`}
         </Text>
       </View>
     </View>

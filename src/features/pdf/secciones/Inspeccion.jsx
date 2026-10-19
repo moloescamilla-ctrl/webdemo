@@ -11,7 +11,7 @@ export default function Inspeccion({ inspeccion }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>8. ESTADO DE CONSERVACION — ROSS HEIDECKE</Text>
+      <Text style={styles.seccionTitulo}>8. ESTADO DE CONSERVACIÓN — ROSS HEIDECKE</Text>
 
       {/* Tabla partidas */}
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
@@ -19,7 +19,7 @@ export default function Inspeccion({ inspeccion }) {
           <Text style={[styles.celdaHeader, { flex: 3 }]}>Partida</Text>
           <Text style={[styles.celdaHeader, { width: 40, textAlign: 'center' }]}>Peso</Text>
           <Text style={[styles.celdaHeader, { width: 60, textAlign: 'center' }]}>Estado</Text>
-          <Text style={[styles.celdaHeader, { width: 55, textAlign: 'right' }]}>Penalizacion</Text>
+          <Text style={[styles.celdaHeader, { width: 55, textAlign: 'right' }]}>Penalización</Text>
         </View>
         {PARTIDAS_INSPECCION.map((p, i) => {
           const valorEstado = Number(inspeccion[p.id] ?? 0)
@@ -60,7 +60,7 @@ export default function Inspeccion({ inspeccion }) {
             </Text>
           </View>
           <View style={styles.campoFila}>
-            <Text style={styles.campoLabel}>Coeficiente C (automatico)</Text>
+            <Text style={styles.campoLabel}>Coeficiente C (automático)</Text>
             <Text style={styles.campoValor}>{formatNumber(inspeccion.coeficiente_c, 3)}</Text>
           </View>
         </View>

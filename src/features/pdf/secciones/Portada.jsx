@@ -82,7 +82,7 @@ export default function Portada({
           <Text style={{ fontSize: 6, color: '#93c5fd', letterSpacing: 0.5, marginBottom: 3 }}>DICTAMEN VALUATORIO</Text>
           <View style={{ height: 0.5, backgroundColor: 'rgba(255,255,255,0.25)', marginBottom: 4, width: 80 }} />
           <Text style={{ fontSize: 7, color: COLORES.blanco, textAlign: 'right' }}>
-            {sa(expediente.proposito_avaluo || 'Avaluo Inmobiliario')}
+            {sa(expediente.proposito_avaluo || 'Avalúo Inmobiliario')}
           </Text>
         </View>
       </View>
@@ -93,7 +93,7 @@ export default function Portada({
       {/* Título */}
       <View style={{ paddingVertical: 5, paddingHorizontal: PAD, borderBottomWidth: 1, borderBottomColor: COLORES.borde }}>
         <Text style={{ fontSize: 11, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, textAlign: 'center', letterSpacing: 1 }}>
-          SINTESIS INFORMATIVA DE AVALUO
+          SÍNTESIS INFORMATIVA DE AVALÚO
         </Text>
       </View>
 
@@ -103,7 +103,7 @@ export default function Portada({
           <Image src={fotoFachada} style={{ width: 210, height: 110, objectFit: 'cover', borderWidth: 0.5, borderColor: COLORES.borde }} />
         ) : (
           <View style={{ width: 210, height: 80, borderWidth: 0.5, borderColor: COLORES.borde, backgroundColor: COLORES.grisClaro, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 7, color: COLORES.gris }}>Sin fotografia</Text>
+            <Text style={{ fontSize: 7, color: COLORES.gris }}>Sin fotografía</Text>
           </View>
         )}
         <Text style={{ fontSize: 6.5, color: COLORES.gris, marginTop: 2 }}>VISTA GENERAL DEL INMUEBLE</Text>
@@ -115,58 +115,58 @@ export default function Portada({
         {/* Header de tabla */}
         <View style={{ flexDirection: 'row', backgroundColor: COLORES.secundario }}>
           <Text style={{ width: 13, fontSize: 6, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCION</Text>
+          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
           <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
           <Text style={{ width: 13, fontSize: 6, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCION</Text>
+          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
           <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right' }}>DATO</Text>
         </View>
 
         {/* Filas 1-19 */}
-        <Fila num={1}  label="Folio de secuencia del avaluo"                          valor={sa(expediente.folio || expediente.id?.slice(0,8).toUpperCase())} />
-        <Fila num={2}  label="Fecha del Avaluo (DD/MM/AAAA)"                          valor={sa(formatDate(expediente.fecha_inspeccion))} />
+        <Fila num={1}  label="Folio de secuencia del avalúo"                          valor={sa(expediente.folio || expediente.id?.slice(0,8).toUpperCase())} />
+        <Fila num={2}  label="Fecha del Avalúo (DD/MM/AAAA)"                          valor={sa(formatDate(expediente.fecha_inspeccion))} />
         <Fila num={3}  label="Nombre del Propietario"                                 valor={sa(expediente.nombre_propietario)} />
         <Fila num={4}  label="Nombre del Perito Valuador"                             valor={sa(nombrePerito)} />
-        <Fila num={5}  label="Clave del Perito Valuador que realizo el Avaluo"        valor={sa(expediente.clave_perito)} />
-        <Fila num={6}  label="Cedula profesional del Valuador"                        valor={sa(cedulaPerito)} />
+        <Fila num={5}  label="Clave del Perito Valuador que realizó el Avalúo"        valor={sa(expediente.clave_perito)} />
+        <Fila num={6}  label="Cédula profesional del Valuador"                        valor={sa(cedulaPerito)} />
         <Fila num={7}  label="Constructor para el caso de vivienda nueva"             valor="—" />
-        <Fila num={8}  label="Proposito"                                              valor={sa(expediente.proposito_avaluo)} />
+        <Fila num={8}  label="Propósito"                                              valor={sa(expediente.proposito_avaluo)} />
         <Fila num={9}  label="Tipo de Inmueble a valuar"                              valor={sa(expediente.tipo_inmueble)} />
-        <Fila num={10} label="Calle y numero o su equivalencia"                       valor={sa([expediente.calle, expediente.numero_oficial].filter(Boolean).join(' '))} />
+        <Fila num={10} label="Calle y número o su equivalencia"                       valor={sa([expediente.calle, expediente.numero_oficial].filter(Boolean).join(' '))} />
         <Fila num={11} label="Nombre del conjunto (de ser aplicable)"                 valor={sa(expediente.fraccionamiento)} />
         <Fila num={12} label="Colonia"                                                valor={sa(expediente.colonia)} />
-        <Fila num={13} label="Codigo Postal"                                          valor={sa(expediente.cp)} />
-        <Fila num={14} label="Clave Delegacion o Municipio INEGI"                    valor={sa([expediente.municipio_clave_inegi, expediente.municipio].filter(Boolean).join(' — '))} />
+        <Fila num={13} label="Código Postal"                                          valor={sa(expediente.cp)} />
+        <Fila num={14} label="Clave Delegación o Municipio INEGI"                    valor={sa([expediente.municipio_clave_inegi, expediente.municipio].filter(Boolean).join(' — '))} />
         <Fila num={15} label="Clave de la Entidad Federativa INEGI"                  valor={sa([expediente.estado_clave_inegi, expediente.estado_rep].filter(Boolean).join(' — '))} />
-        <Fila num={16} label="Numero de cuenta predial"                               valor={sa(expediente.num_cuenta_predial)} />
+        <Fila num={16} label="Número de cuenta predial"                               valor={sa(expediente.num_cuenta_predial)} />
         <Fila num={17} label="Referencia de proximidad urbana"                       valor={sa(entorno?.nombre_vialidad)} />
         <Fila num={18} label="Nivel de Infraestructura urbana"                       valor={sa(entorno?.nivel_socioeconomico)} />
         <Fila num={19} label="Clase del Inmueble"                                     valor={sa(expediente.uso || expediente.tipo_inmueble)} />
 
         {/* Filas duales 20-27 / 33-40 */}
-        <Fila num={20} label="Vida Util Remanente en anos"
+        <Fila num={20} label="Vida Útil Remanente en años"
               valor={vidaRemanente}
-              numD={33} labelD="Numero de recamaras"
+              numD={33} labelD="Número de recámaras"
               valorD={sa(descripcionConstruccion?.num_recamaras)} />
-        <Fila num={21} label="Ano de terminacion o remodelacion"
+        <Fila num={21} label="Año de terminación o remodelación"
               valor={anoTerminacion}
-              numD={34} labelD="Numero de banos"
+              numD={34} labelD="Número de baños"
               valorD={sa(descripcionConstruccion?.banos_completos)} />
         <Fila num={22} label="Unidades rentables generales"
               valor="1"
-              numD={35} labelD="Numero de medios banos"
+              numD={35} labelD="Número de medios baños"
               valorD={sa(descripcionConstruccion?.medios_banos)} />
         <Fila num={23} label="Unidades rentables"
               valor="1"
-              numD={36} labelD="Numero de niveles de la unidad valuada"
+              numD={36} labelD="Número de niveles de la unidad valuada"
               valorD={sa(descripcionConstruccion?.num_niveles)} />
         <Fila num={24} label="Superficie de terreno en m2"
               valor={metodoFisico?.superficie_terreno ? formatNumber(metodoFisico.superficie_terreno, 2) : '—'}
-              numD={37} labelD="Numero de espacios de estacionamiento"
+              numD={37} labelD="Número de espacios de estacionamiento"
               valorD={estac > 0 ? String(estac) : '—'} />
-        <Fila num={25} label="Superficie de construccion en m2"
+        <Fila num={25} label="Superficie de construcción en m2"
               valor={metodoFisico?.superficie_construccion ? formatNumber(metodoFisico.superficie_construccion, 2) : '—'}
-              numD={38} labelD="Acometida suministro telefonico"
+              numD={38} labelD="Acometida suministro telefónico"
               valorD={entorno?.telefonia != null ? (entorno.telefonia ? 'SI EXISTE' : 'NO EXISTE') : '—'} />
         <Fila num={26} label="Superficie accesoria en m2"
               valor="—"
@@ -182,15 +182,15 @@ export default function Portada({
               valor={metodoComparativo ? formatCurrency(metodoComparativo.valor_comparativo_total) : '—'}
               numD={41} labelD="Longitud (Georeferencia)"
               valorD={sa(expediente.longitud)} />
-        <Fila num={29} label="Valor fisico del terreno"
+        <Fila num={29} label="Valor físico del terreno"
               valor={metodoFisico ? formatCurrency(metodoFisico.valor_terreno) : '—'}
               numD={42} labelD="Latitud (Georeferencia)"
               valorD={sa(expediente.latitud)} />
-        <Fila num={30} label="Valor fisico de la construccion"
+        <Fila num={30} label="Valor físico de la construcción"
               valor={metodoFisico ? formatCurrency(metodoFisico.valor_actual_construccion) : '—'}
               numD={43} labelD="Solicitante"
               valorD={sa(expediente.solicitante)} />
-        <Fila num={31} label="Valor fisico de instalaciones y elementos comunes"      valor="—" />
+        <Fila num={31} label="Valor físico de instalaciones y elementos comunes"      valor="—" />
 
         {/* Fila 32: resaltada */}
         <Fila num={32} label="Importe del valor concluido"

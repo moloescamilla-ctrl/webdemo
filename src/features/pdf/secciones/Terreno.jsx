@@ -16,22 +16,22 @@ export default function Terreno({ terreno }) {
 
   return (
     <View>
-      <Text style={styles.seccionTitulo}>6. CARACTERISTICAS DEL TERRENO</Text>
+      <Text style={styles.seccionTitulo}>6. CARACTERÍSTICAS DEL TERRENO</Text>
       <View style={styles.grid2}>
         <View style={styles.col1}>
           <Campo label="Superficie" value={terreno.superficie_m2 ? `${formatNumber(terreno.superficie_m2, 2)} m2` : null} />
           <Campo label="Frente" value={terreno.frente_m ? `${formatNumber(terreno.frente_m, 2)} m` : null} />
           <Campo label="Fondo" value={terreno.fondo_m ? `${formatNumber(terreno.fondo_m, 2)} m` : null} />
           <Campo label="Forma" value={terreno.forma} />
-          <Campo label="Topografia" value={terreno.topografia} />
+          <Campo label="Topografía" value={terreno.topografia} />
           <Campo label="Nivel vs banqueta" value={terreno.nivel_vs_banqueta} />
         </View>
         <View style={styles.col2}>
           <Campo label="Uso de suelo" value={terreno.uso_suelo_autorizado} />
           <Campo label="COS" value={terreno.cos} />
           <Campo label="CUS" value={terreno.cus} />
-          <Campo label="Altura maxima" value={terreno.altura_maxima_m ? `${terreno.altura_maxima_m} m` : null} />
-          <Campo label="Regimen de propiedad" value={terreno.regimen_propiedad} />
+          <Campo label="Altura máxima" value={terreno.altura_maxima_m ? `${terreno.altura_maxima_m} m` : null} />
+          <Campo label="Régimen de propiedad" value={terreno.regimen_propiedad} />
         </View>
       </View>
 
@@ -69,11 +69,11 @@ export default function Terreno({ terreno }) {
           <View style={styles.grid2}>
             <View style={styles.col1}>
               <Campo label="No. escritura" value={terreno.numero_escritura} />
-              <Campo label="Notaria" value={terreno.notaria} />
+              <Campo label="Notaría" value={terreno.notaria} />
               <Campo label="Notario" value={terreno.nombre_notario} />
             </View>
             <View style={styles.col2}>
-              <Campo label="Ciudad (notaria)" value={terreno.ciudad} />
+              <Campo label="Ciudad (notaría)" value={terreno.ciudad} />
               <Campo label="Folio real" value={terreno.folio_real} />
               <Campo label="Fecha escritura" value={formatDate(terreno.fecha_escritura)} />
             </View>
@@ -87,11 +87,11 @@ export default function Terreno({ terreno }) {
         terreno.rpp_volumen || terreno.rpp_seccion || terreno.rpp_serie) && (
         <View style={{ marginTop: 4 }}>
           <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>
-            Inscripcion en el Registro Publico de la Propiedad (RPP)
+            Inscripción en el Registro Público de la Propiedad (RPP)
           </Text>
           <View style={styles.grid2}>
             <View style={styles.col1}>
-              <Campo label="Fecha de inscripcion" value={formatDate(terreno.rpp_fecha)} />
+              <Campo label="Fecha de inscripción" value={formatDate(terreno.rpp_fecha)} />
               <Campo label="Oficina RPP"          value={terreno.rpp_oficina} />
               <Campo label="Registro u orden"     value={terreno.rpp_registro_orden} />
               <Campo label="A fojas o folios"     value={terreno.rpp_fojas_folios} />
@@ -100,7 +100,7 @@ export default function Terreno({ terreno }) {
             <View style={styles.col2}>
               <Campo label="Del tomo"  value={terreno.rpp_tomo} />
               <Campo label="Volumen"   value={terreno.rpp_volumen} />
-              <Campo label="Seccion"   value={terreno.rpp_seccion} />
+              <Campo label="Sección"   value={terreno.rpp_seccion} />
               <Campo label="Serie"     value={terreno.rpp_serie} />
             </View>
           </View>

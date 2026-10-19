@@ -7,7 +7,7 @@ export function PiePagina({ expediente }) {
   const fecha = sa(expediente?.fecha_inspeccion || '')
   return (
     <View style={styles.piePagina} fixed>
-      <Text>{`Dictamen Valuatorio | Folio: ${folio} | Inspeccion: ${fecha}`}</Text>
+      <Text>{`Dictamen Valuatorio | Folio: ${folio} | Inspección: ${fecha}`}</Text>
       <Text render={({ pageNumber, totalPages }) => `Pagina ${pageNumber} de ${totalPages}`} />
     </View>
   )
