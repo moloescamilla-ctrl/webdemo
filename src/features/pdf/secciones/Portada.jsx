@@ -15,16 +15,16 @@ function Fila({ num, label, valor, numD, labelD, valorD, resaltar }) {
       borderBottomWidth: 0.5,
       borderBottomColor: COLORES.borde,
       backgroundColor: bg,
-      minHeight: 8.5,
+      minHeight: 12,
     }}>
-      <Text style={{ width: 13, fontSize: 6, color: COLORES.gris, textAlign: 'center', paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
-      <Text style={{ flex: labelD ? 3 : 5, fontSize: 6.5, paddingHorizontal: 3, paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
-      <Text style={{ flex: 2, fontSize: 6.5, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 1.5, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
+      <Text style={{ width: 15, fontSize: 8, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
+      <Text style={{ flex: labelD ? 3 : 5, fontSize: 9, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
+      <Text style={{ flex: 2, fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
       {labelD && (
         <>
-          <Text style={{ width: 13, fontSize: 6, color: COLORES.gris, textAlign: 'center', paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{numD}</Text>
-          <Text style={{ flex: 3, fontSize: 6.5, paddingHorizontal: 3, paddingVertical: 1.5, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
-          <Text style={{ flex: 2, fontSize: 6.5, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 1.5 }}>{valorD ?? '—'}</Text>
+          <Text style={{ width: 15, fontSize: 8, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{numD}</Text>
+          <Text style={{ flex: 3, fontSize: 9, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
+          <Text style={{ flex: 2, fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2 }}>{valorD ?? '—'}</Text>
         </>
       )}
     </View>
@@ -106,7 +106,7 @@ export default function Portada({
             <Text style={{ fontSize: 7, color: COLORES.gris }}>Sin fotografía</Text>
           </View>
         )}
-        <Text style={{ fontSize: 6.5, color: COLORES.gris, marginTop: 2 }}>VISTA GENERAL DEL INMUEBLE</Text>
+        <Text style={{ fontSize: 8, color: COLORES.gris, marginTop: 2 }}>VISTA GENERAL DEL INMUEBLE</Text>
       </View>
 
       {/* ── Tabla síntesis ── */}
@@ -114,12 +114,12 @@ export default function Portada({
 
         {/* Header de tabla */}
         <View style={{ flexDirection: 'row', backgroundColor: COLORES.secundario }}>
-          <Text style={{ width: 13, fontSize: 6, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
-          <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
-          <Text style={{ width: 13, fontSize: 6, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
-          <Text style={{ flex: 2, fontSize: 6, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2, textAlign: 'right' }}>DATO</Text>
+          <Text style={{ width: 15, fontSize: 8, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
+          <Text style={{ flex: 3, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
+          <Text style={{ flex: 2, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
+          <Text style={{ width: 15, fontSize: 8, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
+          <Text style={{ flex: 3, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
+          <Text style={{ flex: 2, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, textAlign: 'right' }}>DATO</Text>
         </View>
 
         {/* Filas 1-19 */}
