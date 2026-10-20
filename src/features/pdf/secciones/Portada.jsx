@@ -199,7 +199,7 @@ export default function Portada({
       </View>
 
       {/* ── Firma ── */}
-      <View style={{ marginTop: 8, alignItems: 'center' }}>
+      <View style={{ marginTop: 4, alignItems: 'center' }}>
         {firmaPerito && (
           <Image src={firmaPerito} style={{ width: 120, height: 40, objectFit: 'contain', marginBottom: 2 }} />
         )}
