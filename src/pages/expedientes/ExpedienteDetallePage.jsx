@@ -121,7 +121,7 @@ export function ExpedienteDetallePage() {
     setArchivando(true)
     try {
       await archivarExpediente()
-      navigate('/expedientes', { replace: false, state: { mostrarArchivados: true } })
+      navigate('/archivados')
     } catch (err) {
       setConfirmarArchivar(false)
       setErrorMetodo('Error al archivar: ' + err.message)

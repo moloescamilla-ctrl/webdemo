@@ -39,7 +39,7 @@ export function DashboardPage() {
             </CardContent>
           </Card>
         </Link>
-        <Link to="/expedientes" state={{ mostrarArchivados: true }}>
+        <Link to="/archivados">
           <Card className="hover:border-gray-300 hover:shadow-md transition-all cursor-pointer">
             <CardContent className="pt-5 pb-5">
               <Archive className="h-7 w-7 text-gray-400 mb-3" />
