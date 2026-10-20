@@ -15,7 +15,7 @@ function Check({ label, value }) {
   return (
     <View style={[styles.campoFila, { marginBottom: 2, alignItems: 'center' }]}>
       <View style={{ width: 6, height: 6, backgroundColor: value ? '#16A34A' : '#E5E7EB', marginRight: 4 }} />
-      <Text style={{ fontSize: 8, color: value ? '#111827' : '#9CA3AF' }}>{label}</Text>
+      <Text style={{ fontSize: 9, color: value ? '#111827' : '#9CA3AF' }}>{label}</Text>
     </View>
   )
 }
@@ -48,7 +48,7 @@ export default function Construcciones({ descripcion }) {
 
       {descripcion.observaciones && (
         <View style={[styles.cajaGris, { marginTop: 6 }]}>
-          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Observaciones</Text>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Observaciones</Text>
           <Text style={{ fontSize: 8 }}>{sa(descripcion.observaciones)}</Text>
         </View>
       )}

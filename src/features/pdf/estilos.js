@@ -25,7 +25,7 @@ export const COLORES = {
 export const styles = StyleSheet.create({
   pagina: {
     fontFamily: 'Roboto',
-    fontSize: 9,
+    fontSize: 10,
     color: COLORES.texto,
     paddingTop: 40,
     paddingBottom: 54,
@@ -35,13 +35,13 @@ export const styles = StyleSheet.create({
   // Página sin padding para portada con header y foto a sangre completa
   paginaPortada: {
     fontFamily: 'Roboto',
-    fontSize: 9,
+    fontSize: 10,
     color: COLORES.texto,
     paddingBottom: 54,
   },
 
   seccionTitulo: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
     color: COLORES.blanco,
@@ -53,7 +53,7 @@ export const styles = StyleSheet.create({
   },
 
   seccionTituloVerde: {
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
     color: COLORES.blanco,
@@ -66,8 +66,8 @@ export const styles = StyleSheet.create({
 
   // Filas label-valor
   campoFila: { flexDirection: 'row', marginBottom: 3 },
-  campoLabel: { fontSize: 8, color: COLORES.gris, width: 130 },
-  campoValor: { fontSize: 8, color: COLORES.texto, flex: 1 },
+  campoLabel: { fontSize: 9, color: COLORES.gris, width: 140 },
+  campoValor: { fontSize: 9, color: COLORES.texto, flex: 1 },
 
   // Grid de dos columnas
   grid2: { flexDirection: 'row', marginBottom: 4 },
@@ -83,7 +83,7 @@ export const styles = StyleSheet.create({
   celda: {
     paddingVertical: 3,
     paddingHorizontal: 5,
-    fontSize: 8,
+    fontSize: 9,
     borderRightWidth: 0.5,
     borderRightColor: COLORES.borde,
     borderBottomWidth: 0.5,
@@ -93,7 +93,7 @@ export const styles = StyleSheet.create({
   celdaHeader: {
     paddingVertical: 3,
     paddingHorizontal: 5,
-    fontSize: 8,
+    fontSize: 9,
     color: COLORES.blanco,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
@@ -101,7 +101,7 @@ export const styles = StyleSheet.create({
   celdaFoot: {
     paddingVertical: 3,
     paddingHorizontal: 5,
-    fontSize: 8,
+    fontSize: 9,
     fontFamily: 'Roboto',
     fontWeight: 'bold',
     color: COLORES.texto,
@@ -131,7 +131,7 @@ export const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: COLORES.borde,
   },
-  resultadoLabel: { fontSize: 8,  color: COLORES.blanco },
+  resultadoLabel: { fontSize: 9,  color: COLORES.blanco },
   resultadoValor: { fontSize: 15, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.blanco, marginTop: 2 },
 
   // Pie de página
@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
     bottom: 20,
     left: 45,
     right: 45,
-    fontSize: 7,
+    fontSize: 8,
     color: COLORES.gris,
     borderTopWidth: 0.5,
     borderTopColor: COLORES.borde,
@@ -150,5 +150,5 @@ export const styles = StyleSheet.create({
   },
 
   // Nota pequeña
-  nota: { fontSize: 7, color: COLORES.gris, marginTop: 4 },
+  nota: { fontSize: 8, color: COLORES.gris, marginTop: 4 },
 })

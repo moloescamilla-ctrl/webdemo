@@ -59,7 +59,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
       {/* Alerta variacion > 30% */}
       {variacionAlerta && (
         <View style={{ marginTop: 6, padding: 6, backgroundColor: '#FEF2F2', borderWidth: 0.5, borderColor: '#FECACA' }}>
-          <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
+          <Text style={{ fontSize: 9, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
             {`ATENCIÓN: La variación entre enfoques (${variacion.toFixed(1)}%) supera el límite admisible del 30% (SHF / INDAABIN).`}
           </Text>
         </View>
@@ -67,10 +67,10 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
 
       {/* Consideraciones */}
       <View style={[styles.cajaGris, { marginTop: 6 }]}>
-        <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, marginBottom: 3 }}>
+        <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, marginBottom: 3 }}>
           CONSIDERACIONES PREVIAS A LA CONCLUSIÓN
         </Text>
-        <Text style={{ fontSize: 7.5, lineHeight: 1.6 }}>
+        <Text style={{ fontSize: 9, lineHeight: 1.6 }}>
           {`El suscrito, experto independiente y Perito Valuador Profesional, con base en la `}
           {`investigación de mercado, la inspección física del inmueble y la metodología técnica `}
           {`aplicada conforme a la normatividad vigente, concluye que el Valor Comercial del `}
@@ -82,12 +82,12 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
       <View style={[styles.cajaVerde, { marginTop: 8 }]}>
         <Text style={styles.resultadoLabel}>VALOR COMERCIAL DEL INMUEBLE</Text>
         {elegido && (
-          <Text style={{ fontSize: 7, color: '#86efac', marginBottom: 3 }}>
+          <Text style={{ fontSize: 9, color: '#86efac', marginBottom: 3 }}>
             {`Método adoptado: ${CLAVES_ENFOQUE[elegido.clave] || elegido.label}`}
           </Text>
         )}
         <Text style={styles.resultadoValor}>{formatCurrency(valorComercial)}</Text>
-        <Text style={{ fontSize: 8, color: '#d1fae5', marginTop: 4 }}>
+        <Text style={{ fontSize: 9, color: '#d1fae5', marginTop: 4 }}>
           {`(${letras} PESOS 00/100 M.N.)`}
         </Text>
       </View>
@@ -101,7 +101,7 @@ export default function ResumenEjecutivo({ metodoFisico, metodoComparativo, meto
         paddingHorizontal: 12,
         backgroundColor: COLORES.grisClaro,
       }}>
-        <Text style={{ fontSize: 8, textAlign: 'center', color: COLORES.primario, fontFamily: 'Roboto', fontWeight: 'bold' }}>
+        <Text style={{ fontSize: 9, textAlign: 'center', color: COLORES.primario, fontFamily: 'Roboto', fontWeight: 'bold' }}>
           {`ESTA CANTIDAD REPRESENTA EL VALOR COMERCIAL DEL INMUEBLE AL DÍA: ${sa(formatDate(expediente?.fecha_inspeccion))}`}
         </Text>
       </View>

@@ -48,11 +48,11 @@ function TarjetaFoto({ foto, etiqueta, isRight }) {
           backgroundColor: COLORES.secundario,
           marginRight: 5,
         }} />
-        <Text style={{ fontSize: 7, color: COLORES.texto, fontFamily: 'Roboto', fontWeight: 'bold' }}>
+        <Text style={{ fontSize: 9, color: COLORES.texto, fontFamily: 'Roboto', fontWeight: 'bold' }}>
           {etiqueta}
         </Text>
         {foto.descripcion ? (
-          <Text style={{ fontSize: 7, color: COLORES.gris, marginLeft: 4 }}>
+          <Text style={{ fontSize: 9, color: COLORES.gris, marginLeft: 4 }}>
             {`— ${sa(foto.descripcion)}`}
           </Text>
         ) : null}

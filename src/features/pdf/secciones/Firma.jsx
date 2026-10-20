@@ -49,18 +49,16 @@ export default function Firma({ expediente, perfil, firmaPerito }) {
                 src={firmaPerito}
                 style={{ width: '90%', height: '90%', objectFit: 'contain' }}
               />
-            ) : (
-              <Text style={{ fontSize: 7, color: COLORES.gris }}>Firma autógrafa o e.firma</Text>
-            )}
+            ) : null}
           </View>
 
           <View style={{ marginTop: 6, borderTopWidth: 0.5, borderTopColor: COLORES.texto, paddingTop: 3 }}>
-            <Text style={{ fontSize: 7, textAlign: 'center' }}>
+            <Text style={{ fontSize: 9, textAlign: 'center' }}>
               {sa(nombrePerito) || '_____________________________'}
             </Text>
-            <Text style={{ fontSize: 7, color: COLORES.gris, textAlign: 'center' }}>Perito Valuador</Text>
+            <Text style={{ fontSize: 9, color: COLORES.gris, textAlign: 'center' }}>Perito Valuador</Text>
             {cedulaPerito ? (
-              <Text style={{ fontSize: 6.5, color: COLORES.gris, textAlign: 'center', marginTop: 1 }}>
+              <Text style={{ fontSize: 9, color: COLORES.gris, textAlign: 'center', marginTop: 1 }}>
                 {`Cédula: ${cedulaPerito}`}
               </Text>
             ) : null}
@@ -70,7 +68,7 @@ export default function Firma({ expediente, perfil, firmaPerito }) {
 
       {/* Nota de validez */}
       <View style={[styles.cajaGris, { marginTop: 24 }]}>
-        <Text style={{ fontSize: 7, textAlign: 'center', lineHeight: 1.6 }}>
+        <Text style={{ fontSize: 9, textAlign: 'center', lineHeight: 1.6 }}>
           {'Este dictamen fue elaborado por el perito valuador registrado, '}
           {'con base en la inspección física realizada y la investigación de mercado efectuada. '}
           {'La presente valuación tiene vigencia de seis (6) meses a partir de la fecha de inspección. '}

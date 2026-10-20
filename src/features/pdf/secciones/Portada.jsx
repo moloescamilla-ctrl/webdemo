@@ -15,16 +15,16 @@ function Fila({ num, label, valor, numD, labelD, valorD, resaltar }) {
       borderBottomWidth: 0.5,
       borderBottomColor: COLORES.borde,
       backgroundColor: bg,
-      minHeight: 12,
+      minHeight: 14,
     }}>
-      <Text style={{ width: 15, fontSize: 8, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
-      <Text style={{ flex: labelD ? 3 : 5, fontSize: 9, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
-      <Text style={{ flex: 2, fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
+      <Text style={{ width: 16, fontSize: 9, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
+      <Text style={{ flex: labelD ? 3 : 5, fontSize: 10, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
+      <Text style={{ flex: 2, fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
       {labelD && (
         <>
-          <Text style={{ width: 15, fontSize: 8, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{numD}</Text>
-          <Text style={{ flex: 3, fontSize: 9, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
-          <Text style={{ flex: 2, fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2 }}>{valorD ?? '—'}</Text>
+          <Text style={{ width: 16, fontSize: 9, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{numD}</Text>
+          <Text style={{ flex: 3, fontSize: 10, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
+          <Text style={{ flex: 2, fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2 }}>{valorD ?? '—'}</Text>
         </>
       )}
     </View>
@@ -73,15 +73,15 @@ export default function Portada({
           <Image src={logoCovinsa} style={{ width: 80, height: 62, objectFit: 'contain' }} />
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 7, color: COLORES.blanco, marginBottom: 2 }}>RETORNO CITLALLI No. 27</Text>
-          <Text style={{ fontSize: 7, color: COLORES.blanco, marginBottom: 2 }}>COL. EL ESPINAL, C.P. 94330</Text>
-          <Text style={{ fontSize: 7, color: COLORES.blanco, marginBottom: 2 }}>ORIZABA, VER.</Text>
-          <Text style={{ fontSize: 7, color: '#93c5fd' }}>TEL. 272 721 69 55</Text>
+          <Text style={{ fontSize: 9, color: COLORES.blanco, marginBottom: 2 }}>RETORNO CITLALLI No. 27</Text>
+          <Text style={{ fontSize: 9, color: COLORES.blanco, marginBottom: 2 }}>COL. EL ESPINAL, C.P. 94330</Text>
+          <Text style={{ fontSize: 9, color: COLORES.blanco, marginBottom: 2 }}>ORIZABA, VER.</Text>
+          <Text style={{ fontSize: 9, color: '#93c5fd' }}>TEL. 272 721 69 55</Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={{ fontSize: 6, color: '#93c5fd', letterSpacing: 0.5, marginBottom: 3 }}>DICTAMEN VALUATORIO</Text>
           <View style={{ height: 0.5, backgroundColor: 'rgba(255,255,255,0.25)', marginBottom: 4, width: 80 }} />
-          <Text style={{ fontSize: 7, color: COLORES.blanco, textAlign: 'right' }}>
+          <Text style={{ fontSize: 9, color: COLORES.blanco, textAlign: 'right' }}>
             {sa(expediente.proposito_avaluo || 'Avalúo Inmobiliario')}
           </Text>
         </View>
@@ -103,10 +103,10 @@ export default function Portada({
           <Image src={fotoFachada} style={{ width: 210, height: 110, objectFit: 'cover', borderWidth: 0.5, borderColor: COLORES.borde }} />
         ) : (
           <View style={{ width: 210, height: 80, borderWidth: 0.5, borderColor: COLORES.borde, backgroundColor: COLORES.grisClaro, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 7, color: COLORES.gris }}>Sin fotografía</Text>
+            <Text style={{ fontSize: 9, color: COLORES.gris }}>Sin fotografía</Text>
           </View>
         )}
-        <Text style={{ fontSize: 8, color: COLORES.gris, marginTop: 2 }}>VISTA GENERAL DEL INMUEBLE</Text>
+        <Text style={{ fontSize: 9, color: COLORES.gris, marginTop: 2 }}>VISTA GENERAL DEL INMUEBLE</Text>
       </View>
 
       {/* ── Tabla síntesis ── */}
@@ -114,12 +114,12 @@ export default function Portada({
 
         {/* Header de tabla */}
         <View style={{ flexDirection: 'row', backgroundColor: COLORES.secundario }}>
-          <Text style={{ width: 15, fontSize: 8, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
-          <Text style={{ flex: 2, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
-          <Text style={{ width: 15, fontSize: 8, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
-          <Text style={{ flex: 3, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
-          <Text style={{ flex: 2, fontSize: 8, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, textAlign: 'right' }}>DATO</Text>
+          <Text style={{ width: 15, fontSize: 9, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
+          <Text style={{ flex: 3, fontSize: 9, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
+          <Text style={{ flex: 2, fontSize: 9, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, textAlign: 'right', borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DATO</Text>
+          <Text style={{ width: 15, fontSize: 9, color: COLORES.blanco, textAlign: 'center', paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>#</Text>
+          <Text style={{ flex: 3, fontSize: 9, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, borderRightWidth: 0.5, borderRightColor: 'rgba(255,255,255,0.2)' }}>DESCRIPCIÓN</Text>
+          <Text style={{ flex: 2, fontSize: 9, color: COLORES.blanco, fontFamily: 'Roboto', fontWeight: 'bold', paddingHorizontal: 3, paddingVertical: 2.5, textAlign: 'right' }}>DATO</Text>
         </View>
 
         {/* Filas 1-19 */}
@@ -199,17 +199,17 @@ export default function Portada({
       </View>
 
       {/* ── Firma ── */}
-      <View style={{ marginTop: 8, alignItems: 'center' }}>
+      <View style={{ marginTop: 28, alignItems: 'center' }}>
         {firmaPerito && (
           <Image src={firmaPerito} style={{ width: 120, height: 40, objectFit: 'contain', marginBottom: 2 }} />
         )}
-        <View style={{ borderTopWidth: 0.5, borderTopColor: COLORES.texto, paddingTop: 3, width: 200, alignItems: 'center' }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.texto, textAlign: 'center' }}>
+        <View style={{ borderTopWidth: 0.5, borderTopColor: COLORES.texto, paddingTop: 4, width: 220, alignItems: 'center' }}>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.texto, textAlign: 'center' }}>
             {sa(nombrePerito) || '_____________________________'}
           </Text>
-          <Text style={{ fontSize: 6.5, color: COLORES.gris, textAlign: 'center' }}>FIRMA DE VALUADOR PROFESIONAL</Text>
+          <Text style={{ fontSize: 9, color: COLORES.gris, textAlign: 'center' }}>FIRMA DE VALUADOR PROFESIONAL</Text>
           {cedulaPerito && (
-            <Text style={{ fontSize: 6.5, color: COLORES.gris, textAlign: 'center', marginTop: 1 }}>
+            <Text style={{ fontSize: 9, color: COLORES.gris, textAlign: 'center', marginTop: 1 }}>
               {`CÉDULA PROFESIONAL: ${sa(cedulaPerito)}`}
             </Text>
           )}

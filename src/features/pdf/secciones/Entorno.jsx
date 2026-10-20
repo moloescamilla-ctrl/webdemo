@@ -77,7 +77,7 @@ export default function Entorno({ entorno }) {
       </View>
 
       {/* Servicios */}
-      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
+      <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
         Servicios urbanos disponibles
       </Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -90,7 +90,7 @@ export default function Entorno({ entorno }) {
         {serviciosAusentes.map(([, label]) => (
           <View key={label} style={{ flexDirection: 'row', width: '50%', marginBottom: 2, alignItems: 'center' }}>
             <View style={{ width: 6, height: 6, backgroundColor: '#E5E7EB', marginRight: 4 }} />
-            <Text style={{ fontSize: 7, color: '#9CA3AF' }}>{label}</Text>
+            <Text style={{ fontSize: 9, color: '#9CA3AF' }}>{label}</Text>
           </View>
         ))}
       </View>
@@ -98,7 +98,7 @@ export default function Entorno({ entorno }) {
       {/* Distancias */}
       {DISTANCIAS.some(([key]) => entorno[key] != null) && (
         <View style={{ marginTop: 6 }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>
             Distancias al equipamiento urbano
           </Text>
           <View style={[styles.tabla, { borderWidth: 0.5, borderColor: '#D1D5DB' }]}>

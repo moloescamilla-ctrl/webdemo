@@ -63,7 +63,7 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
       {/* Alerta variacion > 30% */}
       {variacionAlerta && (
         <View style={{ marginTop: 6, padding: 6, backgroundColor: '#FEF2F2', borderWidth: 0.5, borderColor: '#FECACA' }}>
-          <Text style={{ fontSize: 7.5, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
+          <Text style={{ fontSize: 9, color: '#B91C1C', fontFamily: 'Roboto', fontWeight: 'bold' }}>
             {`ATENCIÓN: La variación entre métodos (${variacion.toFixed(1)}%) supera el límite admisible del 30% (SHF / INDAABIN). Revise la consistencia de los métodos aplicados.`}
           </Text>
         </View>
@@ -73,7 +73,7 @@ export default function Conclusion({ metodoFisico, metodoComparativo, metodoRent
       <View style={styles.cajaVerde}>
         <Text style={styles.resultadoLabel}>VALOR COMERCIAL DEL INMUEBLE</Text>
         <Text style={styles.resultadoValor}>{formatCurrency(valorComercial)}</Text>
-        <Text style={{ fontSize: 8, color: '#d1fae5', marginTop: 4 }}>
+        <Text style={{ fontSize: 9, color: '#d1fae5', marginTop: 4 }}>
           {`(${letras} PESOS 00/100 M.N.)`}
         </Text>
       </View>

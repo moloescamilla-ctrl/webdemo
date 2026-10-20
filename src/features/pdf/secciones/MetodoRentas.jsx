@@ -81,7 +81,7 @@ export default function MetodoRentas({ metodo }) {
 
       {metodo.notas_valuador && (
         <View style={[styles.cajaGris, { marginTop: 6 }]}>
-          <Text style={{ fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Notas del valuador</Text>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Notas del valuador</Text>
           <Text style={{ fontSize: 7 }}>{metodo.notas_valuador}</Text>
         </View>
       )}

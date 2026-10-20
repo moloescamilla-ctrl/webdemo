@@ -77,7 +77,7 @@ export default function MetodoResidual({ metodo }) {
       </View>
 
       {/* Tabla Ci */}
-      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
+      <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
         Desglose del Costo de Inversión (Ci)
       </Text>
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: COLORES.borde }]}>
@@ -136,7 +136,7 @@ export default function MetodoResidual({ metodo }) {
         </Text>
         <Text style={styles.resultadoValor}>{formatCurrency(valResidual)}</Text>
         {metodo.valor_residual_m2_terreno && (
-          <Text style={{ fontSize: 8, color: '#d1fae5', marginTop: 2 }}>
+          <Text style={{ fontSize: 9, color: '#d1fae5', marginTop: 2 }}>
             {`${formatCurrency(metodo.valor_residual_m2_terreno)} / m2 de terreno`}
           </Text>
         )}
@@ -144,7 +144,7 @@ export default function MetodoResidual({ metodo }) {
 
       {metodo.notas_valuador && (
         <View style={[styles.cajaGris, { marginTop: 6 }]}>
-          <Text style={{ fontSize: 7, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Notas del valuador</Text>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 2 }}>Notas del valuador</Text>
           <Text style={{ fontSize: 7 }}>{sa(metodo.notas_valuador)}</Text>
         </View>
       )}

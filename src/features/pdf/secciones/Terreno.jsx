@@ -36,7 +36,7 @@ export default function Terreno({ terreno }) {
       </View>
 
       {/* Colindancias */}
-      <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
+      <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginTop: 6, marginBottom: 3 }}>
         Medidas y colindancias
       </Text>
       <View style={[styles.tabla, { borderWidth: 0.5, borderColor: '#D1D5DB' }]}>
@@ -65,7 +65,7 @@ export default function Terreno({ terreno }) {
       {/* Datos registrales */}
       {(terreno.numero_escritura || terreno.notaria || terreno.folio_real) && (
         <View style={{ marginTop: 4 }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>Datos registrales</Text>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>Datos registrales</Text>
           <View style={styles.grid2}>
             <View style={styles.col1}>
               <Campo label="No. escritura" value={terreno.numero_escritura} />
@@ -86,7 +86,7 @@ export default function Terreno({ terreno }) {
         terreno.rpp_fojas_folios || terreno.rpp_libro || terreno.rpp_tomo ||
         terreno.rpp_volumen || terreno.rpp_seccion || terreno.rpp_serie) && (
         <View style={{ marginTop: 4 }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>
+          <Text style={{ fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', marginBottom: 3 }}>
             Inscripción en el Registro Público de la Propiedad (RPP)
           </Text>
           <View style={styles.grid2}>
