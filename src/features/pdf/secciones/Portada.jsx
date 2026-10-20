@@ -15,7 +15,7 @@ function Fila({ num, label, valor, numD, labelD, valorD, resaltar }) {
       borderBottomWidth: 0.5,
       borderBottomColor: COLORES.borde,
       backgroundColor: bg,
-      minHeight: 12,
+      minHeight: 11,
     }}>
       <Text style={{ width: 16, fontSize: 8.5, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
       <Text style={{ flex: labelD ? 3 : 5, fontSize: 8.5, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
@@ -66,11 +66,11 @@ export default function Portada({
       {/* ── Header ── */}
       <View style={{
         backgroundColor: COLORES.primario,
-        paddingTop: 10, paddingBottom: 10, paddingHorizontal: PAD,
+        paddingTop: 7, paddingBottom: 7, paddingHorizontal: PAD,
         flexDirection: 'row', alignItems: 'center',
       }}>
         <View style={{ marginRight: 16, justifyContent: 'center' }}>
-          <Image src={logoCovinsa} style={{ width: 80, height: 62, objectFit: 'contain' }} />
+          <Image src={logoCovinsa} style={{ width: 72, height: 52, objectFit: 'contain' }} />
         </View>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           <Text style={{ fontSize: 8.5, color: COLORES.blanco, marginBottom: 2 }}>RETORNO CITLALLI No. 27</Text>
@@ -91,16 +91,16 @@ export default function Portada({
       <View style={{ backgroundColor: COLORES.acento, height: 3 }} />
 
       {/* Título */}
-      <View style={{ paddingVertical: 5, paddingHorizontal: PAD, borderBottomWidth: 1, borderBottomColor: COLORES.borde }}>
+      <View style={{ paddingVertical: 3, paddingHorizontal: PAD, borderBottomWidth: 1, borderBottomColor: COLORES.borde }}>
         <Text style={{ fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', color: COLORES.primario, textAlign: 'center', letterSpacing: 1 }}>
           SÍNTESIS INFORMATIVA DE AVALÚO
         </Text>
       </View>
 
       {/* ── Foto centrada ── */}
-      <View style={{ alignItems: 'center', paddingHorizontal: PAD, paddingTop: 5, paddingBottom: 3 }}>
+      <View style={{ alignItems: 'center', paddingHorizontal: PAD, paddingTop: 3, paddingBottom: 2 }}>
         {fotoFachada ? (
-          <Image src={fotoFachada} style={{ width: 210, height: 110, objectFit: 'cover', borderWidth: 0.5, borderColor: COLORES.borde }} />
+          <Image src={fotoFachada} style={{ width: 210, height: 85, objectFit: 'cover', borderWidth: 0.5, borderColor: COLORES.borde }} />
         ) : (
           <View style={{ width: 210, height: 80, borderWidth: 0.5, borderColor: COLORES.borde, backgroundColor: COLORES.grisClaro, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontSize: 8.5, color: COLORES.gris }}>Sin fotografía</Text>
@@ -199,7 +199,7 @@ export default function Portada({
       </View>
 
       {/* ── Firma ── */}
-      <View style={{ marginTop: 28, alignItems: 'center' }}>
+      <View style={{ marginTop: 8, alignItems: 'center' }}>
         {firmaPerito && (
           <Image src={firmaPerito} style={{ width: 120, height: 40, objectFit: 'contain', marginBottom: 2 }} />
         )}
