@@ -180,11 +180,11 @@ export default function Portada({
         {/* Filas 28-31 con coordenadas a la derecha */}
         <Fila num={28} label="Valor comparativo de mercado"
               valor={metodoComparativo ? formatCurrency(metodoComparativo.valor_comparativo_total) : '—'}
-              numD={41} labelD="Longitud (Georeferencia)"
+              numD={41} labelD="Longitud (Georreferencia)"
               valorD={sa(expediente.longitud)} />
         <Fila num={29} label="Valor físico del terreno"
               valor={metodoFisico ? formatCurrency(metodoFisico.valor_terreno) : '—'}
-              numD={42} labelD="Latitud (Georeferencia)"
+              numD={42} labelD="Latitud (Georreferencia)"
               valorD={sa(expediente.latitud)} />
         <Fila num={30} label="Valor físico de la construcción"
               valor={metodoFisico ? formatCurrency(metodoFisico.valor_actual_construccion) : '—'}

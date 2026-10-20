@@ -3,13 +3,13 @@ import { styles, COLORES } from '../estilos'
 
 const VERIFICACIONES_SHF = [
   'Se realizó inspección física del inmueble en la fecha indicada',
-  'Se verifico la identidad del inmueble con la escritura publica',
-  'Se constato el uso de suelo autorizado y el regimen de propiedad',
-  'Se compararon los datos fisicos del inmueble con los documentos legales',
+  'Se verificó la identidad del inmueble con la escritura pública',
+  'Se constató el uso de suelo autorizado y el régimen de propiedad',
+  'Se compararon los datos físicos del inmueble con los documentos legales',
   'Se investigaron ofertas de compraventa en la zona para el método comparativo',
   'Se aplicó la metodología de valuación conforme a las Reglas SHF vigentes',
-  'El valuador no tiene interes financiero ni personal en el inmueble valuado',
-  'El avaluo fue elaborado de manera imparcial y objetiva',
+  'El valuador no tiene interés financiero ni personal en el inmueble valuado',
+  'El avalúo fue elaborado de manera imparcial y objetiva',
   'Los valores declarados son vigentes a la fecha de inspección indicada',
 ]
 
@@ -20,7 +20,7 @@ export default function Declaraciones() {
 
       <Text style={{ fontSize: 8, marginBottom: 6, lineHeight: 1.5 }}>
         {'El presente dictamen valuatorio ha sido elaborado de conformidad con las Reglas de caracter general '}
-        {'de metodología de valuación emitidas por la Sociedad Hipotecaria Federal (SHF), aplicando los metodos '}
+        {'de metodología de valuación emitidas por la Sociedad Hipotecaria Federal (SHF), aplicando los métodos '}
         {'de valuación reconocidos internacionalmente: Método Físico o de Costos, Método de Mercado o Comparativo '}
         {'y, cuando aplica, el Método de Capitalización de Rentas y el Método Residual Estático.'}
       </Text>
@@ -28,13 +28,13 @@ export default function Declaraciones() {
       <Text style={{ fontSize: 8, marginBottom: 6, lineHeight: 1.5 }}>
         {'El valor expresado en este dictamen es válido únicamente a la fecha de inspección indicada y '}
         {'tiene una vigencia de seis (6) meses. Las condiciones del mercado inmobiliario pueden cambiar '}
-        {'significativamente en periodos cortos de tiempo, por lo que valores posteriores podrian diferir.'}
+        {'significativamente en periodos cortos de tiempo, por lo que valores posteriores podrían diferir.'}
       </Text>
 
       <Text style={{ fontSize: 8, marginBottom: 8, lineHeight: 1.5 }}>
-        {'Este dictamen no constituye garantia de venta ni promesa de compra. El valuador asume que '}
+        {'Este dictamen no constituye garantía de venta ni promesa de compra. El valuador asume que '}
         {'la información proporcionada por el solicitante es verídica y completa. El valuador no es '}
-        {'responsable de vicios ocultos, gravamenes no registrados ni situaciones jurídicas no reveladas.'}
+        {'responsable de vicios ocultos, gravámenes no registrados ni situaciones jurídicas no reveladas.'}
       </Text>
 
       {/* Tabla de verificaciones SHF */}
@@ -62,7 +62,7 @@ export default function Declaraciones() {
         </Text>
         <Text style={{ fontSize: 7, lineHeight: 1.5, marginTop: 3 }}>
           <Text style={{ fontFamily: 'Roboto', fontWeight: 'bold' }}>Valor físico: </Text>
-          {'Valor obtenido por el método de costos, considerando el valor del terreno mas el costo '}
+          {'Valor obtenido por el método de costos, considerando el valor del terreno más el costo '}
           {'de construcción depreciado por edad y estado de conservación.'}
         </Text>
         <Text style={{ fontSize: 7, lineHeight: 1.5, marginTop: 3 }}>

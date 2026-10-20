@@ -440,7 +440,7 @@ export function EditarExpedientePage() {
           </Card>
 
           <Card>
-            <CardHeader><CardTitle>Georeferencia del predio</CardTitle></CardHeader>
+            <CardHeader><CardTitle>Georreferencia del predio</CardTitle></CardHeader>
             <CardContent>
               <UbicacionMapaInput
                 latitud={d.latitud}

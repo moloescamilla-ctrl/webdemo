@@ -9,9 +9,9 @@ const ETIQUETAS = {
   sala:      'Sala',
   comedor:   'Comedor',
   cocina:    'Cocina',
-  bano:      'Bano',
-  recamara1: 'Recamara 1',
-  recamara2: 'Recamara 2',
+  bano:      'Baño',
+  recamara1: 'Recámara 1',
+  recamara2: 'Recámara 2',
   extra:     'Extra',
 }
 
