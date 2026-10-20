@@ -25,7 +25,7 @@ export const COLORES = {
 export const styles = StyleSheet.create({
   pagina: {
     fontFamily: 'Roboto',
-    fontSize: 10,
+    fontSize: 9,
     color: COLORES.texto,
     paddingTop: 40,
     paddingBottom: 54,
@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
   // Página sin padding para portada con header y foto a sangre completa
   paginaPortada: {
     fontFamily: 'Roboto',
-    fontSize: 10,
+    fontSize: 9,
     color: COLORES.texto,
     paddingBottom: 54,
   },

@@ -15,16 +15,16 @@ function Fila({ num, label, valor, numD, labelD, valorD, resaltar }) {
       borderBottomWidth: 0.5,
       borderBottomColor: COLORES.borde,
       backgroundColor: bg,
-      minHeight: 14,
+      minHeight: 12,
     }}>
       <Text style={{ width: 16, fontSize: 9, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{num}</Text>
-      <Text style={{ flex: labelD ? 3 : 5, fontSize: 10, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
-      <Text style={{ flex: 2, fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
+      <Text style={{ flex: labelD ? 3 : 5, fontSize: 9, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{label}</Text>
+      <Text style={{ flex: 2, fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2, color: tc, borderRightWidth: labelD ? 0.5 : 0, borderRightColor: COLORES.borde }}>{valor ?? '—'}</Text>
       {labelD && (
         <>
           <Text style={{ width: 16, fontSize: 9, color: COLORES.gris, textAlign: 'center', paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{numD}</Text>
-          <Text style={{ flex: 3, fontSize: 10, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
-          <Text style={{ flex: 2, fontSize: 10, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2 }}>{valorD ?? '—'}</Text>
+          <Text style={{ flex: 3, fontSize: 9, paddingHorizontal: 3, paddingVertical: 2, borderRightWidth: 0.5, borderRightColor: COLORES.borde }}>{labelD}</Text>
+          <Text style={{ flex: 2, fontSize: 9, fontFamily: 'Roboto', fontWeight: 'bold', textAlign: 'right', paddingHorizontal: 3, paddingVertical: 2 }}>{valorD ?? '—'}</Text>
         </>
       )}
     </View>
