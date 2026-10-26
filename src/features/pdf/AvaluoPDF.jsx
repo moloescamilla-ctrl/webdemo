@@ -17,6 +17,7 @@ import Declaraciones            from './secciones/Declaraciones'
 import Fotografias              from './secciones/Fotografias'
 import ResumenEjecutivo         from './secciones/ResumenEjecutivo'
 import Firma                    from './secciones/Firma'
+import PlanoConstruccion        from './secciones/PlanoConstruccion'
 
 export function AvaluoPDF({ datos }) {
   const {
@@ -31,6 +32,7 @@ export function AvaluoPDF({ datos }) {
     metodoResidual,
     fotos,
     croquisSrc,
+    planoSrc,
     perfil,
     firmaPerito,
   } = datos
@@ -100,6 +102,9 @@ export function AvaluoPDF({ datos }) {
         <Firma expediente={expediente} perfil={perfil} firmaPerito={firmaPerito} />
         <PiePagina expediente={expediente} />
       </Page>
+
+      {/* Plano / croquis de la propiedad — página completa */}
+      <PlanoConstruccion planoSrc={planoSrc} />
     </Document>
   )
 }

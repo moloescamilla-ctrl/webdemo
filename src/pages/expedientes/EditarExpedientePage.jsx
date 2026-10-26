@@ -9,6 +9,7 @@ import { MetodoRentasForm } from '@/features/metodo-rentas/MetodoRentasForm'
 import { MetodoResidualForm } from '@/features/metodo-residual/MetodoResidualForm'
 import { CroquisUploader } from '@/features/croquis/CroquisUploader'
 import { FotosUploader } from '@/features/fotos/FotosUploader'
+import { PlanoUploader } from '@/features/fotos/PlanoUploader'
 import { EntornoForm } from '@/features/entorno/EntornoForm'
 import { CaracteristicasTerrenoForm } from '@/features/terreno/CaracteristicasTerrenoForm'
 import { DescripcionConstruccionForm } from '@/features/construccion/DescripcionConstruccionForm'
@@ -180,6 +181,7 @@ export function EditarExpedientePage() {
   const [errorMsg, setErrorMsg] = useState(null)
   const [datos, setDatos] = useState(null)
   const [croquisUrl, setCroquisUrl] = useState(undefined)
+  const [planoUrl, setPlanoUrl] = useState(undefined)
 
   if (loading) {
     return (
@@ -673,12 +675,26 @@ export function EditarExpedientePage() {
         </div>
       )}
       {tab === 'fotos' && (
-        <Card>
-          <CardHeader><CardTitle>Fotos del inmueble</CardTitle></CardHeader>
-          <CardContent>
-            <FotosUploader expedienteId={id} />
-          </CardContent>
-        </Card>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader><CardTitle>Fotos del inmueble</CardTitle></CardHeader>
+            <CardContent>
+              <FotosUploader expedienteId={id} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Croquis / plano de la propiedad</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PlanoUploader
+                expedienteId={id}
+                currentUrl={planoUrl !== undefined ? planoUrl : (expediente?.plano_url ?? null)}
+                onSaved={setPlanoUrl}
+              />
+            </CardContent>
+          </Card>
+        </div>
       )}
 
     </div>

@@ -40,11 +40,15 @@ function BotonDescargarPDF({ datos, fileName }) {
       if (datos.expediente?.croquis_url) {
         croquisSrc = await fetchBase64(datos.expediente.croquis_url).catch(() => null)
       }
+      let planoSrc = null
+      if (datos.expediente?.plano_url) {
+        planoSrc = await fetchBase64(datos.expediente.plano_url).catch(() => null)
+      }
       let firmaPerito = null
       if (datos.perfil?.firma_url) {
         firmaPerito = await fetchBase64(datos.perfil.firma_url).catch(() => null)
       }
-      const blob = await pdf(<AvaluoPDF datos={{ ...datos, croquisSrc, firmaPerito }} />).toBlob()
+      const blob = await pdf(<AvaluoPDF datos={{ ...datos, croquisSrc, planoSrc, firmaPerito }} />).toBlob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
