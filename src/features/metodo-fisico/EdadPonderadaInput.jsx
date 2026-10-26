@@ -121,8 +121,8 @@ export function EdadPonderadaInput({ value, onChange, onAccesoriaChange, initial
         </button>
       </div>
 
-      <div className="border border-gray-200 rounded-md overflow-hidden text-sm">
-        <table className="w-full">
+      <div className="border border-gray-200 rounded-md overflow-x-auto text-sm">
+        <table className="w-full min-w-[560px]">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
               <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Tipo de construcción</th>

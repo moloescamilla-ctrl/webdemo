@@ -335,7 +335,8 @@ export function MetodoResidualForm({
           <p className="text-xs text-gray-400">Los porcentajes se aplican sobre el VM. Ajusta según el proyecto.</p>
         </CardHeader>
         <CardContent className="p-0">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[380px]">
             <thead className="bg-gray-50 border-y border-gray-200">
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500">Componente</th>
@@ -391,6 +392,7 @@ export function MetodoResidualForm({
               </tfoot>
             )}
           </table>
+          </div>
         </CardContent>
       </Card>
 

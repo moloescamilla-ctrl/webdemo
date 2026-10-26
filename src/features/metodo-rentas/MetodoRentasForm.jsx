@@ -428,8 +428,8 @@ export function MetodoRentasForm({ onGuardar, guardando, submitLabel, initialVal
 
               {variante === 'componentes' && vcResult && (
                 <div className="space-y-2">
-                  <div className="rounded-md border border-gray-200 overflow-hidden">
-                    <table className="w-full text-sm">
+                  <div className="rounded-md border border-gray-200 overflow-x-auto">
+                    <table className="w-full text-sm min-w-[380px]">
                       <thead className="bg-gray-50 border-b border-gray-200">
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500">Componente</th>
