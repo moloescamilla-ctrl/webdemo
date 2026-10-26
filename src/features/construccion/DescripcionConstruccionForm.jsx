@@ -18,6 +18,7 @@ const defaultDatos = {
   elevador: false,
   num_niveles: '',
   superficie_vendible_m2: '',
+  distribucion: '',
   observaciones: '',
 }
 
@@ -35,6 +36,7 @@ function fromDB(row) {
     elevador:                       row.elevador ?? false,
     num_niveles:                    n(row.num_niveles),
     superficie_vendible_m2:         n(row.superficie_vendible_m2),
+    distribucion:                   row.distribucion || '',
     observaciones:                  row.observaciones || '',
   }
 }
@@ -141,6 +143,20 @@ export function DescripcionConstruccionForm({
               <span className="text-sm text-gray-700">Cuenta con elevador</span>
             </label>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><CardTitle>Distribución y áreas</CardTitle></CardHeader>
+        <CardContent>
+          <textarea
+            name="distribucion"
+            value={datos.distribucion || ''}
+            onChange={handleChange}
+            rows={5}
+            placeholder="Describe la distribución de la vivienda: sala, comedor, cocina integral, 3 recámaras, 2 baños, patio de servicio, cochera techada..."
+            className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:border-blue-400 resize-y"
+          />
         </CardContent>
       </Card>
 

@@ -501,6 +501,8 @@ export function EditarExpedientePage() {
                 </Select>
               </div>
               <div className="space-y-1"><Label>Código postal</Label><Input name="cp" value={d.cp} onChange={handleDatos} maxLength={5} /></div>
+              <div className="space-y-1"><Label>Manzana</Label><Input name="manzana" value={d.manzana || ''} onChange={handleDatos} placeholder="Mza. 5" /></div>
+              <div className="space-y-1"><Label>Lote</Label><Input name="lote" value={d.lote || ''} onChange={handleDatos} placeholder="Lote 12" /></div>
               <div className="space-y-1"><Label>No. cuenta predial</Label><Input name="num_cuenta_predial" value={d.num_cuenta_predial} onChange={handleDatos} /></div>
               <div className="space-y-1"><Label>No. cuenta agua</Label><Input name="num_cuenta_agua" value={d.num_cuenta_agua} onChange={handleDatos} /></div>
             </CardContent>
