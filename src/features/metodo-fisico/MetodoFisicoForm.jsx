@@ -311,8 +311,8 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                     </div>
 
                     {partidasConstruccion.length > 0 ? (
-                      <div className="border border-gray-200 rounded-md overflow-hidden">
-                        <table className="w-full text-xs">
+                      <div className="border border-gray-200 rounded-md overflow-x-auto">
+                        <table className="w-full min-w-[560px] text-xs">
                           <thead className="bg-gray-50">
                             <tr>
                               <th className="px-2 py-1.5 text-left font-medium text-gray-500">Nombre / uso</th>
@@ -403,6 +403,7 @@ export function MetodoFisicoForm({ onGuardar, guardando, submitLabel = 'Guardar 
                           <tfoot className="border-t border-gray-200 bg-gray-50">
                             <tr>
                               <td className="px-2 py-1.5 text-xs font-semibold text-gray-600">Total</td>
+                              <td></td>
                               <td className="px-2 py-1.5 text-right text-xs font-semibold font-mono">{supTotalPartidas > 0 ? `${supTotalPartidas.toFixed(2)} m²` : '—'}</td>
                               <td className="px-2 py-1.5 text-right text-xs text-gray-400">—</td>
                               <td className="px-2 py-1.5 text-right text-xs font-semibold text-blue-700 font-mono">{vrnPartidas ? formatCurrency(vrnPartidas) : '—'}</td>
