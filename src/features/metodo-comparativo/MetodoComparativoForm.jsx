@@ -82,7 +82,7 @@ function factorColor(f) {
 
 const inlineNum = 'bg-transparent border-0 shadow-none focus:outline-none focus:ring-0 text-gray-800 placeholder-gray-300 h-auto py-0 rounded-none'
 
-export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial = '', initialValues = null, comparablesImportados = null, datosSujeto = null }) {
+export function MetodoComparativoForm({ onGuardar, onChange, guardando, superficieInicial = '', initialValues = null, comparablesImportados = null, datosSujeto = null }) {
   const supInicial = initialValues
     ? String(initialValues.superficieSujeto || '')
     : String(superficieInicial || datosSujeto?.supConstruccion || '')
@@ -104,31 +104,58 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
   const [captura, setCaptura] = useState(emptyCaptura)
   const [capturaError, setCapturaError] = useState(null)
 
+  // ── Notifica cambios al padre (para auto-guardado al salir de tab) ──────
+  const notifyChange = (newComps, newSup) => {
+    if (!onChange) return
+    const sup = parseFloat(newSup) || 0
+    const parsed = newComps.map(c => ({
+      ...c,
+      superficie:         n(c.superficie),
+      precioTotal:        n(c.precioTotal),
+      factorZona:         n(c.factorZona) || 1,
+      factorUbicacion:    n(c.factorUbicacion) || 1,
+      factorFrente:       n(c.factorFrente) || 1,
+      factorForma:        n(c.factorForma) || 1,
+      factorComerc:       n(c.factorComerc) || 1,
+      factorSuperficie:   n(c.factorSuperficie) || 1,
+      factorEdad:         n(c.factorEdad) || 1,
+      factorConservacion: n(c.factorConservacion) || 1,
+    }))
+    const res = calcularMetodoComparativo(parsed, sup)
+    onChange(
+      res ?? { comparables: parsed, valorUnitarioPonderado: 0, valorComparativoTotal: 0 },
+      sup
+    )
+  }
+
   // ── Superficie del sujeto ────────────────────────────────────────────────
   const updateSupSujeto = (val) => {
     setSupSujeto(val)
     const sup = parseFloat(val) || 0
-    if (sup > 0) {
-      setComps(prev => prev.map(c => ({
-        ...c,
-        factorSuperficie: calcFactorSuperficie(sup, n(c.superficie)).toFixed(4),
-      })))
-    }
+    setComps(prev => {
+      const updated = sup > 0
+        ? prev.map(c => ({ ...c, factorSuperficie: calcFactorSuperficie(sup, n(c.superficie)).toFixed(4) }))
+        : prev
+      notifyChange(updated, val)
+      return updated
+    })
   }
 
   // ── Tabla de homologación ────────────────────────────────────────────────
   const updateComp = (id, field, val) => {
-    setComps(prev => prev.map(c => {
-      if (c.id !== id) return c
-      const updated = { ...c, [field]: val }
-      if (field === 'superficie') {
-        const sup = parseFloat(supSujeto) || 0
-        if (sup > 0) {
-          updated.factorSuperficie = calcFactorSuperficie(sup, parseFloat(val) || 0).toFixed(4)
+    setComps(prev => {
+      const updated = prev.map(c => {
+        if (c.id !== id) return c
+        const next = { ...c, [field]: val }
+        if (field === 'superficie') {
+          const sup = parseFloat(supSujeto) || 0
+          if (sup > 0) next.factorSuperficie = calcFactorSuperficie(sup, parseFloat(val) || 0).toFixed(4)
         }
-      }
+        return next
+      })
+      notifyChange(updated, supSujeto)
       return updated
-    }))
+    })
   }
 
   // ── Captura de comparable ────────────────────────────────────────────────
@@ -147,14 +174,19 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
     const supS = parseFloat(supSujeto) || 0
     const fs = supS > 0 && sup > 0 ? calcFactorSuperficie(supS, sup).toFixed(4) : '1.00'
 
-    setComps(prev => [...prev, newComp({
+    const nuevo = newComp({
       descripcion: captura.descripcion.trim(),
       superficie:  captura.superficie,
       precioTotal: captura.precioTotal,
       factorSuperficie: fs,
       fuente: captura.fuente,
       fecha:  captura.fecha,
-    })])
+    })
+    setComps(prev => {
+      const updated = [...prev, nuevo]
+      notifyChange(updated, supSujeto)
+      return updated
+    })
     setCaptura(emptyCaptura)
     setCapturaError(null)
   }
@@ -323,7 +355,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
             <CardTitle>Tabla de homologación</CardTitle>
             <button
               type="button"
-              onClick={() => setComps(p => [...p, newComp()])}
+              onClick={() => setComps(p => { const u = [...p, newComp()]; notifyChange(u, supSujeto); return u })}
               className="flex items-center gap-1 text-xs text-gray-400 hover:text-blue-600 transition-colors"
             >
               <PlusCircle className="h-3.5 w-3.5" />
@@ -435,7 +467,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                         {comps.length > 1 && (
                           <button
                             type="button"
-                            onClick={() => setComps(p => p.filter(c => c.id !== comp.id))}
+                            onClick={() => setComps(p => { const u = p.filter(c => c.id !== comp.id); notifyChange(u, supSujeto); return u })}
                             className="text-gray-300 hover:text-red-400 transition-colors"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -463,7 +495,7 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
           {!resultado ? (
             <div className="flex items-start gap-2 p-3 bg-gray-50 rounded-md text-sm text-gray-500">
               <Info className="h-4 w-4 mt-0.5 shrink-0" />
-              Completa la superficie del sujeto y al menos un comparable con precio para ver el resultado.
+              Completa la superficie del sujeto y al menos un comparable con precio para ver el resultado calculado.
             </div>
           ) : (
             <>
@@ -507,20 +539,28 @@ export function MetodoComparativoForm({ onGuardar, guardando, superficieInicial 
                   {formatNumber(resultado.valorUnitarioPonderado, 2)} $/m² × {formatNumber(n(supSujeto), 2)} m²
                 </p>
               </div>
-
-              {onGuardar && (
-                <Button
-                  className="w-full"
-                  onClick={() => onGuardar(resultado, n(supSujeto))}
-                  disabled={guardando}
-                >
-                  {guardando
-                    ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando...</>
-                    : 'Guardar resultado en expediente'
-                  }
-                </Button>
-              )}
             </>
+          )}
+
+          {/* Botón siempre visible cuando hay comparables — no depende de resultado */}
+          {onGuardar && comps.length > 0 && (
+            <Button
+              className="w-full"
+              onClick={() => {
+                const payload = resultado ?? {
+                  comparables: parsedComps,
+                  valorUnitarioPonderado: 0,
+                  valorComparativoTotal: 0,
+                }
+                onGuardar(payload, n(supSujeto))
+              }}
+              disabled={guardando}
+            >
+              {guardando
+                ? <><Loader2 className="h-4 w-4 animate-spin" /> Guardando...</>
+                : 'Guardar en expediente'
+              }
+            </Button>
           )}
         </CardContent>
       </Card>

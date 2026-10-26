@@ -156,6 +156,7 @@ export function EditarExpedientePage() {
   const [guardando, setGuardando] = useState(false)
   const pendingConstruccionRef = useRef(null)
   const pendingFisicoRef = useRef(null)
+  const pendingComparativoRef = useRef(null)
 
   useEffect(() => {
     if (expediente?.tipo_expediente === 'calculo_rapido' && !['datos', 'fisico'].includes(tab)) {
@@ -290,6 +291,12 @@ export function EditarExpedientePage() {
       try { await guardarParcialesFisico(id, pendingFisicoRef.current) }
       catch { /* silencioso */ }
       pendingFisicoRef.current = null
+    }
+    if (tab === 'comparativo' && nextTab !== 'comparativo' && pendingComparativoRef.current) {
+      const { resultado, supSujeto } = pendingComparativoRef.current
+      try { await guardarMetodoComparativo(id, resultado, supSujeto) }
+      catch { /* silencioso */ }
+      pendingComparativoRef.current = null
     }
     setTab(nextTab)
     setErrorMsg(null)
@@ -662,6 +669,9 @@ export function EditarExpedientePage() {
           <MetodoComparativoForm
             key={metodoComparativo?.id ?? 'comp-nuevo'}
             onGuardar={handleGuardarComparativo}
+            onChange={(resultado, supSujeto) => {
+              pendingComparativoRef.current = { resultado, supSujeto }
+            }}
             guardando={guardando}
             initialValues={comparativoInitial}
             comparablesImportados={navState.comparablesImportados ?? null}
