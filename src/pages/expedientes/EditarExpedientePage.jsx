@@ -22,7 +22,7 @@ import { ArrowLeft, CheckCircle2, Loader2, Sparkles, User, MapPin, Calculator } 
 
 const TIPOS_INMUEBLE = [
   'Casa habitación', 'Departamento', 'Local comercial', 'Oficina',
-  'Nave industrial', 'Terreno urbano', 'Terreno suburbano', 'Terreno rural', 'Bodega', 'Otro',
+  'Nave industrial', 'Terreno urbano', 'Terreno suburbano', 'Terreno rural', 'Bodega', 'Mixto', 'Otro',
 ]
 
 const TIPOS_PREDIO = ['URBANO', 'SUBURBANO', 'RURAL']
