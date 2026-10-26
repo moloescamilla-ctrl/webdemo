@@ -201,7 +201,7 @@ export function useExpedientes() {
       .from('metodos_comparativos')
       .upsert({
         expediente_id: expedienteId,
-        user_id: user.id,
+        perito_id: user.id,
         superficie_sujeto: superficieSujeto,
         comparables: resultado.comparables,
         valor_unitario_ponderado: resultado.valorUnitarioPonderado,
