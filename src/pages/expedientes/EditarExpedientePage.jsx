@@ -25,6 +25,60 @@ const TIPOS_INMUEBLE = [
   'Nave industrial', 'Terreno urbano', 'Terreno suburbano', 'Terreno rural', 'Bodega', 'Mixto', 'Otro',
 ]
 
+const MUNICIPIOS_VER = [
+  [1,'Acajete'],[2,'Acatlán'],[3,'Acayucan'],[4,'Actopan'],[5,'Acula'],[6,'Acultzingo'],
+  [7,'Camarón de Tejeda'],[8,'Alpatláhuac'],[9,'Alto Lucero de Gutiérrez Barrios'],[10,'Altotonga'],
+  [11,'Alvarado'],[12,'Amatitlán'],[13,'Naranjos Amatlán'],[14,'Amatlán de los Reyes'],
+  [15,'Ángel R. Cabada'],[16,'La Antigua'],[17,'Apazapan'],[18,'Aquila'],[19,'Astacinga'],
+  [20,'Atlahuilco'],[21,'Atoyac'],[22,'Atzacan'],[23,'Atzalan'],[24,'Tlaltetela'],
+  [25,'Ayahualulco'],[26,'Banderilla'],[27,'Benito Juárez'],[28,'Boca del Río'],[29,'Calcahualco'],
+  [30,'Camerino Z. Mendoza'],[31,'Carrillo Puerto'],[32,'Catemaco'],[33,'Cazones de Herrera'],
+  [34,'Cerro Azul'],[35,'Citlaltépetl'],[36,'Coacoatzintla'],[37,'Coahuitlán'],[38,'Coatepec'],
+  [39,'Coatzacoalcos'],[40,'Coatzintla'],[41,'Coetzala'],[42,'Colipa'],[43,'Comapa'],
+  [44,'Córdoba'],[45,'Cosamaloapan de Carpio'],[46,'Cosautlán de Carvajal'],[47,'Coscomatepec'],
+  [48,'Cosoleacaque'],[49,'Cotaxtla'],[50,'Coxquihui'],[51,'Coyutla'],[52,'Cuichapa'],
+  [53,'Cuitláhuac'],[54,'Chacaltianguis'],[55,'Chalma'],[56,'Chiconamel'],[57,'Chiconquiaco'],
+  [58,'Chicontepec'],[59,'Chinameca'],[60,'Chinampa de Gorostiza'],[61,'Las Choapas'],
+  [62,'Chocamán'],[63,'Chontla'],[64,'Chumatlán'],[65,'Emiliano Zapata'],[66,'Espinal'],
+  [67,'Filomeno Mata'],[68,'Fortín'],[69,'Gutiérrez Zamora'],[70,'Hidalgotitlán'],
+  [71,'Huatusco'],[72,'Huayacocotla'],[73,'Hueyapan de Ocampo'],[74,'Huiloapan de Cuauhtémoc'],
+  [75,'Ignacio de la Llave'],[76,'Ilamatlán'],[77,'Isla'],[78,'Ixcatepec'],
+  [79,'Ixhuacán de los Reyes'],[80,'Ixhuatlán del Café'],[81,'Ixhuatlancillo'],
+  [82,'Ixhuatlán del Sureste'],[83,'Ixhuatlán de Madero'],[84,'Ixmatlahuacan'],
+  [85,'Ixtaczoquitlán'],[86,'Jalacingo'],[87,'Xalapa'],[88,'Jalcomulco'],[89,'Jáltipan'],
+  [90,'Jamapa'],[91,'Jesús Carranza'],[92,'Xico'],[93,'Jilotepec'],[94,'Juan Rodríguez Clara'],
+  [95,'Juchique de Ferrer'],[96,'Landero y Coss'],[97,'Lerdo de Tejada'],[98,'Magdalena'],
+  [99,'Maltrata'],[100,'Manlio Fabio Altamirano'],[101,'Mariano Escobedo'],
+  [102,'Martínez de la Torre'],[103,'Mecatlán'],[104,'Mecayapan'],[105,'Medellín de Bravo'],
+  [106,'Miahuatlán'],[107,'Las Minas'],[108,'Minatitlán'],[109,'Misantla'],
+  [110,'Mixtla de Altamirano'],[111,'Moloacán'],[112,'Naolinco'],[113,'Naranjal'],[114,'Nautla'],
+  [115,'Nogales'],[116,'Oluta'],[117,'Omealca'],[118,'Orizaba'],[119,'Otatitlán'],[120,'Oteapan'],
+  [121,'Ozuluama de Mascareñas'],[122,'Pajapan'],[123,'Pánuco'],[124,'Papantla'],
+  [125,'Paso del Macho'],[126,'Paso de Ovejas'],[127,'La Perla'],[128,'Perote'],
+  [129,'Platón Sánchez'],[130,'Playa Vicente'],[131,'Poza Rica de Hidalgo'],
+  [132,'Las Vigas de Ramírez'],[133,'Pueblo Viejo'],[134,'Puente Nacional'],
+  [135,'Rafael Delgado'],[136,'Rafael Lucio'],[137,'Los Reyes'],[138,'Río Blanco'],
+  [139,'Saltabarranca'],[140,'San Andrés Tenejapan'],[141,'San Andrés Tuxtla'],
+  [142,'San Juan Evangelista'],[143,'Santiago Tuxtla'],[144,'Sayula de Alemán'],
+  [145,'Soconusco'],[146,'Sochiapa'],[147,'Soledad Atzompa'],[148,'Soledad de Doblado'],
+  [149,'Soteapan'],[150,'Tamalín'],[151,'Tamiahua'],[152,'Tampico Alto'],[153,'Tancoco'],
+  [154,'Tantima'],[155,'Tantoyuca'],[156,'Tatatila'],[157,'Castillo de Teayo'],
+  [158,'Tecolutla'],[159,'Tehuipango'],[160,'Álamo Temapache'],[161,'Tempoal'],
+  [162,'Tenampa'],[163,'Tenochtitlán'],[164,'Teocelo'],[165,'Tepatlaxco'],[166,'Tepetlán'],
+  [167,'Tepetzintla'],[168,'Tequila'],[169,'José Azueta'],[170,'Texcatepec'],
+  [171,'Texhuacán'],[172,'Texistepec'],[173,'Tezonapa'],[174,'Tierra Blanca'],
+  [175,'Tihuatlán'],[176,'Tlacojalpan'],[177,'Tlacolulan'],[178,'Tlacotalpan'],
+  [179,'Tlacotepec de Mejía'],[180,'Tlachichilco'],[181,'Tlalixcoyan'],[182,'Tlalnelhuayocan'],
+  [183,'Tlapacoyan'],[184,'Tlaquilpa'],[185,'Tlilapan'],[186,'Tomatlán'],[187,'Tonayán'],
+  [188,'Totutla'],[189,'Tuxpan'],[190,'Tuxtilla'],[191,'Ursulo Galván'],
+  [192,'Vega de Alatorre'],[193,'Veracruz'],[194,'Villa Aldama'],[195,'Xoxocotla'],
+  [196,'Yanga'],[197,'Yecuatla'],[198,'Zacualpan'],[199,'Zaragoza'],[200,'Zentla'],
+  [201,'Zongolica'],[202,'Zontecomatlán de López y Fuentes'],[203,'Zozocolco de Hidalgo'],
+  [204,'Agua Dulce'],[205,'El Higo'],[206,'Nanchital de Lázaro Cárdenas del Río'],
+  [207,'Tres Valles'],[208,'Carlos A. Carrillo'],[209,'Tatahuicapan de Juárez'],
+  [210,'Uxpanapa'],[211,'San Rafael'],[212,'Santiago Sochiapan'],
+]
+
 const TIPOS_PREDIO = ['URBANO', 'SUBURBANO', 'RURAL']
 const TIPOS_SUELO  = ['TEMPORAL', 'RIEGO', 'HUMEDAD', 'ÁRIDO', 'PANTANOSO']
 
@@ -408,10 +462,23 @@ export function EditarExpedientePage() {
               <div className="space-y-1"><Label>Número oficial</Label><Input name="numero_oficial" value={d.numero_oficial} onChange={handleDatos} placeholder="123, 4-B..." /></div>
               <div className="space-y-1"><Label>Fraccionamiento / Colonia</Label><Input name="fraccionamiento" value={d.fraccionamiento} onChange={handleDatos} placeholder="Fraccionamiento..." /></div>
               <div className="space-y-1"><Label>Colonia</Label><Input name="colonia" value={d.colonia} onChange={handleDatos} /></div>
-              <div className="space-y-1"><Label>Municipio / Delegación</Label><Input name="municipio" value={d.municipio} onChange={handleDatos} /></div>
-              <div className="space-y-1">
-                <Label>Clave INEGI municipio</Label>
-                <Input name="municipio_clave_inegi" value={d.municipio_clave_inegi} onChange={handleDatos} placeholder="001" maxLength={3} />
+              <div className="space-y-1 sm:col-span-2">
+                <Label>Municipio</Label>
+                <Select
+                  value={d.municipio_clave_inegi ? `${d.municipio_clave_inegi}|${d.municipio}` : ''}
+                  onChange={e => {
+                    const [clave, ...rest] = e.target.value.split('|')
+                    const nombre = rest.join('|')
+                    setDatos(prev => ({ ...prev, municipio: nombre, municipio_clave_inegi: clave }))
+                  }}
+                >
+                  <option value="">— Selecciona municipio —</option>
+                  {MUNICIPIOS_VER.map(([clave, nombre]) => (
+                    <option key={clave} value={`${String(clave).padStart(3,'0')}|${nombre}`}>
+                      {String(clave).padStart(3,'0')} — {nombre}
+                    </option>
+                  ))}
+                </Select>
               </div>
               <div className="space-y-1">
                 <Label>Estado</Label>
