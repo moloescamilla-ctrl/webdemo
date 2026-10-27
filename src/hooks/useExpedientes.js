@@ -113,9 +113,10 @@ export function useExpedientes() {
   }
 
   async function guardarDescripcionConstruccion(expedienteId, datos) {
+    const payload = { ...datos, condicion: datos.condicion || null }
     const { error } = await supabase
       .from('descripcion_construccion')
-      .upsert({ expediente_id: expedienteId, ...datos }, { onConflict: 'expediente_id' })
+      .upsert({ expediente_id: expedienteId, ...payload }, { onConflict: 'expediente_id' })
     if (error) throw new Error(error.message)
   }
 

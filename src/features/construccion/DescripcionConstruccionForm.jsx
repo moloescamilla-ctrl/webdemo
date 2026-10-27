@@ -113,7 +113,7 @@ export function DescripcionConstruccionForm({
           </Campo>
           <Campo label="Condición del inmueble" name="condicion" value={datos.condicion} onChange={handleChange}>
             <Select name="condicion" value={datos.condicion} onChange={handleChange}>
-              <option value="">— Seleccionar —</option>
+              <option value="">No aplica / Sin construcción</option>
               <option value="nueva">Vivienda nueva</option>
               <option value="usada">Vivienda usada</option>
             </Select>
