@@ -202,6 +202,7 @@ export function useExpedientes() {
       .upsert({
         expediente_id: expedienteId,
         perito_id: user.id,
+        user_id: user.id,
         superficie_sujeto: superficieSujeto,
         comparables: resultado.comparables,
         valor_unitario_ponderado: resultado.valorUnitarioPonderado,
